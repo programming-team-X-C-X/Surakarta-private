@@ -1,6 +1,5 @@
 #pragma once
 
-#include "my_board.h"
 #include "my_piece.h"
 #include "my_reason.h"
 

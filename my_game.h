@@ -5,6 +5,7 @@
 #include "my_rule_manager.h"
 // #include "mainwindow.h"
 #include "chessboardwidght.h"
+#include "settings.h"
 
 class SurakartaMoveResponse {
 public:

@@ -62,9 +62,9 @@ void ChessBoardWidget::paintEvent(QPaintEvent */*event*/) {
     for (unsigned int y = 0; y < BOARD_SIZE; y++) {
         for (unsigned int x = 0; x < BOARD_SIZE; x++) {
             if ((*board)[x][y]->color_ == PieceColor::BLACK)
-                my_drawSolidPoint(&painter, QPoint((arcNum + x + 1) * gridSize, (arcNum + y + 1) * gridSize), 10, Qt::black);
+                my_drawSolidPoint(&painter, QPoint((arcNum + x + 1) * gridSize, (arcNum + y + 1) * gridSize), PIECE_SIZE, Qt::black);
             else if ((*board)[x][y]->color_ == PieceColor::WHITE)
-                my_drawSolidPoint(&painter, QPoint((arcNum + x + 1) * gridSize, (arcNum + y + 1) * gridSize), 10, Qt::white);
+                my_drawSolidPoint(&painter, QPoint((arcNum + x + 1) * gridSize, (arcNum + y + 1) * gridSize), PIECE_SIZE, Qt::white);
 
         }
     }

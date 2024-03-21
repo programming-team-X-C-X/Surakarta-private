@@ -4,6 +4,7 @@
 #include <memory>
 #include <vector>
 #include "my_common.h"
+#include "my_board.h"
 
 class SurakartaRuleManager {
 public:

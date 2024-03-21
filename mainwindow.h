@@ -13,15 +13,12 @@
 #include "my_agent_random.h"
 #include "my_game.h"
 #include "chessboardwidght.h"
-#include "settings.h"
-
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
 class MainWindow;
 }
 QT_END_NAMESPACE
-
 
 
 // 在绘制事件中调用此函数来绘制实心点
@@ -33,7 +30,6 @@ class MainWindow : public QMainWindow
 public:
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    // std::shared_ptr<ChessBoardWidget> chessBoard;
     ChessBoardWidget *chessBoard;
     SurakartaGame game;
     std::shared_ptr<SurakartaAgentRandom> agent     = std::make_shared<SurakartaAgentRandom>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager());
@@ -46,20 +42,11 @@ public slots:
 
 
 private:
-    // Ui::MainWindow *ui;
     QPushButton *buttonClose;
     QPushButton *buttonStart;
     QHBoxLayout *hbox;
     QVBoxLayout *vbox;
-//     void startGame() {
-
-
-//     }
-//     void updateBoard() {
-
-//     }
 };
-
 
 
 #endif // MAINWINDOW_H

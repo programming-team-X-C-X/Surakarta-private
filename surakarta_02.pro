@@ -12,13 +12,11 @@ SOURCES += \
     chessboardwidght.cpp \
     main.cpp \
     mainwindow.cpp \
-    my_agent_base.cpp \
     my_agent_mine.cpp \
     my_agent_random.cpp \
     my_game.cpp \
     my_reason.cpp \
     my_rule_manager.cpp \
-    run_surakarta.cpp \
     settings.cpp
 
     # Surakarta-RuleAiTest-private\src\surakarta\surakarta_agent_base.cpp
@@ -37,7 +35,6 @@ HEADERS += \
     my_piece.h \
     my_reason.h \
     my_rule_manager.h \
-    run_surakarta.h \
     settings.h
 
 

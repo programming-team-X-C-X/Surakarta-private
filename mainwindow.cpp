@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include "settings.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -16,7 +17,6 @@ MainWindow::MainWindow(QWidget *parent)
     // vbox->addWidget(buttonClose);
     // vbox->addWidget(buttonStart);
     // this->setLayout(vbox);
-    // connect(buttonClose, SIGNAL(clicked(bool)), buttonClose, SLOT(exit()));
 
     connect(buttonClose, SIGNAL(clicked(bool)), this, SLOT(close()));
     connect(buttonStart, SIGNAL(clicked(bool)), this, SLOT(Initialize()));
@@ -31,7 +31,7 @@ void MainWindow::Initialize() {
 
     QTimer *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &MainWindow::updateGame);
-    timer->start(500);
+    timer->start(SLEEP_TIME);
 }
 void MainWindow::updateGame() {
     // 处理游戏逻辑

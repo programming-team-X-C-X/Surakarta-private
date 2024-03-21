@@ -7,7 +7,6 @@
 #include "my_common.h"
 #include "my_agent_mine.h"
 #include "my_agent_random.h"
-// #include "mainwindow.h"
 
 void SurakartaGame::StartGame(std::string file_name) {
     // void SurakartaGame::StartGame(std::string file_name) {
@@ -56,7 +55,7 @@ void SurakartaGame::UpdateGameInfo(SurakartaIllegalMoveReason move_reason, Surak
 void SurakartaGame::printBoard(std::shared_ptr<ChessBoardWidget>& chessboardweight) {
     chessboardweight->update();
 }
-    //  woshishabi
+    //  I am sb
 void SurakartaGame::chessBoardWidghtInit(std::shared_ptr<ChessBoardWidget>& chessboardweight, std::shared_ptr<SurakartaBoard> board_) {
     chessboardweight = std::make_shared<ChessBoardWidget>(board_);
 }
