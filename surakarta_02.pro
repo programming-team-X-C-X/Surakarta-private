@@ -10,6 +10,7 @@ CONFIG += c++17
 
 SOURCES += \
     chessboardwidght.cpp \
+    enddialog.cpp \
     main.cpp \
     mainwindow.cpp \
     my_agent_mine.cpp \
@@ -17,13 +18,15 @@ SOURCES += \
     my_game.cpp \
     my_reason.cpp \
     my_rule_manager.cpp \
-    settings.cpp
+    settings.cpp \
+    startdialog.cpp
 
     # Surakarta-RuleAiTest-private\src\surakarta\surakarta_agent_base.cpp
 
 HEADERS += \
     chessboardwidght.h \
     drawpoint.h \
+    enddialog.h \
     mainwindow.h \
     my_agent_base.h \
     my_agent_mine.h \
@@ -35,7 +38,8 @@ HEADERS += \
     my_piece.h \
     my_reason.h \
     my_rule_manager.h \
-    settings.h
+    settings.h \
+    startdialog.h
 
 
 # FORMS += \
@@ -45,3 +49,9 @@ HEADERS += \
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
+
+DISTFILES += \
+    img/board.jpg
+
+RESOURCES += \
+    img.qrc
