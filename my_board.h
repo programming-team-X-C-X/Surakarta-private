@@ -3,8 +3,9 @@
 #include <memory>
 #include <vector>
 #include "my_piece.h"
+#include "settings.h"
 
-#define BOARD_SIZE 6
+// #define BOARD_SIZE 6
 
 class SurakartRow : public std::vector<std::shared_ptr<SurakartaPiece>> {
 public:

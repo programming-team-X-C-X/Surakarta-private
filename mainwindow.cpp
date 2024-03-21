@@ -1,25 +1,23 @@
 #include "mainwindow.h"
-#include "chessboardwidght.h"
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
 // , ui(new Ui::MainWindow)
 {
     // ui->setupUi(this);
-    // SurakartaGame game;
-    // ChessBoardWidget *chessBoard = new ChessBoardWidget();
     chessBoard = new ChessBoardWidget();
-    // chessBoard = std::make_shared<ChessBoardWidget>();
     setCentralWidget(chessBoard);
     setWindowTitle(tr("surakarta"));
+
     buttonClose = new QPushButton("close", this);
     buttonStart = new QPushButton("start", this);
-    buttonClose->setGeometry(700, 500, 100, 30);
-    buttonStart->setGeometry(700, 550, 100, 30);
+    buttonClose->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*5/6, 100, 30);
+    buttonStart->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*4.5/6, 100, 30);
     // vbox->addWidget(buttonClose);
     // vbox->addWidget(buttonStart);
     // this->setLayout(vbox);
     // connect(buttonClose, SIGNAL(clicked(bool)), buttonClose, SLOT(exit()));
+
     connect(buttonClose, SIGNAL(clicked(bool)), this, SLOT(close()));
     connect(buttonStart, SIGNAL(clicked(bool)), this, SLOT(Initialize()));
 }

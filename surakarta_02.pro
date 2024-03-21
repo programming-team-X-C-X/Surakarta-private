@@ -9,6 +9,7 @@ CONFIG += c++17
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 SOURCES += \
+    chessboardwidght.cpp \
     main.cpp \
     mainwindow.cpp \
     my_agent_base.cpp \
@@ -17,7 +18,8 @@ SOURCES += \
     my_game.cpp \
     my_reason.cpp \
     my_rule_manager.cpp \
-    run_surakarta.cpp
+    run_surakarta.cpp \
+    settings.cpp
 
     # Surakarta-RuleAiTest-private\src\surakarta\surakarta_agent_base.cpp
 
@@ -35,7 +37,8 @@ HEADERS += \
     my_piece.h \
     my_reason.h \
     my_rule_manager.h \
-    run_surakarta.h
+    run_surakarta.h \
+    settings.h
 
 
 # FORMS += \

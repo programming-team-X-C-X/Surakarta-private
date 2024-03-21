@@ -1,12 +1,8 @@
 #include "my_game.h"
 #include <fstream>
-#include <iostream>
 #include <QMainWindow>
 #include <QWidget>
 #include <QPainter>
-#include <chrono>
-#include <thread>
-#include "drawpoint.h"
 #include "my_board.h"
 #include "my_common.h"
 #include "my_agent_mine.h"

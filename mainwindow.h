@@ -13,9 +13,8 @@
 #include "my_agent_random.h"
 #include "my_game.h"
 #include "chessboardwidght.h"
+#include "settings.h"
 
-// #define ANSI_CLEAR_SCREEN "\033[2J"
-// #define ANSI_MOVE_TO_START "\033[H"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -44,8 +43,6 @@ public:
 public slots:
     void Initialize();
     void updateGame();
-
-
 
 
 private:
