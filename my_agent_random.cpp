@@ -1,7 +1,5 @@
 #include "my_agent_random.h"
 #include <algorithm>
-#include <cstdlib>
-#include <random>
 #include <vector>
 #include "my_global_random_generator.h"
 #include "my_common.h"

@@ -1,3 +1,4 @@
+#pragma once
 #include "my_agent_base.h"
 
 class SurakartaAgentRandom : public SurakartaAgentBase {

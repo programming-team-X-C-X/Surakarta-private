@@ -4,7 +4,7 @@
 #include "my_common.h"
 #include "my_rule_manager.h"
 // #include "mainwindow.h"
-#include "chessboardwidght.h"
+#include "chess_board_widght.h"
 #include "settings.h"
 
 class SurakartaMoveResponse {

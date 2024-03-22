@@ -1,5 +1,5 @@
-#ifndef ENDDIALOG_H
-#define ENDDIALOG_H
+#ifndef END_DIALOG_H
+#define END_DIALOG_H
 
 #include <QDialog>
 #include <QLabel>
@@ -26,4 +26,4 @@ private:
     QLabel *label;
 };
 
-#endif // ENDDIALOG_H
+#endif // END_DIALOG_H

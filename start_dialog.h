@@ -1,5 +1,5 @@
-#ifndef STARTDIALOG_H
-#define STARTDIALOG_H
+#ifndef START_DIALOG_H
+#define START_DIALOG_H
 
 #include <QDialog>
 
@@ -32,4 +32,4 @@ public slots:
 
 };
 
-#endif // STARTDIALOG_H
+#endif // START_DIALOG_H

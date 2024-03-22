@@ -1,8 +1,8 @@
-#include "mainwindow.h"
+#include "mainwindow_eve.h"
 #include "settings.h"
-#include "enddialog.h"
+#include "end_dialog.h"
 
-MainWindow::MainWindow(QWidget *parent)
+MainWindow_EVE::MainWindow_EVE(QWidget *parent)
     : QMainWindow(parent)
 // , ui(new Ui::MainWindow)
 {
@@ -21,22 +21,24 @@ MainWindow::MainWindow(QWidget *parent)
 
     connect(buttonClose, SIGNAL(clicked(bool)), this, SLOT(close()));
     connect(buttonStart, SIGNAL(clicked(bool)), this, SLOT(Initialize()));
+    // connect(chessBoard, &ChessBoardWidget::playerMove, this, &MainWindow_EVE::handlePlayerMove);
 }
 
-void MainWindow::Initialize() {
+void MainWindow_EVE::Initialize() {
     // SurakartaGame game;
     game.StartGame();
     game.chessBoardWidghtInit(game.chessboardwight_, game.board_);
     chessBoard->board = game.board_;
 
+    chessBoard->setMode(ChessBoardWidget::PieceMode);
     chessBoard->update();
 
     QTimer *timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &MainWindow::updateGame);
+    connect(timer, &QTimer::timeout, this, &MainWindow_EVE::updateGame);
     timer->start(SLEEP_TIME);
 }
 
-void MainWindow::updateGame() {
+void MainWindow_EVE::updateGame() {
     // 处理游戏逻辑
     SurakartaMove move;
     if(game.game_info_->current_player_ == PieceColor::BLACK)
@@ -47,6 +49,7 @@ void MainWindow::updateGame() {
     game.Move(move);
 
     chessBoard->board = game.board_;
+    chessBoard->setMode(ChessBoardWidget::PieceMode);
     chessBoard->update();
 
     if (game.IsEnd()) {
@@ -70,20 +73,26 @@ void MainWindow::updateGame() {
             winnerColor = "Unknown";
         }
 
-        QString message = QString(
-                              "<div style='text-align: center;'>"
-                              "<p><span style='font-size:12pt; color:red;'>GAME OVER!</span>.</p>"
-                              "<p><span style='font-size:10pt; color:blue;'>进行轮数：%1</span>.</p>"
-                              "<p><span style='font-size:10pt; color:green;'>获胜者：%2</span>.</p>")
-                              .arg(game.game_info_->num_round_)
-                              .arg( winnerColor);
+        QString message = QString("<div style='text-align: center;'>"
+                                  "<p><span style='font-size:12pt; color:red;'>GAME OVER!</span></p>"
+                                  "<p><span style='font-size:10pt; color:blue;'>获胜者：%1</span>.</p>"
+                                  "<p><span style='font-size:10pt; color:blue;'>进行轮数：%2</span>.</p>"
+                                  "<p><span style='font-size:10pt; color:green;'>最后捕获轮：%3</span>.</p>"
+                                  // "<p><span style='font-size:10pt; color:orange;'>结束原因：%4</span>.</p>"
+                                  "<p><span style='font-size:10pt; color:navy;'>最大无捕获回合数：%6</span>.</p></div>")
+                              .arg(winnerColor)
+                              .arg(info->num_round_)
+                              .arg(info->last_captured_round_)
+                              // .arg(endReasonToString(info->end_reason_)) // 假设有一个endReasonToString函数将结束原因转换为字符串
+                              .arg(info->max_no_capture_round_);
+
         enddialog->setText(message);
-        connect(enddialog, &endDialog::restartGame, this, &MainWindow::Initialize);
+        connect(enddialog, &endDialog::restartGame, this, &MainWindow_EVE::Initialize);
         enddialog->exec();
     }
 }
 
-MainWindow::~MainWindow()
+MainWindow_EVE::~MainWindow_EVE()
 {
     // delete ui;
 }

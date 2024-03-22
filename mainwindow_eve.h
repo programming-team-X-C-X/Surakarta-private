@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef MAINWINDOW_EVE_H
+#define MAINWINDOW_EVE_H
 
 #include <QMainWindow>
 #include <QWidget>
@@ -12,7 +12,7 @@
 #include "my_agent_mine.h"
 #include "my_agent_random.h"
 #include "my_game.h"
-#include "chessboardwidght.h"
+#include "chess_board_widght.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -23,13 +23,14 @@ QT_END_NAMESPACE
 
 // 在绘制事件中调用此函数来绘制实心点
 
-class MainWindow : public QMainWindow
+class MainWindow_EVE : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    MainWindow_EVE(QWidget *parent = nullptr);
+    ~MainWindow_EVE();
+    void handlePlayerMove(SurakartaPosition from, SurakartaPosition to);
     ChessBoardWidget *chessBoard;
     SurakartaGame game;
     std::shared_ptr<SurakartaAgentRandom> agent     = std::make_shared<SurakartaAgentRandom>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager());
@@ -49,4 +50,4 @@ private:
 };
 
 
-#endif // MAINWINDOW_H
+#endif // MAINWINDOW_EVE_H

@@ -1,5 +1,4 @@
-#include "enddialog.h"
-// #include "mainwindow.h"
+#include "end_dialog.h"
 
 endDialog::endDialog(QWidget *parent) : QDialog(parent), label(new QLabel(this)) {
     QVBoxLayout *layout = new QVBoxLayout(this);
