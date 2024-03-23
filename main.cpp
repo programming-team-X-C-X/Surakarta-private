@@ -8,23 +8,30 @@ int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
 
     StartDialog startDialog;
-    MainWindow_EVE mainWindow_EVE;
-    MainWindow_PVP mainWindow_PVP;
-    MainWindow_PVE mainWindow_PVE;
+    // MainWindow_EVE mainWindow_EVE;
+    // MainWindow_PVP mainWindow_PVP;
+    // MainWindow_PVE mainWindow_PVE;
 
     QObject::connect(&startDialog, &StartDialog::startComputerGame, &app, [&]() {
         startDialog.close();
-        mainWindow_EVE.show();
+        // 在堆上创建 MainWindow_PVE 并设置父对象
+        MainWindow_EVE* mainWindow_EVE = new MainWindow_EVE();
+        mainWindow_EVE->setAttribute(Qt::WA_DeleteOnClose); // 确保窗口关闭时会删除对象
+        mainWindow_EVE->show();
     });
     QObject::connect(&startDialog, &StartDialog::startMultiPlayerGame, &app, [&]() {
         startDialog.close();
         // MainWindow_PVP mainWindow_PVP;
-        mainWindow_PVP.show();
+        MainWindow_PVP* mainWindow_PVP = new MainWindow_PVP();
+        mainWindow_PVP->setAttribute(Qt::WA_DeleteOnClose);
+        mainWindow_PVP->show();
     });
     QObject::connect(&startDialog, &StartDialog::startSinglePlayerGame, &app, [&]() {
         startDialog.close();
         // MainWindow_PVE mainWindow_PVE;
-        mainWindow_PVE.show();
+        MainWindow_PVE* mainWindow_PVE = new MainWindow_PVE();
+        mainWindow_PVE->setAttribute(Qt::WA_DeleteOnClose);
+        mainWindow_PVE->show();
     });
 
     startDialog.show();

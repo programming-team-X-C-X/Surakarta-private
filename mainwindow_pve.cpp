@@ -1,5 +1,4 @@
 #include "mainwindow_pve.h"
-#include "settings.h"
 #include "end_dialog.h"
 
 MainWindow_PVE::MainWindow_PVE(QWidget *parent)
@@ -13,8 +12,17 @@ MainWindow_PVE::MainWindow_PVE(QWidget *parent)
 
     buttonClose = new QPushButton("close", this);
     buttonStart = new QPushButton("start", this);
+
+    countdownLabel = new QLabel(this);
+    QFont labelFont = countdownLabel->font();
+    labelFont.setPointSize(50);
+    countdownLabel->setText(tr("Remaining Time: %1").arg(countdownTime));
+
     buttonClose->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*5/6, 100, 30);
     buttonStart->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*4.5/6, 100, 30);
+    countdownLabel->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*1/6, 200, 50);
+    // countdownLabel->setFixedSize(200, 50);
+    // countdownLabel->show();
     // vbox->addWidget(buttonClose);
     // vbox->addWidget(buttonStart);
     // this->setLayout(vbox);
@@ -27,6 +35,10 @@ MainWindow_PVE::MainWindow_PVE(QWidget *parent)
     computerMoveTimer->setSingleShot(true);
     connect(computerMoveTimer, &QTimer::timeout, this, &MainWindow_PVE::computerMove);
 
+    countdownTimer = new QTimer(this);
+    countdownTimer->setInterval(1000); // 设置定时器每秒触发一次
+    connect(countdownTimer, &QTimer::timeout, this, &MainWindow_PVE::updateCountdown);
+
 }
 
 void MainWindow_PVE::Initialize() {
@@ -37,6 +49,9 @@ void MainWindow_PVE::Initialize() {
 
     chessBoard->setMode(ChessBoardWidget::PieceMode);
     chessBoard->update();
+
+    countdownTime = TIME_LIMIT;
+    countdownTimer->start();
 }
 
 void MainWindow_PVE::updateGame() {
@@ -50,9 +65,12 @@ void MainWindow_PVE::updateGame() {
 
 void MainWindow_PVE::playerMove(SurakartaPosition from, SurakartaPosition to) {
     SurakartaMove move = handlePlayerMove(from, to);
+
     game.Move(move);
     if (game.game_info_->current_player_ == PieceColor::WHITE){
         updateGame();
+        // countdownTimer->stop();
+        countdownTime = TIME_LIMIT;
         computerMoveTimer->start(computerMoveDelay);
     }
 }
@@ -61,6 +79,7 @@ void MainWindow_PVE::computerMove() {
     SurakartaMove move = agentMine->CalculateMove();
     game.Move(move);
     updateGame();
+    // countdownTimer->start(TIME_LIMIT);
 }
 
 
@@ -102,12 +121,32 @@ void MainWindow_PVE::showEndDialog() {
                           .arg(winnerColor)
                           .arg(info->num_round_)
                           .arg(info->last_captured_round_);
-                        // .arg(endReasonToString(info->end_reason_)) // 假设有一个endReasonToString函数将结束原因转换为字符串
-                        // .arg(info->max_no_capture_round_);
+    // .arg(endReasonToString(info->end_reason_)) // 假设有一个endReasonToString函数将结束原因转换为字符串
+    // .arg(info->max_no_capture_round_);
 
     enddialog->setText(message);
     connect(enddialog, &endDialog::restartGame, this, &MainWindow_PVE::Initialize);
     enddialog->exec();
+}
+
+void MainWindow_PVE::updateCountdown() {
+    countdownTime--;
+    updateCountdownDisplay();
+    if (countdownTime <= 0) {
+        countdownTimer->stop();
+        showEndDialog();
+    }
+}
+
+void MainWindow_PVE::updateCountdownDisplay() {
+    QString color = "black";
+    if (countdownTime <= 10) {
+        color = "red";
+    }
+    countdownLabel->setStyleSheet((QString("color:%1").arg(color)));
+    countdownLabel->setText(tr("Remaining Time: %1").arg(countdownTime));
+    // countdownLabel->show();
+
 }
 
 MainWindow_PVE::~MainWindow_PVE()

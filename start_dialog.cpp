@@ -1,7 +1,9 @@
 #include "start_dialog.h"
 #include <QPushButton>
 #include <QVBoxLayout>
+#include <QSpinBox>
 #include "settings.h"
+#include "settings_dialog.h"
 
 StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
 
@@ -15,30 +17,32 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
     QSize imageSize = background.size();
     resize(imageSize);
 
-    QVBoxLayout *vLayout = new QVBoxLayout();//no this
+    vLayout = new QVBoxLayout();//no this
     //  QHBoxLayout和QVBoxLayout不应该直接用this（指向窗口的指针）初始化，因为这样会导致它们试图设置窗口的布局两次
-    QHBoxLayout *hLayout = new QHBoxLayout();
+    hLayout = new QHBoxLayout();
 
-    QPushButton *singlePlayerButton = new QPushButton(tr("单人游戏"), this);
-    QPushButton *multiPlayerButton = new QPushButton(tr("双人游戏"), this);
-    QPushButton *computerGameButton = new QPushButton(tr("电脑对战"), this);
+    singlePlayerButton = new QPushButton(tr("单人游戏"), this);
+    multiPlayerButton = new QPushButton(tr("双人游戏"), this);
+    computerGameButton = new QPushButton(tr("电脑对战"), this);
+    settingsButton = new QPushButton(tr("settings"), this);
     // singlePlayerButton->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*5/6, 100, 30);
     // multiPlayerButton->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*5/6, 100, 30);
     // computerGameButton->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*5/6, 100, 30);
     singlePlayerButton->setFixedSize(100, 30); // 将按钮的大小设置为100x30
     multiPlayerButton->setFixedSize(100, 30);
     computerGameButton->setFixedSize(100, 30);
+    settingsButton->setFixedSize(100, 30);
 
-    // QSizePolicy sizePolicy(QSizePolicy::Preferred, QSizePolicy::Preferred);
-    // sizePolicy.setHorizontalStretch(1);
-    // sizePolicy.setVerticalStretch(1);
-    // singlePlayerButton->setSizePolicy(sizePolicy);
-    // multiPlayerButton->setSizePolicy(sizePolicy);
-    // computerGameButton->setSizePolicy(sizePolicy);
+    // box = new QSpinBox(this);
+    // box->setRange(4, 20);
+    // box->setValue(BOARD_SIZE);
 
-    // setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*4.5/6, 100, 30);
+    // saveButton = new QPushButton(tr("save"), this);
+    // vLayout->addWidget(box);
+    // vLayout->addWidget(saveButton);
 
     // vLayout->setAlignment(Qt::AlignBottom);
+    vLayout->addWidget(settingsButton);
     vLayout->addStretch();
     vLayout->addWidget(singlePlayerButton);
     vLayout->addWidget(multiPlayerButton);
@@ -50,7 +54,9 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
     connect(singlePlayerButton, &QPushButton::clicked, this, &StartDialog::startSinglePlayerGame);
     connect(multiPlayerButton, &QPushButton::clicked, this, &StartDialog::startMultiPlayerGame);
     connect(computerGameButton, &QPushButton::clicked, this, &StartDialog::startComputerGame);
+    connect(settingsButton, &QPushButton::clicked, this, &StartDialog::openSettingsDialog);
 
+    // connect(saveButton, &QPushButton::clicked, this, &StartDialog::saveSettings);
 
 }
 
@@ -69,3 +75,12 @@ void StartDialog::selectComputerGame() {
     this->accept();
     // this->close();
 }
+
+void StartDialog::openSettingsDialog() {
+    SettingsDialog settingsDialog(this); // 使用 this 作为 parent 以确保设置面板居中显示
+    settingsDialog.exec(); // 显示设置面板
+}
+
+// void StartDialog::saveSettings() {
+//     BOARD_SIZE = box->value();
+// }

@@ -21,6 +21,7 @@ SOURCES += \
     my_reason.cpp \
     my_rule_manager.cpp \
     settings.cpp \
+    settings_dialog.cpp \
     start_dialog.cpp
 
     # Surakarta-RuleAiTest-private\src\surakarta\surakarta_agent_base.cpp
@@ -43,6 +44,7 @@ HEADERS += \
     my_reason.h \
     my_rule_manager.h \
     settings.h \
+    settings_dialog.h \
     start_dialog.h
 
 
@@ -59,3 +61,6 @@ DISTFILES += \
 
 RESOURCES += \
     img.qrc
+
+FORMS += \
+    settings_dialog.ui

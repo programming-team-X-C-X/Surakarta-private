@@ -42,7 +42,6 @@ public slots:
     void Initialize();
     void updateGame();
 
-
 private:
     QPushButton *buttonClose;
     QPushButton *buttonStart;
