@@ -9,7 +9,7 @@
 #include <cmath>
 
 ChessBoardWidget::ChessBoardWidget() :
-    hasFirstClick(false), currentMode(BoardMode)
+    currentMode(BoardMode), hasFirstClick(false)
 {
     board = std::make_shared<SurakartaBoard>(BOARD_SIZE);
     setFixedSize(WINDOW_SIZE * 1.5, WINDOW_SIZE);

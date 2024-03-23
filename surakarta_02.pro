@@ -13,6 +13,7 @@ SOURCES += \
     end_dialog.cpp \
     main.cpp \
     mainwindow_eve.cpp \
+    mainwindow_pve.cpp \
     mainwindow_pvp.cpp \
     my_agent_mine.cpp \
     my_agent_random.cpp \
@@ -29,6 +30,7 @@ HEADERS += \
     drawpoint.h \
     end_dialog.h \
     mainwindow_eve.h \
+    mainwindow_pve.h \
     mainwindow_pvp.h \
     my_agent_base.h \
     my_agent_mine.h \

@@ -58,38 +58,40 @@ void MainWindow_EVE::updateGame() {
         if (timer) {
             timer->stop();
         }
-
-        //实现结局弹窗
-        // game.game_info_->end_reason_
-        std::shared_ptr<SurakartaGameInfo> info = game.GetGameInfo();
-        endDialog *enddialog = new endDialog(this);
-        // QString winnerColor = (game.game_info_->winner_ == PieceColor::BLACK) ? "Black" : "White";
-        QString winnerColor;
-        if (game.game_info_->winner_ == PieceColor::BLACK) {
-            winnerColor = "Black Player";
-        } else if (game.game_info_->winner_ == PieceColor::WHITE) {
-            winnerColor = "White Player";
-        } else {
-            winnerColor = "Unknown";
-        }
-
-        QString message = QString("<div style='text-align: center;'>"
-                                  "<p><span style='font-size:12pt; color:red;'>GAME OVER!</span></p>"
-                                  "<p><span style='font-size:10pt; color:blue;'>获胜者：%1</span>.</p>"
-                                  "<p><span style='font-size:10pt; color:blue;'>进行轮数：%2</span>.</p>"
-                                  "<p><span style='font-size:10pt; color:green;'>最后捕获轮：%3</span>.</p>"
-                                  // "<p><span style='font-size:10pt; color:orange;'>结束原因：%4</span>.</p>"
-                                  "<p><span style='font-size:10pt; color:navy;'>最大无捕获回合数：%6</span>.</p></div>")
-                              .arg(winnerColor)
-                              .arg(info->num_round_)
-                              .arg(info->last_captured_round_)
-                              // .arg(endReasonToString(info->end_reason_)) // 假设有一个endReasonToString函数将结束原因转换为字符串
-                              .arg(info->max_no_capture_round_);
-
-        enddialog->setText(message);
-        connect(enddialog, &endDialog::restartGame, this, &MainWindow_EVE::Initialize);
-        enddialog->exec();
+        showEndDialog();
     }
+}
+
+void MainWindow_EVE::showEndDialog() {
+    //实现结局弹窗
+    // game.game_info_->end_reason_
+    std::shared_ptr<SurakartaGameInfo> info = game.GetGameInfo();
+    endDialog *enddialog = new endDialog(this);
+    // QString winnerColor = (game.game_info_->winner_ == PieceColor::BLACK) ? "Black" : "White";
+    QString winnerColor;
+    if (game.game_info_->winner_ == PieceColor::BLACK) {
+        winnerColor = "Black Player";
+    } else if (game.game_info_->winner_ == PieceColor::WHITE) {
+        winnerColor = "White Player";
+    } else {
+        winnerColor = "Unknown";
+    }
+
+    QString message = QString("<div style='text-align: center;'>"
+                              "<p><span style='font-size:12pt; color:red;'>GAME OVER!</span></p>"
+                              "<p><span style='font-size:10pt; color:blue;'>获胜者：%1</span>.</p>"
+                              "<p><span style='font-size:10pt; color:blue;'>进行轮数：%2</span>.</p>"
+                              "<p><span style='font-size:10pt; color:green;'>最后捕获轮：%3</span>.</p>"
+                              // "<p><span style='font-size:10pt; color:orange;'>结束原因：%4</span>.</p>"
+                              "</div>")
+                          .arg(winnerColor)
+                          .arg(info->num_round_)
+                          .arg(info->last_captured_round_);
+                          // .arg(endReasonToString(info->end_reason_)) // 假设有一个endReasonToString函数将结束原因转换为字符串
+
+    enddialog->setText(message);
+    connect(enddialog, &endDialog::restartGame, this, &MainWindow_EVE::Initialize);
+    enddialog->exec();
 }
 
 MainWindow_EVE::~MainWindow_EVE()

@@ -2,6 +2,7 @@
 #include "start_dialog.h"
 #include "mainwindow_eve.h"
 #include "mainwindow_pvp.h"
+#include "mainwindow_pve.h"
 
 int main(int argc, char *argv[]) {
     QApplication app(argc, argv);
@@ -9,6 +10,7 @@ int main(int argc, char *argv[]) {
     StartDialog startDialog;
     MainWindow_EVE mainWindow_EVE;
     MainWindow_PVP mainWindow_PVP;
+    MainWindow_PVE mainWindow_PVE;
 
     QObject::connect(&startDialog, &StartDialog::startComputerGame, &app, [&]() {
         startDialog.close();
@@ -16,7 +18,13 @@ int main(int argc, char *argv[]) {
     });
     QObject::connect(&startDialog, &StartDialog::startMultiPlayerGame, &app, [&]() {
         startDialog.close();
+        // MainWindow_PVP mainWindow_PVP;
         mainWindow_PVP.show();
+    });
+    QObject::connect(&startDialog, &StartDialog::startSinglePlayerGame, &app, [&]() {
+        startDialog.close();
+        // MainWindow_PVE mainWindow_PVE;
+        mainWindow_PVE.show();
     });
 
     startDialog.show();

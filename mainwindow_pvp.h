@@ -31,6 +31,7 @@ public:
     SurakartaMove handlePlayerMove(SurakartaPosition from, SurakartaPosition to);
     ChessBoardWidget *chessBoard;
     SurakartaGame game;
+    void showEndDialog();
 
 public slots:
     void Initialize();
