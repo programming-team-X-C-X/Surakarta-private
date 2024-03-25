@@ -5,12 +5,12 @@
 #include <QPainter>
 #include "my_board.h"
 #include "my_common.h"
-#include "my_agent_mine.h"
-#include "my_agent_random.h"
+// #include "my_agent_mine.h"
+// #include "my_agent_random.h"
 
-void SurakartaGame::StartGame(std::string file_name) {
+void SurakartaGame::StartGame() {
     // void SurakartaGame::StartGame(std::string file_name) {
-    if (file_name.empty()) {
+    // if (file_name.empty()) {
         for (unsigned int y = 0; y < board_size_; y++) {
             for (unsigned int x = 0; x < board_size_; x++) {
                 if (y < 2) {
@@ -23,21 +23,21 @@ void SurakartaGame::StartGame(std::string file_name) {
             }
         }
         game_info_->Reset();
-    } else {
-        std::ifstream fin(file_name);
-        fin >> (*board_);
-        fin >> (*game_info_);
-        fin.close();
-    }
+    // } else {
+    //     std::ifstream fin(file_name);
+    //     fin >> (*board_);
+    //     fin >> (*game_info_);
+    //     fin.close();
+    // }
     rule_manager_->OnUpdateBoard();
 }
 
-void SurakartaGame::SaveGame(std::string file_name) const {
-    std::ofstream fout(file_name);
-    fout << (*board_);
-    fout << (*game_info_);
-    fout.close();
-}
+// void SurakartaGame::SaveGame(std::string file_name) const {
+//     std::ofstream fout(file_name);
+//     // fout << (*board_);
+//     // fout << (*game_info_);
+//     fout.close();
+// }
 
 void SurakartaGame::UpdateGameInfo(SurakartaIllegalMoveReason move_reason, SurakartaEndReason end_reason, SurakartaPlayer winner) {
     if (move_reason == SurakartaIllegalMoveReason::LEGAL_CAPTURE_MOVE) {
@@ -55,7 +55,7 @@ void SurakartaGame::UpdateGameInfo(SurakartaIllegalMoveReason move_reason, Surak
 void SurakartaGame::printBoard(std::shared_ptr<ChessBoardWidget>& chessboardweight) {
     chessboardweight->update();
 }
-    //  I am sb
+
 void SurakartaGame::chessBoardWidghtInit(std::shared_ptr<ChessBoardWidget>& chessboardweight, std::shared_ptr<SurakartaBoard> board_) {
     chessboardweight = std::make_shared<ChessBoardWidget>(board_);
 }

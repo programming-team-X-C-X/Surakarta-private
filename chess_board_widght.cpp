@@ -1,4 +1,3 @@
-#include "my_common.h"
 #include <QMouseEvent>
 #include "chess_board_widght.h"
 #include <QWidget>

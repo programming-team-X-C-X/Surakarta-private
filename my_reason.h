@@ -32,9 +32,3 @@ enum class SurakartaEndReason {
 
 bool IsLegalMoveReason(SurakartaIllegalMoveReason reason);
 bool IsEndReason(SurakartaEndReason reason);
-
-std::ostream& operator<<(std::ostream& os, const SurakartaIllegalMoveReason& reason);
-std::istream& operator>>(std::istream& is, SurakartaIllegalMoveReason& reason);
-
-std::ostream& operator<<(std::ostream& os, const SurakartaEndReason& reason);
-std::istream& operator>>(std::istream& is, SurakartaEndReason& reason);

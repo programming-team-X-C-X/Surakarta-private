@@ -58,36 +58,36 @@ public:
 
 
 
-    friend inline std::ostream& operator<<(std::ostream& os, const SurakartaBoard& board) {
-        for (unsigned int y = 0; y < board.board_size_; y++) {
-            for (unsigned int x = 0; x < board.board_size_; x++) {
-                os << (*board[x][y]) << " ";
-            }
-            os << std::endl;
-        }
-        return os;
-    }
+    // friend inline std::ostream& operator<<(std::ostream& os, const SurakartaBoard& board) {
+    //     for (unsigned int y = 0; y < board.board_size_; y++) {
+    //         for (unsigned int x = 0; x < board.board_size_; x++) {
+    //             os << (*board[x][y]) << " ";
+    //         }
+    //         os << std::endl;
+    //     }
+    //     return os;
+    // }
 
-    friend inline std::istream& operator>>(std::istream& is, SurakartaBoard& board) {
-        for (unsigned int y = 0; y < board.board_size_; y++) {
-            for (unsigned int x = 0; x < board.board_size_; x++) {
-                char ch;
-                is >> ch;
-                PieceColor color;
-                switch (ch) {
-                case 'B':
-                    color = PieceColor::BLACK;
-                    break;
-                case 'W':
-                    color = PieceColor::WHITE;
-                    break;
-                default:
-                    color = PieceColor::NONE;
-                    break;
-                }
-                board[x][y] = std::make_shared<SurakartaPiece>(x, y, color);
-            }
-        }
-        return is;
-    }
+    // friend inline std::istream& operator>>(std::istream& is, SurakartaBoard& board) {
+    //     for (unsigned int y = 0; y < board.board_size_; y++) {
+    //         for (unsigned int x = 0; x < board.board_size_; x++) {
+    //             char ch;
+    //             is >> ch;
+    //             PieceColor color;
+    //             switch (ch) {
+    //             case 'B':
+    //                 color = PieceColor::BLACK;
+    //                 break;
+    //             case 'W':
+    //                 color = PieceColor::WHITE;
+    //                 break;
+    //             default:
+    //                 color = PieceColor::NONE;
+    //                 break;
+    //             }
+    //             board[x][y] = std::make_shared<SurakartaPiece>(x, y, color);
+    //         }
+    //     }
+    //     return is;
+    // }
 };

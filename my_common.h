@@ -13,10 +13,10 @@ struct SurakartaMove {
         : from(from_x, from_y), to(to_x, to_y), player(player) {}
     SurakartaMove(SurakartaPosition from, SurakartaPosition to, SurakartaPlayer player)
         : from(from), to(to), player(player) {}
-    friend std::ostream& operator<<(std::ostream& os, const SurakartaMove& move) {
-        os << move.from << " -> " << move.to << " (" << move.player << ")";
-        return os;
-    }
+    // friend std::ostream& operator<<(std::ostream& os, const SurakartaMove& move) {
+    //     os << move.from << " -> " << move.to << " (" << move.player << ")";
+    //     return os;
+    // }
 };
 
 struct SurakartaGameInfo {
@@ -46,26 +46,26 @@ struct SurakartaGameInfo {
     bool IsEnd() const { return IsEndReason(end_reason_); }
     SurakartaPlayer Winner() const { return winner_; }
 
-    friend std::ostream& operator<<(std::ostream& os, const SurakartaGameInfo& game_info) {
-        os << "current_player: " << game_info.current_player_ << std::endl;
-        os << "num_round: " << game_info.num_round_ << std::endl;
-        os << "last_captured_round: " << game_info.last_captured_round_ << std::endl;
-        os << "end_reason: " << game_info.end_reason_ << std::endl;
-        os << "winner: " << game_info.winner_ << std::endl;
-        os << "max_no_capture_round: " << game_info.max_no_capture_round_ << std::endl;
-        return os;
-    }
+    // friend std::ostream& operator<<(std::ostream& os, const SurakartaGameInfo& game_info) {
+    //     os << "current_player: " << game_info.current_player_ << std::endl;
+    //     os << "num_round: " << game_info.num_round_ << std::endl;
+    //     os << "last_captured_round: " << game_info.last_captured_round_ << std::endl;
+    //     os << "end_reason: " << game_info.end_reason_ << std::endl;
+    //     os << "winner: " << game_info.winner_ << std::endl;
+    //     os << "max_no_capture_round: " << game_info.max_no_capture_round_ << std::endl;
+    //     return os;
+    // }
 
-    friend std::istream& operator>>(std::istream& is, SurakartaGameInfo& game_info) {
-        std::string str;
-        is >> str >> game_info.current_player_;
-        is >> str >> game_info.num_round_;
-        is >> str >> game_info.last_captured_round_;
-        is >> str >> game_info.end_reason_;
-        is >> str >> game_info.winner_;
-        is >> str >> game_info.max_no_capture_round_;
-        return is;
-    }
+    // friend std::istream& operator>>(std::istream& is, SurakartaGameInfo& game_info) {
+    //     std::string str;
+    //     is >> str >> game_info.current_player_;
+    //     is >> str >> game_info.num_round_;
+    //     is >> str >> game_info.last_captured_round_;
+    //     is >> str >> game_info.end_reason_;
+    //     is >> str >> game_info.winner_;
+    //     is >> str >> game_info.max_no_capture_round_;
+    //     return is;
+    // }
 };
 
 class SurakartaException : public std::exception {

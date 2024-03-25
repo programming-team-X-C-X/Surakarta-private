@@ -53,13 +53,13 @@ public:
     /**
      * @brief Start the game. If file_name is empty, the board will be initialized to the initial state. Otherwise, the board will be initialized to the state in the file.
      */
-    void StartGame(std::string file_name = "");
+    void StartGame(/*std::string file_name = ""*/);
 
     /**
      * @brief Save the game to a file.
      * @param file_name The file name.
      */
-    void SaveGame(std::string file_name) const;
+    // void SaveGame(std::string file_name) const;
 
     /**
      * @brief Update game info, this function should be called after each move.

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <iostream>
+#include <QGraphicsItem>
 
 using PieceColorMemoryType = int;
 enum class PieceColor : PieceColorMemoryType { BLACK,
@@ -21,45 +22,6 @@ inline PieceColor ReverseColor(PieceColor color) {
         return color;
     }
 }
-
-inline std::ostream& operator<<(std::ostream& os, const PieceColor& color) {
-    switch (color) {
-    case PieceColor::NONE:
-        os << ".";
-        break;
-    case PieceColor::BLACK:
-        os << "B";
-        break;
-    case PieceColor::WHITE:
-        os << "W";
-        break;
-    default:
-        os << "?";
-        break;
-    }
-    return os;
-}
-
-inline std::istream& operator>>(std::istream& is, PieceColor& color) {
-    char ch;
-    is >> ch;
-    switch (ch) {
-    case '.':
-        color = PieceColor::NONE;
-        break;
-    case 'B':
-        color = PieceColor::BLACK;
-        break;
-    case 'W':
-        color = PieceColor::WHITE;
-        break;
-    default:
-        color = PieceColor::UNKNOWN;
-        break;
-    }
-    return is;
-}
-
 struct SurakartaPosition {
     unsigned int x;
     unsigned int y;
@@ -97,10 +59,8 @@ public:
     SurakartaPosition GetPosition() const { return position_; }
     PieceColor GetColor() const { return color_; }
 
-    friend std::ostream& operator<<(std::ostream& os, const SurakartaPiece& piece) {
-        os << piece.color_;
-        return os;
-    }
+    QRectF boundingRect() const override;
+    void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
 
     //    private:
     SurakartaPosition position_;
