@@ -51,9 +51,11 @@ public slots:
     void Initialize();
     void updateGame();
     void updateCountdown();
+    void giveUp();
 
 
 private:
+    QPushButton *buttonGiveUp;
     QPushButton *buttonClose;
     QPushButton *buttonStart;
     QHBoxLayout *hbox;

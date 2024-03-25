@@ -10,6 +10,7 @@ MainWindow_PVE::MainWindow_PVE(QWidget *parent)
     setCentralWidget(chessBoard);
     setWindowTitle(tr("surakarta"));
 
+    buttonGiveUp = new QPushButton("认输", this);
     buttonClose = new QPushButton("close", this);
     buttonStart = new QPushButton("start", this);
 
@@ -18,6 +19,7 @@ MainWindow_PVE::MainWindow_PVE(QWidget *parent)
     labelFont.setPointSize(50);
     countdownLabel->setText(tr("Remaining Time: %1").arg(countdownTime));
 
+    buttonGiveUp->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*4/6, 100, 30);
     buttonClose->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*5/6, 100, 30);
     buttonStart->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*4.5/6, 100, 30);
     countdownLabel->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*1/6, 200, 50);
@@ -27,6 +29,8 @@ MainWindow_PVE::MainWindow_PVE(QWidget *parent)
     // vbox->addWidget(buttonStart);
     // this->setLayout(vbox);
 
+
+    connect(buttonGiveUp, &QPushButton::clicked, this, &MainWindow_PVE::giveUp);
     connect(buttonClose, SIGNAL(clicked(bool)), this, SLOT(close()));
     connect(buttonStart, SIGNAL(clicked(bool)), this, SLOT(Initialize()));
     connect(chessBoard, &ChessBoardWidget::playerMove, this, &MainWindow_PVE::playerMove);
@@ -64,8 +68,8 @@ void MainWindow_PVE::updateGame() {
 }
 
 void MainWindow_PVE::playerMove(SurakartaPosition from, SurakartaPosition to) {
+    if (game.IsEnd()) return;
     SurakartaMove move = handlePlayerMove(from, to);
-
     game.Move(move);
     if (game.game_info_->current_player_ == PieceColor::WHITE){
         updateGame();
@@ -134,6 +138,7 @@ void MainWindow_PVE::updateCountdown() {
     updateCountdownDisplay();
     if (countdownTime <= 0) {
         countdownTimer->stop();
+        game.game_info_->end_reason_ = SurakartaEndReason::TIMEOUT;
         showEndDialog();
     }
 }
@@ -147,6 +152,11 @@ void MainWindow_PVE::updateCountdownDisplay() {
     countdownLabel->setText(tr("Remaining Time: %1").arg(countdownTime));
     // countdownLabel->show();
 
+}
+
+void MainWindow_PVE::giveUp() {
+    showEndDialog();
+    game.game_info_->end_reason_ = SurakartaEndReason::TIMEOUT;
 }
 
 MainWindow_PVE::~MainWindow_PVE()

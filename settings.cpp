@@ -4,7 +4,7 @@
 const unsigned int WINDOW_SIZE = 700;
 
 //棋盘设置
-unsigned int BOARD_SIZE = 8;
+unsigned int BOARD_SIZE = 6;
 
 //休眠设置
 const unsigned int SLEEP_TIME = 500;
