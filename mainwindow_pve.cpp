@@ -1,16 +1,14 @@
 #include "mainwindow_pve.h"
 #include "end_dialog.h"
+#include <QDebug>
 
 MainWindow_PVE::MainWindow_PVE(QWidget *parent)
     : QMainWindow(parent)
-// , ui(new Ui::MainWindow)
 {
-    // ui->setupUi(this);
-    chessBoard = new ChessBoardWidget();
-    setCentralWidget(chessBoard);
-    setWindowTitle(tr("surakarta"));
 
-    buttonGiveUp = new QPushButton("认输", this);
+    setWindowTitle(tr("surakarta"));
+    setFixedSize(WINDOW_SIZE*1.5, WINDOW_SIZE);
+
     buttonClose = new QPushButton("close", this);
     buttonStart = new QPushButton("start", this);
 
@@ -19,21 +17,33 @@ MainWindow_PVE::MainWindow_PVE(QWidget *parent)
     labelFont.setPointSize(50);
     countdownLabel->setText(tr("Remaining Time: %1").arg(countdownTime));
 
-    buttonGiveUp->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*4/6, 100, 30);
-    buttonClose->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*5/6, 100, 30);
-    buttonStart->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*4.5/6, 100, 30);
+    // buttonGiveUp->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*4/6, 100, 30);
+    // buttonClose->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*5/6, 100, 30);
+    // buttonStart->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*4.5/6, 100, 30);
     countdownLabel->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*1/6, 200, 50);
-    // countdownLabel->setFixedSize(200, 50);
-    // countdownLabel->show();
-    // vbox->addWidget(buttonClose);
-    // vbox->addWidget(buttonStart);
-    // this->setLayout(vbox);
 
+    QVBoxLayout *vlayout = new QVBoxLayout();
+    QHBoxLayout *hlayout = new QHBoxLayout();
 
-    connect(buttonGiveUp, &QPushButton::clicked, this, &MainWindow_PVE::giveUp);
-    connect(buttonClose, SIGNAL(clicked(bool)), this, SLOT(close()));
-    connect(buttonStart, SIGNAL(clicked(bool)), this, SLOT(Initialize()));
-    connect(chessBoard, &ChessBoardWidget::playerMove, this, &MainWindow_PVE::playerMove);
+    buttonStart->setFixedSize(100, 30);
+    buttonClose->setFixedSize(100, 30);
+    vlayout->addStretch(30);
+    vlayout->addWidget(buttonStart);
+    vlayout->addStretch(1);
+    vlayout->addWidget(buttonClose);
+    vlayout->addStretch(1);
+    vlayout->addStretch(4);
+    hlayout->addStretch(6);
+    hlayout->addLayout(vlayout);
+    hlayout->addStretch(1);
+    setLayout(hlayout);
+    // 创建一个新的容器并设置布局
+    QWidget *container = new QWidget();
+    container->setLayout(hlayout);
+    setCentralWidget(container);
+    connect(buttonClose, &QPushButton::clicked, this, &MainWindow_PVE::close);
+    connect(buttonStart, &QPushButton::clicked, this,  &MainWindow_PVE::Initialize);
+    connect(buttonStart, &QPushButton::clicked, buttonStart, &QPushButton::deleteLater);
 
     computerMoveTimer = new QTimer(this);
     computerMoveTimer->setSingleShot(true);
@@ -46,22 +56,53 @@ MainWindow_PVE::MainWindow_PVE(QWidget *parent)
 }
 
 void MainWindow_PVE::Initialize() {
-    // SurakartaGame game;
+    buttonGiveUp = new QPushButton("认输", this);
+    buttonGiveUp->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*4/6, 100, 30);
+    chessBoard = new ChessBoardWidget();
+    setCentralWidget(chessBoard);
+    // chessBoard->setGeometry(0, 0, WINDOW_SIZE, WINDOW_SIZE);
+    connect(buttonGiveUp, &QPushButton::clicked, this, &MainWindow_PVE::giveUp);
+    connect(chessBoard, &ChessBoardWidget::playerMove, this, &MainWindow_PVE::playerMove);
+    update();
+    // 创建一个新的布局
+    QVBoxLayout *vlayout = new QVBoxLayout();
+    QHBoxLayout *hlayout = new QHBoxLayout();
+    // 将按钮添加到布局中
+    buttonClose->setFixedSize(100, 30);
+    buttonGiveUp->setFixedSize(100, 30);
+    buttonStart->setFixedSize(100, 30);
+    vlayout->addStretch(30);
+    vlayout->addWidget(buttonGiveUp);
+    vlayout->addStretch(1);
+    vlayout->addWidget(buttonClose);
+    vlayout->addStretch(1);
+    vlayout->addStretch(4);
+    // 将棋盘添加到布局中
+    chessBoard->setFixedSize(WINDOW_SIZE, WINDOW_SIZE);
+    hlayout->addWidget(chessBoard);
+    hlayout->addStretch(1);
+    hlayout->addLayout(vlayout);
+    hlayout->addStretch(1);
+    // 创建一个新的容器并设置布局
+    QWidget *container = new QWidget();
+    container->setLayout(hlayout);
+    // 将容器设置为中央组件
+    // container->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*4/6, 100, 30);
+    setCentralWidget(container);
+
     game.StartGame();
-    game.chessBoardWidghtInit(game.chessboardwight_, game.board_);
     chessBoard->board = game.board_;
-
     chessBoard->setMode(ChessBoardWidget::PieceMode);
-    chessBoard->update();
-
     countdownTime = TIME_LIMIT;
     countdownTimer->start();
+    // qDebug() << "1";
 }
 
 void MainWindow_PVE::updateGame() {
-    chessBoard->board = game.board_;
+    // chessBoard->board = game.board_;
     chessBoard->setMode(ChessBoardWidget::PieceMode);
-    chessBoard->update();
+    // chessBoard->update();
+    // chessBoard->movePiece()
     if (game.IsEnd() && game.GetGameInfo()->end_reason_ != SurakartaEndReason::ILLIGAL_MOVE) {
         showEndDialog();
     }
@@ -71,6 +112,8 @@ void MainWindow_PVE::playerMove(SurakartaPosition from, SurakartaPosition to) {
     if (game.IsEnd()) return;
     SurakartaMove move = handlePlayerMove(from, to);
     game.Move(move);
+    chessBoard->movePiece(move.from, move.to);
+    updateGame();
     if (game.game_info_->current_player_ == PieceColor::WHITE){
         updateGame();
         // countdownTimer->stop();
@@ -82,6 +125,8 @@ void MainWindow_PVE::playerMove(SurakartaPosition from, SurakartaPosition to) {
 void MainWindow_PVE::computerMove() {
     SurakartaMove move = agentMine->CalculateMove();
     game.Move(move);
+    handlePlayerMove(move.from, move.to);
+    chessBoard->movePiece(move.from, move.to);
     updateGame();
     // countdownTimer->start(TIME_LIMIT);
 }
@@ -102,7 +147,29 @@ SurakartaMove MainWindow_PVE::handlePlayerMove(SurakartaPosition from, Surakarta
     }
 }
 
+
+void MainWindow_PVE::updateCountdown() {
+    countdownTime--;
+    updateCountdownDisplay();
+    if (countdownTime <= 0) {
+        // countdownTimer->stop();
+        game.game_info_->end_reason_ = SurakartaEndReason::TIMEOUT;
+        showEndDialog();
+    }
+}
+
+void MainWindow_PVE::updateCountdownDisplay() {
+    QString color = "black";
+    if (countdownTime <= 10) {
+        color = "red";
+    }
+    countdownLabel->setStyleSheet((QString("color:%1").arg(color)));
+    countdownLabel->setText(tr("Remaining Time: %1").arg(countdownTime));
+    // countdownLabel->show();
+}
+
 void MainWindow_PVE::showEndDialog() {
+    countdownTimer->stop();
     std::shared_ptr<SurakartaGameInfo> info = game.GetGameInfo();
     endDialog *enddialog = new endDialog(this);
     // QString winnerColor = (game.game_info_->winner_ == PieceColor::BLACK) ? "Black" : "White";
@@ -133,33 +200,38 @@ void MainWindow_PVE::showEndDialog() {
     enddialog->exec();
 }
 
-void MainWindow_PVE::updateCountdown() {
-    countdownTime--;
-    updateCountdownDisplay();
-    if (countdownTime <= 0) {
-        countdownTimer->stop();
-        game.game_info_->end_reason_ = SurakartaEndReason::TIMEOUT;
-        showEndDialog();
-    }
-}
-
-void MainWindow_PVE::updateCountdownDisplay() {
-    QString color = "black";
-    if (countdownTime <= 10) {
-        color = "red";
-    }
-    countdownLabel->setStyleSheet((QString("color:%1").arg(color)));
-    countdownLabel->setText(tr("Remaining Time: %1").arg(countdownTime));
-    // countdownLabel->show();
-
-}
-
 void MainWindow_PVE::giveUp() {
     showEndDialog();
     game.game_info_->end_reason_ = SurakartaEndReason::TIMEOUT;
 }
 
-MainWindow_PVE::~MainWindow_PVE()
-{
+MainWindow_PVE::~MainWindow_PVE() {
     // delete ui;
+}
+
+void MainWindow_PVE::paintEvent(QPaintEvent */*event*/) {
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+    int arcNum = (BOARD_SIZE - 2) / 2;//环数
+    int rawNum = BOARD_SIZE + arcNum * 2 + 1;//总行数
+    int gridSize = WINDOW_SIZE / rawNum;
+    // 绘制棋盘网格
+    painter.setPen(Qt::black);
+    for (int i = arcNum; i < rawNum - arcNum - 1; ++i) {
+        for (int j = arcNum; j < rawNum - arcNum - 1; ++j) {
+            QLineF line1((i + 1) * gridSize, (j + 1) * gridSize, gridSize * (BOARD_SIZE + arcNum), (j + 1) * gridSize);
+            QLineF line2((i + 1) * gridSize, (j + 1) * gridSize, (i + 1) * gridSize, gridSize * (BOARD_SIZE + arcNum));
+            painter.drawLine(line1);
+            painter.drawLine(line2);
+        }
+    }
+
+    for (int i = 0; i < arcNum; i++)
+        painter.drawArc(gridSize*(arcNum-i), gridSize*(arcNum-i), gridSize*2*(i+1), gridSize*2*(i+1), 0, 16*270);
+    for (int i = 0; i < arcNum; i++)
+        painter.drawArc((BOARD_SIZE + arcNum - 1 - i)*gridSize, gridSize*(arcNum-i), gridSize*2*(i+1), gridSize*2*(i+1), 16*270, 16*270);
+    for (int i = 0; i < arcNum; i++)
+        painter.drawArc(gridSize*(arcNum-i), (BOARD_SIZE + arcNum - 1 - i)*gridSize, gridSize*2*(i+1), gridSize*2*(i+1), 16*90, 16*270);
+    for (int i = 0; i < arcNum; i++)
+        painter.drawArc((BOARD_SIZE + arcNum - 1 - i)*gridSize, (BOARD_SIZE + arcNum - 1 - i)*gridSize, gridSize*2*(i+1), gridSize*2*(i+1), 16*180, 16*270);
 }

@@ -21,7 +21,6 @@ SOURCES += \
     my_piece.cpp \
     my_reason.cpp \
     my_rule_manager.cpp \
-    piece.cpp \
     settings.cpp \
     settings_dialog.cpp \
     start_dialog.cpp
@@ -45,7 +44,6 @@ HEADERS += \
     my_piece.h \
     my_reason.h \
     my_rule_manager.h \
-    piece.h \
     settings.h \
     settings_dialog.h \
     start_dialog.h

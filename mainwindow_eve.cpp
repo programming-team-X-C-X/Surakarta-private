@@ -27,7 +27,7 @@ MainWindow_EVE::MainWindow_EVE(QWidget *parent)
 void MainWindow_EVE::Initialize() {
     // SurakartaGame game;
     game.StartGame();
-    game.chessBoardWidghtInit(game.chessboardwight_, game.board_);
+    // game.chessBoardWidghtInit(game.chessboardwight_, game.board_);
     chessBoard->board = game.board_;
 
     chessBoard->setMode(ChessBoardWidget::PieceMode);
@@ -48,7 +48,7 @@ void MainWindow_EVE::updateGame() {
 
     game.Move(move);
 
-    chessBoard->board = game.board_;
+    // chessBoard->board = game.board_;
     chessBoard->setMode(ChessBoardWidget::PieceMode);
     chessBoard->update();
 

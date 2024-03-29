@@ -2,6 +2,7 @@
 
 #include <iostream>
 #include <QGraphicsItem>
+// #include <QRectF>
 
 using PieceColorMemoryType = int;
 enum class PieceColor : PieceColorMemoryType { BLACK,
@@ -39,8 +40,15 @@ struct SurakartaPosition {
     }
 };
 
-class SurakartaPiece {
+class SurakartaPiece : public QGraphicsItem {
 public:
+
+    static const int Type = QGraphicsItem::UserType + 2;
+
+    int type() const override {
+        return Type;
+    }
+
     SurakartaPiece()
         : position_({0, 0}), color_(PieceColor::NONE) {}
 
@@ -61,6 +69,7 @@ public:
 
     QRectF boundingRect() const override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
+    // void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 
     //    private:
     SurakartaPosition position_;

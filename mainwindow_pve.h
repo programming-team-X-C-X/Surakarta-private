@@ -53,6 +53,8 @@ public slots:
     void updateCountdown();
     void giveUp();
 
+protected:
+        void paintEvent(QPaintEvent */*event*/) override;
 
 private:
     QPushButton *buttonGiveUp;

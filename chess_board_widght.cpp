@@ -1,40 +1,67 @@
 #include <QMouseEvent>
 #include "chess_board_widght.h"
-#include <QWidget>
 #include "my_board.h"
+#include "my_piece.h"
 #include <QPainter>
-#include "drawpoint.h"
+// #include "drawpoint.h"
+// #include "drawpoint.h"
 #include "settings.h"
 #include <cmath>
+#include <QDebug>
+// #include <QScrollBar>
 
 ChessBoardWidget::ChessBoardWidget() :
     currentMode(BoardMode), hasFirstClick(false)
 {
     board = std::make_shared<SurakartaBoard>(BOARD_SIZE);
-    setFixedSize(WINDOW_SIZE * 1.5, WINDOW_SIZE);
-    setStyleSheet("background-color: grey;");
+    // setFixedSize(WINDOW_SIZE * 1.5, WINDOW_SIZE);
+    // setStyleSheet("background-color: grey;");
+
+    int arcNum = (BOARD_SIZE - 2) / 2;//环数
+    int rawNum = BOARD_SIZE + arcNum * 2 + 1;//总行数
+    int gridSize = WINDOW_SIZE / rawNum;
+    pieceItems.resize(BOARD_SIZE, std::vector<std::shared_ptr<SurakartaPiece>>(BOARD_SIZE));
+
+
+    scene = new QGraphicsScene(this);
+    view = new QGraphicsView(scene, this);
+    // view->setFixedSize(WINDOW_SIZE * 1.5, WINDOW_SIZE);
+    ChessBoardGraphicsItem *chessBoardItem = new ChessBoardGraphicsItem();
+    // chessBoardItem->setZValue(-10);
+    // view->setFixedSize(WINDOW_SIZE, WINDOW_SIZE);
+    // view->setFixedSize(WINDOW_SIZE/2, WINDOW_SIZE/2);
+
+    // view->setSceneRect(chessBoardItem->boundingRect());
+
+    // QRectF sceneRect = QRectF(0, 0, WINDOW_SIZE/**0.9*/, WINDOW_SIZE/**0.9*/);
+    // scene->setSceneRect(sceneRect);
+
+    // view->setBackgroundBrush(QBrush(Qt::transparent));
+    scene->addItem(chessBoardItem);
+
     for (unsigned int y = 0; y < BOARD_SIZE; y++) {
         for (unsigned int x = 0; x < BOARD_SIZE; x++) {
             if (y < 2) {
                 (*board)[x][y] = std::make_shared<SurakartaPiece>(x, y, PieceColor::BLACK);
+                pieceItems[x][y] = std::make_shared<SurakartaPiece>(x, y, (*board)[x][y]->color_);
+                SurakartaPiece *pieceItem = pieceItems[x][y].get();
+                int pos_x = (arcNum + x + 1) * gridSize;
+                int pos_y = (arcNum + y + 1) * gridSize;
+                pieceItem->setPos(pos_x-PIECE_SIZE/2, pos_y-PIECE_SIZE/2);
+                scene->addItem(pieceItem);
             } else if (y >= BOARD_SIZE - 2) {
                 (*board)[x][y] = std::make_shared<SurakartaPiece>(x, y, PieceColor::WHITE);
+                pieceItems[x][y] = std::make_shared<SurakartaPiece>(x, y, (*board)[x][y]->color_);
+                SurakartaPiece *pieceItem = pieceItems[x][y].get();
+                int pos_x = (arcNum + x + 1) * gridSize;
+                int pos_y = (arcNum + y + 1) * gridSize;
+                pieceItem->setPos(pos_x-PIECE_SIZE/2, pos_y-PIECE_SIZE/2);
+                scene->addItem(pieceItem);
             } else {
                 (*board)[x][y] = std::make_shared<SurakartaPiece>(x, y, PieceColor::NONE);
             }
         }
     }
-}
-
-ChessBoardWidget::ChessBoardWidget(std::shared_ptr<SurakartaBoard> board_) {
-    board = board_;
-    setFixedSize(WINDOW_SIZE * 1.5, WINDOW_SIZE);
-    setStyleSheet("background-color: grey;");
-    // QPushButton *buttonClose = new QPushButton("close");
-    // QHBoxLayout *box = nullptr;
-    // box->addWidget(chessBoard);
-    // box->addWidget(buttonClose);
-    // setLayout(box);
 }
 
 void ChessBoardWidget::paintEvent(QPaintEvent */*event*/) {
@@ -62,50 +89,75 @@ void ChessBoardWidget::paintEvent(QPaintEvent */*event*/) {
         painter.drawArc(gridSize*(arcNum-i), (BOARD_SIZE + arcNum - 1 - i)*gridSize, gridSize*2*(i+1), gridSize*2*(i+1), 16*90, 16*270);
     for (int i = 0; i < arcNum; i++)
         painter.drawArc((BOARD_SIZE + arcNum - 1 - i)*gridSize, (BOARD_SIZE + arcNum - 1 - i)*gridSize, gridSize*2*(i+1), gridSize*2*(i+1), 16*180, 16*270);
-
-    if (currentMode == DrawMode::PieceMode)
-        for (unsigned int y = 0; y < BOARD_SIZE; y++) {
-            for (unsigned int x = 0; x < BOARD_SIZE; x++) {
-                if ((*board)[x][y]->color_ == PieceColor::BLACK)
-                    my_drawSolidPoint(&painter, QPoint((arcNum + x + 1) * gridSize, (arcNum + y + 1) * gridSize), PIECE_SIZE, Qt::black);
-                else if ((*board)[x][y]->color_ == PieceColor::WHITE)
-                    my_drawSolidPoint(&painter, QPoint((arcNum + x + 1) * gridSize, (arcNum + y + 1) * gridSize), PIECE_SIZE, Qt::white);
-
-            }
-        }
-
 }
 
 void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
+    scene = view->scene();
+    QPointF scenePos = view->mapToScene(event->pos());
+    QGraphicsItem *item = scene->itemAt(scenePos, QTransform());
+    // QList items = scene->selectedItems();
+    // QList views = scene->views();
+    if (item) {
+        SurakartaPiece *piece = qgraphicsitem_cast<SurakartaPiece*>(item);
+        if (hasFirstClick) {
+            SurakartaPosition secondClickPos;
+            if (piece) {
+                secondClickPos = piece->GetPosition();
+            }
+            else {
+                    int arcNum = (BOARD_SIZE - 2) / 2;
+                    int rawNum = BOARD_SIZE + arcNum * 2 + 1;
+                    int gridSize = WINDOW_SIZE / rawNum;
+                    // 计算格子坐标前先转换为浮点数
+                    float fx = (event->position().x() - gridSize * arcNum) / (float)gridSize;
+                    float fy = (event->position().y() - gridSize * arcNum) / (float)gridSize;
+                    // 使用四舍五入找到最接近的整数格子坐标
+                    unsigned int x = static_cast<unsigned int>(round(fx)) - 1;
+                    unsigned int y = static_cast<unsigned int>(round(fy)) - 1;
+                    // SurakartaPosition *pos = new SurakartaPosition(fx, fy);
+                    secondClickPos.x = x;
+                    secondClickPos.y = y;
+            }
 
-    int arcNum = (BOARD_SIZE - 2) / 2;
-    int rawNum = BOARD_SIZE + arcNum * 2 + 1;
-    int gridSize = WINDOW_SIZE / rawNum;
 
-    // 将鼠标点击位置转换为棋盘坐标
-    // unsigned int x = (event->position().x() - gridSize * arcNum) / gridSize - 1;
-    // unsigned int y = (event->position().y() - gridSize * arcNum) / gridSize - 1;
-    // 计算格子坐标前先转换为浮点数
-    float fx = (event->position().x() - gridSize * arcNum) / (float)gridSize;
-    float fy = (event->position().y() - gridSize * arcNum) / (float)gridSize;
-
-    // 使用四舍五入找到最接近的整数格子坐标
-    unsigned int x = static_cast<unsigned int>(round(fx)) - 1;
-    unsigned int y = static_cast<unsigned int>(round(fy)) - 1;
-
-    if (x < BOARD_SIZE && y < BOARD_SIZE) {
-        if (!hasFirstClick) {
-            // 如果这是第一次点击，记录棋子的位置并设置标志
-            firstClickPos = {x, y};
-            hasFirstClick = true;
-        } else {
-            // 这是第二次点击，获取目的位置
-            SurakartaPosition secondClickPos = {x, y};
-            emit playerMove(firstClickPos, secondClickPos);
-
-            // 重置状态，等待下一对点击
             hasFirstClick = false;
+
+            // piece->position_ = secondClickPos;
+            // pieceItems[firstClickPos.x][firstClickPos.y] = pieceItems[secondClickPos.x][secondClickPos.y];
+
+            // pieceItems[firstClickPos.x][firstClickPos.y] = nullptr;
+            // pieceItems[secondClickPos.x][secondClickPos.y] = std::make_shared<SurakartaPiece>(firstClickPiece->GetPosition().x, firstClickPiece->GetPosition().y, firstClickPiece->GetColor());
+            emit playerMove(firstClickPos, secondClickPos);
+            qDebug() << "second:" << secondClickPos.x << "," << secondClickPos.y << '\n';
         }
+        else if (piece) {
+            SurakartaPosition pos = piece->GetPosition();
+            // 第一次点击
+            firstClickPos = pos;
+            firstClickPiece = piece;
+            hasFirstClick = true;
+            qDebug() << "first:" << pos.x << "," << pos.y << '\n';
+        }
+    }
+}
+
+void ChessBoardWidget::movePiece(const SurakartaPosition& from, const SurakartaPosition& to) {
+    std::shared_ptr<SurakartaPiece>piece = pieceItems[from.x][from.y];
+    if(piece) {
+        int arcNum = (BOARD_SIZE - 2) / 2;
+        int rawNum = BOARD_SIZE + arcNum * 2 + 1;
+        int gridSize = WINDOW_SIZE / rawNum;
+        // float fx = (to.x - gridSize * arcNum) / (float)gridSize;
+        // float fy = (event->position().y() - gridSize * arcNum) / (float)gridSize;
+        QPointF newPos((arcNum + to.x + 1) * gridSize - PIECE_SIZE / 2, (arcNum + to.y + 1) * gridSize - PIECE_SIZE / 2);
+        piece->setPos(newPos);
+        // Update the pieceItems array
+        pieceItems[from.x][from.y].reset();
+        piece->position_.x = to.x;
+        piece->position_.y = to.y;
+        pieceItems[to.x][to.y] = piece;
+        // (*board)[from.x][from.y] = nullptr;
+        // pieceItems[from.x][from.y] = nullptr;
     }
 }
 

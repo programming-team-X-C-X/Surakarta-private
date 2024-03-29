@@ -52,13 +52,13 @@ void SurakartaGame::UpdateGameInfo(SurakartaIllegalMoveReason move_reason, Surak
     }
 }
 
-void SurakartaGame::printBoard(std::shared_ptr<ChessBoardWidget>& chessboardweight) {
-    chessboardweight->update();
-}
+// void SurakartaGame::printBoard(std::shared_ptr<ChessBoardWidget>& chessboardweight) {
+//     chessboardweight->update();
+// }
 
-void SurakartaGame::chessBoardWidghtInit(std::shared_ptr<ChessBoardWidget>& chessboardweight, std::shared_ptr<SurakartaBoard> board_) {
-    chessboardweight = std::make_shared<ChessBoardWidget>(board_);
-}
+// void SurakartaGame::chessBoardWidghtInit(std::shared_ptr<ChessBoardWidget>& chessboardweight, std::shared_ptr<SurakartaBoard> board_) {
+//     chessboardweight = std::make_shared<ChessBoardWidget>(board_);
+// }
 
 
 SurakartaMoveResponse SurakartaGame::Move(const SurakartaMove& move) {

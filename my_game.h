@@ -79,9 +79,9 @@ public:
      */
     void SetAgent(std::shared_ptr<SurakartaAgentBase> agent) { agent_ = agent; }
 
-    void printBoard(std::shared_ptr<ChessBoardWidget>& chessboardweight);
+    // void printBoard(std::shared_ptr<ChessBoardWidget>& chessboardweight);
 
-    void chessBoardWidghtInit(std::shared_ptr<ChessBoardWidget>& chessboardweight, std::shared_ptr<SurakartaBoard> board_);
+    // void chessBoardWidghtInit(std::shared_ptr<ChessBoardWidget>& chessboardweight, std::shared_ptr<SurakartaBoard> board_);
 
     unsigned int GetBoardSize() const { return board_size_; }
     std::shared_ptr<SurakartaBoard> GetBoard() const { return board_; }
@@ -100,7 +100,7 @@ public:
     std::shared_ptr<SurakartaGameInfo> game_info_;
     std::shared_ptr<SurakartaRuleManager> rule_manager_;
     std::shared_ptr<SurakartaAgentBase> agent_;
-    std::shared_ptr<ChessBoardWidget> chessboardwight_;
+    // std::shared_ptr<ChessBoardWidget> chessboardwight_;
 
 
 

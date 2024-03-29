@@ -30,7 +30,7 @@ MainWindow_PVP::MainWindow_PVP(QWidget *parent)
 void MainWindow_PVP::Initialize() {
     // SurakartaGame game;
     game.StartGame();
-    game.chessBoardWidghtInit(game.chessboardwight_, game.board_);
+    // game.chessBoardWidghtInit(game.chessboardwight_, game.board_);
     chessBoard->board = game.board_;
 
     // chessBoard->paintBoard();
@@ -47,7 +47,7 @@ void MainWindow_PVP::updateGame(SurakartaPosition from, SurakartaPosition to) {
     SurakartaMove move = handlePlayerMove(from, to);
     game.Move(move);
 
-    chessBoard->board = game.board_;
+    // chessBoard->board = game.board_;
     chessBoard->setMode(ChessBoardWidget::PieceMode);
     chessBoard->update();
 
