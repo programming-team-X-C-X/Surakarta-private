@@ -41,18 +41,11 @@ private:
     QPushButton *computerGameButton;
     QPushButton *settingsButton;
 
-    // QSpinBox *box;
-    // QPushButton *saveButton;
-
-
 public slots:
     void selectSinglePlayerGame();
     void selectMultiPlayerGame();
     void selectComputerGame();
     void openSettingsDialog();
-
-    // void saveSettings();
-
 
 };
 

@@ -53,6 +53,10 @@ public slots:
     void updateCountdown();
     void giveUp();
 
+signals:
+    void backToStartDialog();
+
+
 protected:
         void paintEvent(QPaintEvent */*event*/) override;
 
@@ -60,6 +64,7 @@ private:
     QPushButton *buttonGiveUp;
     QPushButton *buttonClose;
     QPushButton *buttonStart;
+    QPushButton *buttonBack;
     QHBoxLayout *hbox;
     QVBoxLayout *vbox;
 };

@@ -33,14 +33,6 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
     computerGameButton->setFixedSize(100, 30);
     settingsButton->setFixedSize(100, 30);
 
-    // box = new QSpinBox(this);
-    // box->setRange(4, 20);
-    // box->setValue(BOARD_SIZE);
-
-    // saveButton = new QPushButton(tr("save"), this);
-    // vLayout->addWidget(box);
-    // vLayout->addWidget(saveButton);
-
     // vLayout->setAlignment(Qt::AlignBottom);
     vLayout->addWidget(settingsButton);
     vLayout->addStretch();
@@ -55,8 +47,6 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
     connect(multiPlayerButton, &QPushButton::clicked, this, &StartDialog::startMultiPlayerGame);
     connect(computerGameButton, &QPushButton::clicked, this, &StartDialog::startComputerGame);
     connect(settingsButton, &QPushButton::clicked, this, &StartDialog::openSettingsDialog);
-
-    // connect(saveButton, &QPushButton::clicked, this, &StartDialog::saveSettings);
 
 }
 
@@ -80,7 +70,3 @@ void StartDialog::openSettingsDialog() {
     SettingsDialog settingsDialog(this); // 使用 this 作为 parent 以确保设置面板居中显示
     settingsDialog.exec(); // 显示设置面板
 }
-
-// void StartDialog::saveSettings() {
-//     BOARD_SIZE = box->value();
-// }

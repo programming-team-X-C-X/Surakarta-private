@@ -18,9 +18,11 @@ public:
 
 signals:
     void restartGame(); // 添加一个信号
+    void backToStart();
 
 private slots:
     void onREButtonClicked(); // 处理 OK 按钮点击的槽函数
+    void onBAButtonClicked();
 
 private:
     QLabel *label;

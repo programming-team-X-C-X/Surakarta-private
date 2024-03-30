@@ -3,8 +3,6 @@
 #include "my_board.h"
 #include "my_piece.h"
 #include <QPainter>
-// #include "drawpoint.h"
-// #include "drawpoint.h"
 #include "settings.h"
 #include <cmath>
 #include <QDebug>
@@ -17,20 +15,12 @@ ChessBoardWidget::ChessBoardWidget() :
     // setFixedSize(WINDOW_SIZE * 1.5, WINDOW_SIZE);
     // setStyleSheet("background-color: grey;");
 
-    int arcNum = (BOARD_SIZE - 2) / 2;//环数
-    int rawNum = BOARD_SIZE + arcNum * 2 + 1;//总行数
-    int gridSize = WINDOW_SIZE / rawNum;
     pieceItems.resize(BOARD_SIZE, std::vector<std::shared_ptr<SurakartaPiece>>(BOARD_SIZE));
-
 
     scene = new QGraphicsScene(this);
     view = new QGraphicsView(scene, this);
-    // view->setFixedSize(WINDOW_SIZE * 1.5, WINDOW_SIZE);
     ChessBoardGraphicsItem *chessBoardItem = new ChessBoardGraphicsItem();
-    // chessBoardItem->setZValue(-10);
     // view->setFixedSize(WINDOW_SIZE, WINDOW_SIZE);
-    // view->setFixedSize(WINDOW_SIZE/2, WINDOW_SIZE/2);
-
     // view->setSceneRect(chessBoardItem->boundingRect());
 
     // QRectF sceneRect = QRectF(0, 0, WINDOW_SIZE/**0.9*/, WINDOW_SIZE/**0.9*/);
@@ -105,9 +95,6 @@ void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
                 secondClickPos = piece->GetPosition();
             }
             else {
-                    int arcNum = (BOARD_SIZE - 2) / 2;
-                    int rawNum = BOARD_SIZE + arcNum * 2 + 1;
-                    int gridSize = WINDOW_SIZE / rawNum;
                     // 计算格子坐标前先转换为浮点数
                     float fx = (event->position().x() - gridSize * arcNum) / (float)gridSize;
                     float fy = (event->position().y() - gridSize * arcNum) / (float)gridSize;
@@ -118,7 +105,6 @@ void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
                     secondClickPos.x = x;
                     secondClickPos.y = y;
             }
-
 
             hasFirstClick = false;
 
@@ -144,9 +130,6 @@ void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
 void ChessBoardWidget::movePiece(const SurakartaPosition& from, const SurakartaPosition& to) {
     std::shared_ptr<SurakartaPiece>piece = pieceItems[from.x][from.y];
     if(piece) {
-        int arcNum = (BOARD_SIZE - 2) / 2;
-        int rawNum = BOARD_SIZE + arcNum * 2 + 1;
-        int gridSize = WINDOW_SIZE / rawNum;
         // float fx = (to.x - gridSize * arcNum) / (float)gridSize;
         // float fy = (event->position().y() - gridSize * arcNum) / (float)gridSize;
         QPointF newPos((arcNum + to.x + 1) * gridSize - PIECE_SIZE / 2, (arcNum + to.y + 1) * gridSize - PIECE_SIZE / 2);

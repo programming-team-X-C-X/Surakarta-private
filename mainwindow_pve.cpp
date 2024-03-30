@@ -11,6 +11,7 @@ MainWindow_PVE::MainWindow_PVE(QWidget *parent)
 
     buttonClose = new QPushButton("close", this);
     buttonStart = new QPushButton("start", this);
+    buttonBack = new QPushButton("back", this);
 
     countdownLabel = new QLabel(this);
     QFont labelFont = countdownLabel->font();
@@ -26,9 +27,12 @@ MainWindow_PVE::MainWindow_PVE(QWidget *parent)
     QHBoxLayout *hlayout = new QHBoxLayout();
 
     buttonStart->setFixedSize(100, 30);
+    buttonBack->setFixedSize(100, 30);
     buttonClose->setFixedSize(100, 30);
     vlayout->addStretch(30);
     vlayout->addWidget(buttonStart);
+    vlayout->addStretch(1);
+    vlayout->addWidget(buttonBack);
     vlayout->addStretch(1);
     vlayout->addWidget(buttonClose);
     vlayout->addStretch(1);
@@ -44,6 +48,7 @@ MainWindow_PVE::MainWindow_PVE(QWidget *parent)
     connect(buttonClose, &QPushButton::clicked, this, &MainWindow_PVE::close);
     connect(buttonStart, &QPushButton::clicked, this,  &MainWindow_PVE::Initialize);
     connect(buttonStart, &QPushButton::clicked, buttonStart, &QPushButton::deleteLater);
+    connect(buttonBack, &QPushButton::clicked, this, &MainWindow_PVE::backToStartDialog);
 
     computerMoveTimer = new QTimer(this);
     computerMoveTimer->setSingleShot(true);
@@ -102,7 +107,6 @@ void MainWindow_PVE::updateGame() {
     // chessBoard->board = game.board_;
     chessBoard->setMode(ChessBoardWidget::PieceMode);
     // chessBoard->update();
-    // chessBoard->movePiece()
     if (game.IsEnd() && game.GetGameInfo()->end_reason_ != SurakartaEndReason::ILLIGAL_MOVE) {
         showEndDialog();
     }
@@ -197,6 +201,7 @@ void MainWindow_PVE::showEndDialog() {
 
     enddialog->setText(message);
     connect(enddialog, &endDialog::restartGame, this, &MainWindow_PVE::Initialize);
+    connect(enddialog, &endDialog::backToStart, this, &MainWindow_PVE::backToStartDialog);
     enddialog->exec();
 }
 
@@ -212,9 +217,7 @@ MainWindow_PVE::~MainWindow_PVE() {
 void MainWindow_PVE::paintEvent(QPaintEvent */*event*/) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-    int arcNum = (BOARD_SIZE - 2) / 2;//环数
-    int rawNum = BOARD_SIZE + arcNum * 2 + 1;//总行数
-    int gridSize = WINDOW_SIZE / rawNum;
+
     // 绘制棋盘网格
     painter.setPen(Qt::black);
     for (int i = arcNum; i < rawNum - arcNum - 1; ++i) {
