@@ -15,6 +15,7 @@ const unsigned int SLEEP_TIME = 500;
 
 //棋子设置
 const unsigned int PIECE_SIZE = 30;
+double PIECE_SPEED = 100.0;
 
 //回合限时
-unsigned int TIME_LIMIT = 20;
+unsigned int TIME_LIMIT = 200;

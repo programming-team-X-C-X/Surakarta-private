@@ -1,4 +1,4 @@
-#include "my_agent_mine.h"
+#include "agent_mine.h"
 
 SurakartaMove SurakartaAgentMine::CalculateMove() {
     // TODO: Implement your own ai here.

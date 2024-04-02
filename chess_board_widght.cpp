@@ -6,7 +6,7 @@
 #include "settings.h"
 #include <cmath>
 #include <QDebug>
-// #include <QScrollBar>
+#include <QPropertyAnimation>
 
 ChessBoardWidget::ChessBoardWidget() :
     currentMode(BoardMode), hasFirstClick(false)
@@ -95,15 +95,15 @@ void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
                 secondClickPos = piece->GetPosition();
             }
             else {
-                    // 计算格子坐标前先转换为浮点数
-                    float fx = (event->position().x() - gridSize * arcNum) / (float)gridSize;
-                    float fy = (event->position().y() - gridSize * arcNum) / (float)gridSize;
-                    // 使用四舍五入找到最接近的整数格子坐标
-                    unsigned int x = static_cast<unsigned int>(round(fx)) - 1;
-                    unsigned int y = static_cast<unsigned int>(round(fy)) - 1;
-                    // SurakartaPosition *pos = new SurakartaPosition(fx, fy);
-                    secondClickPos.x = x;
-                    secondClickPos.y = y;
+                // 计算格子坐标前先转换为浮点数
+                float fx = (event->position().x() - gridSize * arcNum) / (float)gridSize;
+                float fy = (event->position().y() - gridSize * arcNum) / (float)gridSize;
+                // 使用四舍五入找到最接近的整数格子坐标
+                unsigned int x = static_cast<unsigned int>(round(fx)) - 1;
+                unsigned int y = static_cast<unsigned int>(round(fy)) - 1;
+                // SurakartaPosition *pos = new SurakartaPosition(fx, fy);
+                secondClickPos.x = x;
+                secondClickPos.y = y;
             }
 
             hasFirstClick = false;
@@ -127,22 +127,122 @@ void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
     }
 }
 
-void ChessBoardWidget::movePiece(const SurakartaPosition& from, const SurakartaPosition& to) {
-    std::shared_ptr<SurakartaPiece>piece = pieceItems[from.x][from.y];
-    if(piece) {
-        // float fx = (to.x - gridSize * arcNum) / (float)gridSize;
-        // float fy = (event->position().y() - gridSize * arcNum) / (float)gridSize;
-        QPointF newPos((arcNum + to.x + 1) * gridSize - PIECE_SIZE / 2, (arcNum + to.y + 1) * gridSize - PIECE_SIZE / 2);
-        piece->setPos(newPos);
-        // Update the pieceItems array
-        pieceItems[from.x][from.y].reset();
-        piece->position_.x = to.x;
-        piece->position_.y = to.y;
-        pieceItems[to.x][to.y] = piece;
-        // (*board)[from.x][from.y] = nullptr;
-        // pieceItems[from.x][from.y] = nullptr;
+void ChessBoardWidget::movePiece(const SurakartaMove& move) {
+    auto piece = pieceItems[move.from.x][move.from.y];
+    if (piece) {
+        QPainterPath animationPath;
+        double pathLength = 0.0;
+        animationPath.moveTo(convertPositionToQPointF(move.from));
+
+        QPointF oldPoint = convertPositionToQPointF(move.from);
+        for (const std::shared_ptr<SurakartaPosition>& pos : move.pathPoints) {
+            QPointF currentPoint = convertPositionToQPointF(*pos);
+            if (oldPoint != currentPoint)
+                pathLength += QLineF(oldPoint, currentPoint).length();
+            oldPoint = currentPoint;
+        }
+        for (size_t i = 0; i< move.pathPoints.size(); i++) {
+            const auto currentPos = *move.pathPoints[i];
+            QPointF currentPoint = convertPositionToQPointF(currentPos);
+            if (i == 0 || !move.isLoopMove)
+                animationPath.lineTo(currentPoint);
+            else {
+                const auto lastPos = *move.pathPoints[i - 1];
+                QPointF lastPoint = convertPositionToQPointF(lastPos);
+                if (lastPoint.x() == currentPoint.x() || lastPoint.y() == currentPoint.y())
+                    animationPath.lineTo(currentPoint);
+                else {
+                    // QPointF start = convertPositionToQPointF(lastPoint);
+
+                    if (currentPos.x < BOARD_SIZE / 2 && currentPos.y < BOARD_SIZE / 2) {
+                        double radius = (currentPos.x + currentPos.y) * gridSize;
+                        QPointF center = convertPositionToQPointF(SurakartaPosition(0, 0));
+                        // 创建一个矩形，表示圆的外接矩形
+                        QRectF rectangle(center.x() - radius, center.y() - radius, radius * 2, radius * 2);
+                        if (lastPos.x == 0) {//shun
+                            qreal startAngle = 270;
+                            qreal spanAngle = -270;
+                            animationPath.arcTo(rectangle, startAngle, spanAngle);
+                        }
+                        if (lastPos.y == 0) {//ni
+                            qreal startAngle = 0;
+                            qreal spanAngle = 270;
+                            animationPath.arcTo(rectangle, startAngle, spanAngle);
+                        }
+                    }
+                    else if (currentPos.x >= BOARD_SIZE / 2 && currentPos.y < BOARD_SIZE / 2) { //右上
+                        double radius = (std::max(currentPos.y, lastPos.y)) * gridSize;
+                        QPointF center = convertPositionToQPointF(SurakartaPosition(BOARD_SIZE - 1, 0));
+                        QRectF rectangle(center.x() - radius, center.y() - radius, radius * 2, radius * 2);
+                        if (lastPos.y == 0) {//shun
+                            qreal startAngle = 180;
+                            qreal spanAngle = -270;
+                            animationPath.arcTo(rectangle, startAngle, spanAngle);
+                        }
+                        if (currentPos.y == 0) {//ni
+                            qreal startAngle = 270;
+                            qreal spanAngle = 270;
+                            animationPath.arcTo(rectangle, startAngle, spanAngle);
+                        }
+                    }
+                    else if (currentPos.x < BOARD_SIZE / 2 && currentPos.y >= BOARD_SIZE / 2) { //左下
+                        double radius = (std::max(currentPos.x, lastPos.x)) * gridSize;
+                        QPointF center = convertPositionToQPointF(SurakartaPosition(0, BOARD_SIZE - 1));
+                        QRectF rectangle(center.x() - radius, center.y() - radius, radius * 2, radius * 2);
+                        if (lastPos.x == 0) {//ni
+                            qreal startAngle = 90;
+                            qreal spanAngle = 270;
+                            animationPath.arcTo(rectangle, startAngle, spanAngle);
+                        }
+                        if (currentPos.x == 0) {//shun
+                            qreal startAngle = 0;
+                            qreal spanAngle = -270;
+                            animationPath.arcTo(rectangle, startAngle, spanAngle);
+                        }
+                    }
+                    else if (currentPos.x >= BOARD_SIZE / 2 && currentPos.y >= BOARD_SIZE / 2) {    //右下
+                        double radius = (2 * BOARD_SIZE - 2 - currentPos.x - lastPos.x) * gridSize;
+                        QPointF center = convertPositionToQPointF(SurakartaPosition(BOARD_SIZE - 1, BOARD_SIZE - 1));
+                        QRectF rectangle(center.x() - radius, center.y() - radius, radius * 2, radius * 2);
+                        if (lastPos.y == BOARD_SIZE - 1) {//ni
+                            qreal startAngle = 180;
+                            qreal spanAngle = 270;
+                            animationPath.arcTo(rectangle, startAngle, spanAngle);
+                        }
+                        if (currentPos.y == BOARD_SIZE - 1) {//shun
+                            qreal startAngle = 90;
+                            qreal spanAngle = -270;
+                            animationPath.arcTo(rectangle, startAngle, spanAngle);
+                        }
+                    }
+                }
+            }
+        }
+        auto animation = new QVariantAnimation(this);
+        int duration = static_cast<int>(pathLength / PIECE_SPEED * 1000);
+        animation->setDuration(duration); // 动画时间，例如 1000 毫秒
+        animation->setStartValue(0.0);
+        animation->setEndValue(1.0);
+        connect(animation, &QVariantAnimation::valueChanged, [animationPath, piece](const QVariant &value) {
+            qreal t = value.toReal();
+            QPointF newPos = animationPath.pointAtPercent(t); // 获取路径上的位置
+            piece->setPos(newPos); // 移动棋子到这个位置
+        });
+        connect(animation, &QVariantAnimation::finished, this, [move, animation, piece]() {
+            animation->deleteLater(); // 删除动画对象
+        });
+        animation->start(); // 开始动画
+        pieceItems[move.from.x][move.from.y] = nullptr;
+        piece->position_ = move.to; // 更新棋子的最终位置
+        pieceItems[move.to.x][move.to.y] = piece;
     }
 }
+
+QPointF ChessBoardWidget::convertPositionToQPointF(const SurakartaPosition& position) {
+    return QPointF((arcNum + position.x + 1) * gridSize - PIECE_SIZE / 2,
+                   (arcNum + position.y + 1) * gridSize - PIECE_SIZE / 2);
+}
+
 
 void ChessBoardWidget::setMode(DrawMode mode) {
     currentMode = mode;

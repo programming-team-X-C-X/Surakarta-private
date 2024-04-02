@@ -7,16 +7,15 @@ struct SurakartaMove {
     SurakartaPosition from;
     SurakartaPosition to;
     SurakartaPlayer player;
+    bool isLoopMove; // 表示是否是旋吃动作
+    std::vector<std::shared_ptr<SurakartaPosition>> pathPoints; // 存储旋吃路径上的关键点
+
     SurakartaMove()
         : from(0, 0), to(0, 0), player(SurakartaPlayer::NONE) {}
     SurakartaMove(unsigned int from_x, unsigned int from_y, unsigned int to_x, unsigned int to_y, SurakartaPlayer player)
         : from(from_x, from_y), to(to_x, to_y), player(player) {}
     SurakartaMove(SurakartaPosition from, SurakartaPosition to, SurakartaPlayer player)
         : from(from), to(to), player(player) {}
-    // friend std::ostream& operator<<(std::ostream& os, const SurakartaMove& move) {
-    //     os << move.from << " -> " << move.to << " (" << move.player << ")";
-    //     return os;
-    // }
 };
 
 struct SurakartaGameInfo {

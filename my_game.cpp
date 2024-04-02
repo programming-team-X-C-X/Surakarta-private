@@ -1,9 +1,7 @@
 #include "my_game.h"
-#include <fstream>
 #include <QMainWindow>
 #include <QWidget>
 #include <QPainter>
-#include "my_board.h"
 #include "my_common.h"
 // #include "my_agent_mine.h"
 // #include "my_agent_random.h"
@@ -52,17 +50,8 @@ void SurakartaGame::UpdateGameInfo(SurakartaIllegalMoveReason move_reason, Surak
     }
 }
 
-// void SurakartaGame::printBoard(std::shared_ptr<ChessBoardWidget>& chessboardweight) {
-//     chessboardweight->update();
-// }
-
-// void SurakartaGame::chessBoardWidghtInit(std::shared_ptr<ChessBoardWidget>& chessboardweight, std::shared_ptr<SurakartaBoard> board_) {
-//     chessboardweight = std::make_shared<ChessBoardWidget>(board_);
-// }
-
-
-SurakartaMoveResponse SurakartaGame::Move(const SurakartaMove& move) {
-    SurakartaIllegalMoveReason move_reason = rule_manager_->JudgeMove(move);
+SurakartaMoveResponse SurakartaGame::Move(/*const*/ SurakartaMove& move) {
+    SurakartaIllegalMoveReason move_reason = rule_manager_->JudgeMove(move/*, path*/);
     auto [end_reason, winner] = rule_manager_->JudgeEnd(move_reason);
 
     UpdateGameInfo(move_reason, end_reason, winner);

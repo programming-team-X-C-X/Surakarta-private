@@ -1,5 +1,4 @@
-#include "my_rule_manager.h"
-#include <iostream>
+#include "rule_manager.h"
 
 void SurakartaRuleManager::OnUpdateBoard() {
     // TODO:
@@ -8,68 +7,7 @@ void SurakartaRuleManager::OnUpdateBoard() {
     // A more delicate way is to use Qt's signal and slot mechanism, but that's the advanced part.
 }
 
-bool SurakartaRuleManager::EatCircle(const SurakartaMove& move,const circle& circle,unsigned int & i)
-{
-    unsigned index,Pass;
-
-
-    Pass = 0;   // 默认没有转弯
-    index = i ; // 检查的第一个点
-
-
-
-    if((index == 4 * board_size_ - 1) || (index == 3 * board_size_ - 1) || (index == 2 * board_size_ - 1)  || (index == board_size_ - 1) ) // 表示在拐弯的位置
-        Pass  = 1;
-
-    index = (index + 1) % (4 * board_size_);
-
-    while(*circle[index] != move.to && index != i)
-    {
-        if( (circle[index]->x == move.from.x && circle[index]->y == move.from.y) ||  (*board_)[(*circle[index]).x][(*circle[index]).y]->GetColor() == PieceColor::NONE )
-        {
-            if(index == 0 ||  index == board_size_ || (index == 2 * board_size_) ||  (index == 3 * board_size_) |(index == 4 * board_size_ - 1) || (index == 3 * board_size_ - 1) || (index == 2 * board_size_ - 1)  || (index == board_size_ - 1 ) ) // 表示拐了弯
-            {
-                Pass  = 1 ;
-            }
-
-            index = (index + 1) % (4 * board_size_);
-
-        }  // 路径上为空地的时候往后移动
-        else break;
-        // 表示路径上有障碍,第一条路不通
-    }
-
-    if(*circle[index] == move.to && Pass) //可以到达目的地且转了弯
-        return true;
-    // 如果不行，表示这条路行不通，换另一条路
-
-    Pass = 0;
-    index = i;
-    if(index == 0 ||  index == board_size_ || index == 2 * board_size_ ||  index == 3 * board_size_ ) // 表示在拐弯的位置
-        Pass  = 1 ;
-
-    index = (i - 1 + 4 * board_size_) % (4 * board_size_); // 检查的第一个点
-
-    while(*circle[index] != move.to && index != i)
-    {
-        if((circle[index]->x == move.from.x && circle[index]->y == move.from.y) ||(*board_)[(*circle[index]).x][(*circle[index]).y]->GetColor() == PieceColor::NONE )
-        {
-            if(index == 0 ||  index == board_size_ || (index == 2 * board_size_) ||  (index == 3 * board_size_) |(index == 4 * board_size_ - 1) || (index == 3 * board_size_ - 1) || (index == 2 * board_size_ - 1)  || (index == board_size_ - 1 ) ) // 表示拐了弯
-            {
-                Pass  = 1 ;
-            }
-            index = (index - 1 + 4 * board_size_) % (4 * board_size_);
-        }  // 路径上为空地的时候往前移动
-        else break;
-        // 表示路径上有障碍,第二条路不通
-    }
-    if(*circle[index] == move.to && Pass) //可以到达目的地且转了弯
-        return true;
-
-    return false;
-}
-
-SurakartaIllegalMoveReason SurakartaRuleManager::JudgeMove(const SurakartaMove& move) {
+SurakartaIllegalMoveReason SurakartaRuleManager::JudgeMove(/*const*/ SurakartaMove& move) {
     // TODO: Implement this function.
     SurakartaPlayer current_player = game_info_->current_player_;
 
@@ -88,8 +26,15 @@ SurakartaIllegalMoveReason SurakartaRuleManager::JudgeMove(const SurakartaMove& 
         // 2. move that doesn't capture
         if((*board_)[move.to.x][move.to.y]->GetColor() == PieceColor::NONE)
         {
-            if(IsN_C_M(move))
+            if(IsN_C_M(move)) {
+                if (move.pathPoints.empty()){
+                    std::shared_ptr<SurakartaPosition>from = std::make_shared<SurakartaPosition>(move.from.x, move.from.y);
+                    std::shared_ptr<SurakartaPosition>to = std::make_shared<SurakartaPosition>(move.to.x, move.to.y);
+                    move.pathPoints.push_back(from);
+                    move.pathPoints.push_back(to);
+                }
                 return SurakartaIllegalMoveReason::LEGAL_NON_CAPTURE_MOVE;
+            }
             return SurakartaIllegalMoveReason::ILLIGAL_NON_CAPTURE_MOVE;
         }
         // 2. same color
@@ -99,34 +44,28 @@ SurakartaIllegalMoveReason SurakartaRuleManager::JudgeMove(const SurakartaMove& 
         // 3. capture a opponent's piece
         else
         {
-
-            if(Eat(move))
+            if(Eat(move, move.pathPoints)) {
+                move.isLoopMove = true;
                 return SurakartaIllegalMoveReason::LEGAL_CAPTURE_MOVE;
+            }
             return  SurakartaIllegalMoveReason::ILLIGAL_CAPTURE_MOVE;
         }
-
-
     }
-
     else return SurakartaIllegalMoveReason::NOT_PLAYER_PIECE;
-
-
-
     //return SurakartaIllegalMoveReason::LEGAL;
 }
 
-bool SurakartaRuleManager::Eat(const SurakartaMove& move)
+bool SurakartaRuleManager::Eat(const SurakartaMove& move, std::vector<std::shared_ptr<SurakartaPosition>>& path)
 {
-
-    for(unsigned int i = 0;i < board_size_/2 - 1; i++)
+    for(unsigned int i = 0;i < BOARD_SIZE/2 - 1; i++)
     {
-        for(unsigned int j = 0;j < 4 * board_size_; j++)
+        for(unsigned int j = 0;j < 4 * BOARD_SIZE; j++)
         {
             if(move.from == *(*board_).Cir[i][j])
             {
-                if(EatCircle(move,(*board_).Cir[i],j)) return true;
+                if(EatCircle(move, (*board_).Cir[i], j, path)) return true;
                 else if (j == 1) j = 21;
-                else if( j == (1 + board_size_/2) || j == (1 + 3 * board_size_/2) || j == (1 + 5 * board_size_/2)) j = j + board_size_/2 - 1;
+                else if( j == (1 + BOARD_SIZE/2) || j == (1 + 3 * BOARD_SIZE/2) || j == (1 + 5 * BOARD_SIZE/2)) j = j + BOARD_SIZE/2 - 1;
                 //else break; // I didn't understand why this is wrong
 
             }
@@ -134,6 +73,82 @@ bool SurakartaRuleManager::Eat(const SurakartaMove& move)
     }
 
     return false; //  剩下的表示不正确
+}
+
+bool SurakartaRuleManager::EatCircle(const SurakartaMove& move,const circle& circle,unsigned int& i, std::vector<std::shared_ptr<SurakartaPosition>>& path)
+{
+    unsigned index,Pass;
+    Pass = 0;   // 默认没有转弯
+    index = i ; // 检查的第一个点
+
+    path.push_back(circle[index]);
+
+    if((index == 4 * BOARD_SIZE - 1) || (index == 3 * BOARD_SIZE - 1) || (index == 2 * BOARD_SIZE - 1)  || (index == BOARD_SIZE - 1) ) {
+        // 表示在拐弯的位置
+        Pass  = 1;
+        path.push_back(circle[index]);
+    }
+
+    index = (index + 1) % (4 * BOARD_SIZE);
+
+    while(*circle[index] != move.to && index != i)
+    {
+        if( (circle[index]->x == move.from.x && circle[index]->y == move.from.y) ||  (*board_)[(*circle[index]).x][(*circle[index]).y]->GetColor() == PieceColor::NONE )
+        {
+            if(index == 0 ||  index == BOARD_SIZE || (index == 2 * BOARD_SIZE) ||  (index == 3 * BOARD_SIZE) |(index == 4 * BOARD_SIZE - 1) || (index == 3 * BOARD_SIZE - 1) || (index == 2 * BOARD_SIZE - 1)  || (index == BOARD_SIZE - 1 ) ) // 表示拐了弯
+            {
+                Pass  = 1 ;
+                path.push_back(circle[index]);
+            }
+
+            index = (index + 1) % (4 * BOARD_SIZE);
+
+        }  // 路径上为空地的时候往后移动
+        else break;
+        // 表示路径上有障碍,第一条路不通
+    }
+
+    if(*circle[index] == move.to && Pass) {
+        //可以到达目的地且转了弯
+        path.push_back(circle[index]);
+        return true;
+    }
+
+    // 如果不行，表示这条路行不通，换另一条路
+    path.clear();
+    Pass = 0;
+    index = i;
+    path.push_back(circle[index]);
+    if(index == 0 ||  index == BOARD_SIZE || index == 2 * BOARD_SIZE ||  index == 3 * BOARD_SIZE ) {
+        // 表示在拐弯的位置
+        path.push_back(circle[index]);
+        Pass  = 1 ;
+    }
+
+    index = (i - 1 + 4 * BOARD_SIZE) % (4 * BOARD_SIZE); // 检查的第一个点
+
+    while(*circle[index] != move.to && index != i)
+    {
+        if((circle[index]->x == move.from.x && circle[index]->y == move.from.y) ||(*board_)[(*circle[index]).x][(*circle[index]).y]->GetColor() == PieceColor::NONE )
+        {
+            if(index == 0 || index == BOARD_SIZE || (index == 2 * BOARD_SIZE) ||  (index == 3 * BOARD_SIZE) |(index == 4 * BOARD_SIZE - 1) || (index == 3 * BOARD_SIZE - 1) || (index == 2 * BOARD_SIZE - 1)  || (index == BOARD_SIZE - 1 ) ) // 表示拐了弯
+            {
+                Pass = 1 ;
+                path.push_back(circle[index]);
+            }
+            index = (index - 1 + 4 * BOARD_SIZE) % (4 * BOARD_SIZE);
+        }  // 路径上为空地的时候往前移动
+        else break;
+        // 表示路径上有障碍,第二条路不通
+    }
+    if(*circle[index] == move.to && Pass) {
+        //可以到达目的地且转了弯
+        path.push_back(circle[index]);
+        return true;
+    }
+
+    path.clear();
+    return false;
 }
 
 std::pair<SurakartaEndReason, SurakartaPlayer> SurakartaRuleManager::JudgeEnd(const SurakartaIllegalMoveReason reason) {
@@ -148,9 +163,9 @@ std::pair<SurakartaEndReason, SurakartaPlayer> SurakartaRuleManager::JudgeEnd(co
         {
 
             int cnt1{},cnt2{};
-            for(unsigned int i = 0;i< board_size_;i++)
+            for(unsigned int i = 0;i< BOARD_SIZE;i++)
             {
-                for(unsigned int j = 0;j < board_size_;j++)
+                for(unsigned int j = 0;j < BOARD_SIZE;j++)
                 {
 
                     if((*board_)[i][j]->GetColor() == PieceColor::BLACK) cnt1++;
@@ -168,9 +183,9 @@ std::pair<SurakartaEndReason, SurakartaPlayer> SurakartaRuleManager::JudgeEnd(co
     else if(reason == SurakartaIllegalMoveReason::LEGAL_CAPTURE_MOVE)
     {
         int cnt{};
-        for(unsigned int i = 0;i< board_size_;i++)
+        for(unsigned int i = 0;i< BOARD_SIZE;i++)
         {
-            for(unsigned int j =0 ;j< board_size_;j++)
+            for(unsigned int j =0 ;j< BOARD_SIZE;j++)
             {
                 if((*board_)[i][j]->GetColor() != current_player && (*board_)[i][j]->GetColor() != PieceColor::NONE) cnt++;
                 if(cnt > 1) return std::make_pair(SurakartaEndReason::NONE, PieceColor::NONE);
@@ -192,9 +207,9 @@ std::unique_ptr<std::vector<SurakartaPosition>> SurakartaRuleManager::GetAllLega
     SurakartaMove move;
     move.from = postion;
     std::unique_ptr<std::vector<SurakartaPosition>> rt = std::make_unique<std::vector<SurakartaPosition>>();
-    for(unsigned i = 0; i < board_size_ ; i++)
+    for(unsigned i = 0; i < BOARD_SIZE ; i++)
     {
-        for(unsigned j = 0; j < board_size_ ; j++)
+        for(unsigned j = 0; j < BOARD_SIZE ; j++)
         {
             move.to = {i , j};
             if(JudgeMove(move) == SurakartaIllegalMoveReason::LEGAL_NON_CAPTURE_MOVE || JudgeMove(move) == SurakartaIllegalMoveReason::LEGAL_CAPTURE_MOVE) // legal move
@@ -202,10 +217,6 @@ std::unique_ptr<std::vector<SurakartaPosition>> SurakartaRuleManager::GetAllLega
         }
     }
     return rt;
-}
-
-void SurakartaRuleManager::HelloWorld() {
-    std::cout << "Hello World!" << std::endl;
 }
 
 bool SurakartaRuleManager::IsN_C_M(const SurakartaMove& move)

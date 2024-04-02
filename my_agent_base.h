@@ -2,7 +2,7 @@
 
 #include <memory>
 #include "my_common.h"
-#include "my_rule_manager.h"
+#include "rule_manager.h"
 
 class SurakartaAgentBase {
 public:

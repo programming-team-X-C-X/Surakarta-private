@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream>
-#include <QGraphicsItem>
+#include <QGraphicsObject>
 // #include <QRectF>
 
 using PieceColorMemoryType = int;
@@ -40,7 +40,7 @@ struct SurakartaPosition {
     }
 };
 
-class SurakartaPiece : public QGraphicsItem {
+class SurakartaPiece : public QGraphicsObject {
 public:
 
     static const int Type = QGraphicsItem::UserType + 2;

@@ -1,4 +1,4 @@
-#include "my_agent_random.h"
+#include "agent_random.h"
 #include <algorithm>
 #include <vector>
 #include "my_global_random_generator.h"

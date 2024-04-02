@@ -10,7 +10,7 @@
 #include <QHBoxLayout>
 #include <QPainter>
 #include "my_game.h"
-#include "my_agent_mine.h"
+#include "agent_mine.h"
 // #include "my_agent_random.h"
 #include "chess_board_widght.h"
 #include "settings.h"

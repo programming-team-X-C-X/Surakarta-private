@@ -9,6 +9,7 @@ extern int rawNum;
 extern int gridSize;
 extern const unsigned int SLEEP_TIME;
 extern const unsigned int PIECE_SIZE;
+extern double PIECE_SPEED;
 extern unsigned int TIME_LIMIT;
 
 #endif // SETTINGS_H

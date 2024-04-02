@@ -112,11 +112,22 @@ void MainWindow_PVE::updateGame() {
     }
 }
 
+void MainWindow_PVE::computerMove() {
+    SurakartaMove move = agentMine->CalculateMove();
+    game.Move(move);
+    handlePlayerMove(move.from, move.to);
+    chessBoard->movePiece(move);
+    updateGame();
+    // countdownTimer->start(TIME_LIMIT);
+}
+
 void MainWindow_PVE::playerMove(SurakartaPosition from, SurakartaPosition to) {
     if (game.IsEnd()) return;
-    SurakartaMove move = handlePlayerMove(from, to);
+    // SurakartaMove move = handlePlayerMove(from, to);
+    SurakartaMove move(from, to, game.GetGameInfo()->current_player_);
+
     game.Move(move);
-    chessBoard->movePiece(move.from, move.to);
+    chessBoard->movePiece(move);
     updateGame();
     if (game.game_info_->current_player_ == PieceColor::WHITE){
         updateGame();
@@ -125,16 +136,6 @@ void MainWindow_PVE::playerMove(SurakartaPosition from, SurakartaPosition to) {
         computerMoveTimer->start(computerMoveDelay);
     }
 }
-
-void MainWindow_PVE::computerMove() {
-    SurakartaMove move = agentMine->CalculateMove();
-    game.Move(move);
-    handlePlayerMove(move.from, move.to);
-    chessBoard->movePiece(move.from, move.to);
-    updateGame();
-    // countdownTimer->start(TIME_LIMIT);
-}
-
 
 SurakartaMove MainWindow_PVE::handlePlayerMove(SurakartaPosition from, SurakartaPosition to) {
 

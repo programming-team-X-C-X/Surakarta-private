@@ -8,6 +8,7 @@
 #include <QGraphicsScene>
 #include "my_board.h"
 #include <QPainter>
+#include "my_common.h"
 #include "settings.h"
 
 class ChessBoardWidget : public QWidget {
@@ -21,9 +22,10 @@ public:
     // ChessBoardWidget(std::shared_ptr<SurakartaBoard> board_);
     ChessBoardWidget();
     void setMode(DrawMode newMode);
+    QPointF convertPositionToQPointF(const SurakartaPosition& position);
 
 public slots:
-    void movePiece(const SurakartaPosition& from, const SurakartaPosition& to);
+    void movePiece(/*const SurakartaPosition& from, const SurakartaPosition& to*/const SurakartaMove& move);
 
 signals:
     void playerMove(SurakartaPosition from, SurakartaPosition to);

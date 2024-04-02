@@ -2,9 +2,7 @@
 
 #include "my_agent_base.h"
 #include "my_common.h"
-#include "my_rule_manager.h"
-// #include "mainwindow.h"
-#include "chess_board_widght.h"
+#include "rule_manager.h"
 #include "settings.h"
 
 class SurakartaMoveResponse {
@@ -72,7 +70,7 @@ public:
      * @param move The move to be made.
      * @return See SurakartaMoveResponse.
      */
-    SurakartaMoveResponse Move(const SurakartaMove& move);
+    SurakartaMoveResponse Move(/*const*/ SurakartaMove& move);
 
     /**
      * @brief Set the agent.
