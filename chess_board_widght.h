@@ -6,9 +6,9 @@
 #include <QWidget>
 #include <QGraphicsView>
 #include <QGraphicsScene>
-#include "my_board.h"
+#include "info_board.h"
 #include <QPainter>
-#include "my_common.h"
+#include "info_common.h"
 #include "settings.h"
 
 class ChessBoardWidget : public QWidget {
@@ -29,6 +29,7 @@ public slots:
 
 signals:
     void playerMove(SurakartaPosition from, SurakartaPosition to);
+    void animationFinished();
 
 protected:
     void paintEvent(QPaintEvent */*event*/) override;

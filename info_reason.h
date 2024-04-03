@@ -1,7 +1,5 @@
 #pragma once
 
-#include <iostream>
-
 // TODO: Read the following comments carefully.
 // Don't implement anything with 'unused' comments.
 

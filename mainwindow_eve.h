@@ -8,10 +8,10 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QPainter>
-#include "my_game.h"
+#include "info_game.h"
 #include "agent_mine.h"
 #include "agent_random.h"
-#include "my_game.h"
+#include "info_game.h"
 #include "chess_board_widght.h"
 
 QT_BEGIN_NAMESPACE

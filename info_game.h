@@ -1,9 +1,10 @@
 #pragma once
 
-#include "my_agent_base.h"
-#include "my_common.h"
+#include "agent_base.h"
 #include "rule_manager.h"
 #include "settings.h"
+#include "info_piece.h"
+#include "info_reason.h"
 
 class SurakartaMoveResponse {
 public:
@@ -48,38 +49,11 @@ public:
         rule_manager_(std::make_shared<SurakartaRuleManager>(board_, game_info_)),
         agent_(std::make_shared<SurakartaAgentBase>(board_, game_info_, rule_manager_)) {}
 
-    /**
-     * @brief Start the game. If file_name is empty, the board will be initialized to the initial state. Otherwise, the board will be initialized to the state in the file.
-     */
     void StartGame(/*std::string file_name = ""*/);
-
-    /**
-     * @brief Save the game to a file.
-     * @param file_name The file name.
-     */
     // void SaveGame(std::string file_name) const;
-
-    /**
-     * @brief Update game info, this function should be called after each move.
-     * @param reason SurakartaIllegalMoveReason.
-     */
     void UpdateGameInfo(SurakartaIllegalMoveReason move_reason, SurakartaEndReason end_reason, SurakartaPlayer winner);
-
-    /**
-     * @brief Move a piece, and update game info.
-     * @param move The move to be made.
-     * @return See SurakartaMoveResponse.
-     */
     SurakartaMoveResponse Move(/*const*/ SurakartaMove& move);
-
-    /**
-     * @brief Set the agent.
-     */
     void SetAgent(std::shared_ptr<SurakartaAgentBase> agent) { agent_ = agent; }
-
-    // void printBoard(std::shared_ptr<ChessBoardWidget>& chessboardweight);
-
-    // void chessBoardWidghtInit(std::shared_ptr<ChessBoardWidget>& chessboardweight, std::shared_ptr<SurakartaBoard> board_);
 
     unsigned int GetBoardSize() const { return board_size_; }
     std::shared_ptr<SurakartaBoard> GetBoard() const { return board_; }
@@ -100,6 +74,6 @@ public:
     std::shared_ptr<SurakartaAgentBase> agent_;
     // std::shared_ptr<ChessBoardWidget> chessboardwight_;
 
-
-
 };
+
+

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <memory>
-#include "my_common.h"
+#include "info_common.h"
 #include "rule_manager.h"
 
 class SurakartaAgentBase {

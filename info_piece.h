@@ -1,6 +1,5 @@
 #pragma once
 
-#include <iostream>
 #include <QGraphicsObject>
 // #include <QRectF>
 
@@ -28,10 +27,10 @@ struct SurakartaPosition {
     unsigned int y;
     SurakartaPosition(unsigned int x = 0, unsigned int y = 0)
         : x(x), y(y) {}
-    friend std::ostream& operator<<(std::ostream& os, const SurakartaPosition& pos) {
-        os << "(" << pos.x << ", " << pos.y << ")";
-        return os;
-    }
+    // friend std::ostream& operator<<(std::ostream& os, const SurakartaPosition& pos) {
+    //     os << "(" << pos.x << ", " << pos.y << ")";
+    //     return os;
+    // }
     bool operator==(const SurakartaPosition& rhs) const {
         return x == rhs.x && y == rhs.y;
     }

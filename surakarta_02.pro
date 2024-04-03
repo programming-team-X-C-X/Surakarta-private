@@ -13,13 +13,13 @@ SOURCES += \
     agent_random.cpp \
     chess_board_widght.cpp \
     end_dialog.cpp \
+    info_game.cpp \
+    info_piece.cpp \
+    info_reason.cpp \
     main.cpp \
     mainwindow_eve.cpp \
     mainwindow_pve.cpp \
     mainwindow_pvp.cpp \
-    my_game.cpp \
-    my_piece.cpp \
-    my_reason.cpp \
     rule_manager.cpp \
     settings.cpp \
     settings_dialog.cpp \
@@ -28,21 +28,21 @@ SOURCES += \
     # Surakarta-RuleAiTest-private\src\surakarta\surakarta_agent_base.cpp
 
 HEADERS += \
+    agent_base.h \
     agent_mine.h \
     agent_random.h \
     chess_board_widght.h \
     drawpoint.h \
     end_dialog.h \
+    global_random_generator.h \
+    info_board.h \
+    info_common.h \
+    info_game.h \
+    info_piece.h \
+    info_reason.h \
     mainwindow_eve.h \
     mainwindow_pve.h \
     mainwindow_pvp.h \
-    my_agent_base.h \
-    my_board.h \
-    my_common.h \
-    my_game.h \
-    my_global_random_generator.h \
-    my_piece.h \
-    my_reason.h \
     rule_manager.h \
     settings.h \
     settings_dialog.h \

@@ -1,6 +1,6 @@
 #pragma once
 #include <memory>
-#include "my_agent_base.h"
+#include "agent_base.h"
 
 class SurakartaAgentMine : public SurakartaAgentBase {
 public:

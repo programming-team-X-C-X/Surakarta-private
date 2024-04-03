@@ -2,8 +2,8 @@
 
 #include <memory>
 #include <vector>
-#include "my_common.h"
-#include "my_board.h"
+#include "info_common.h"
+#include "info_board.h"
 #include "settings.h"
 
 class SurakartaRuleManager {
@@ -21,28 +21,11 @@ public:
     }
 
     virtual void OnUpdateBoard();
-
-
-    /**
-     * @brief Judge whether a move is legal.
-     * @param move The move to be judged.
-     */
     virtual SurakartaIllegalMoveReason JudgeMove(/*const*/ SurakartaMove& move);
-
-    /**
-     * @brief Judge whether the game is end.
-     * @param reason SurakartaIllegalMoveReason of the last move.
-     */
     virtual std::pair<SurakartaEndReason, SurakartaPlayer> JudgeEnd(const SurakartaIllegalMoveReason reason);
-
-    // *
-    //  * @brief Get all legal target positions of a piece.
-    //  * @param postion The position of the piece.
-
     virtual std::unique_ptr<std::vector<SurakartaPosition>> GetAllLegalTarget(const SurakartaPosition postion);
 
     //    protected:
-    // const unsigned int BOARD_SIZE;
     std::shared_ptr<const SurakartaBoard> board_;
     std::shared_ptr<const SurakartaGameInfo> game_info_;
 
@@ -55,5 +38,5 @@ public:
 
     bool EatCircle(const SurakartaMove& move, const circle& circle, unsigned int& i, std::vector<std::shared_ptr<SurakartaPosition>>& path);
 
-    int bye_world_ = 0;
+    // int bye_world_ = 0;
 };

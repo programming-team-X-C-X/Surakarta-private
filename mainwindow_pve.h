@@ -9,7 +9,7 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QPainter>
-#include "my_game.h"
+#include "info_game.h"
 #include "agent_mine.h"
 // #include "my_agent_random.h"
 #include "chess_board_widght.h"
@@ -32,15 +32,15 @@ public:
     SurakartaGame game;//顺序讲究
     MainWindow_PVE(QWidget *parent = nullptr);
     ~MainWindow_PVE();
-    SurakartaMove handlePlayerMove(SurakartaPosition from, SurakartaPosition to);
     void computerMove();
+    void startComputerMove();
     void showEndDialog();
     void updateCountdownDisplay();
     // std::shared_ptr<SurakartaAgentRandom> agent     = std::make_shared<SurakartaAgentRandom>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager());
     std::shared_ptr<SurakartaAgentMine>   agentMine = std::make_shared<SurakartaAgentMine>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager());
     ChessBoardWidget *chessBoard;
     QTimer *computerMoveTimer;
-    int computerMoveDelay = 1000; // 电脑走棋的延迟时间，1000毫秒
+    int computerMoveDelay = 500; // 电脑走棋的延迟时间，1000毫秒
     int countdownTime = TIME_LIMIT;
     QTimer *countdownTimer;
     QLabel *countdownLabel;
@@ -49,13 +49,13 @@ public:
 public slots:
     void playerMove(SurakartaPosition from, SurakartaPosition to);
     void Initialize();
-    void updateGame();
+    // void updateGame();
     void updateCountdown();
     void giveUp();
+    void restartGame();
 
 signals:
     void backToStartDialog();
-
 
 protected:
         void paintEvent(QPaintEvent */*event*/) override;

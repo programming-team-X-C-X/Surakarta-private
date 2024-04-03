@@ -1,4 +1,4 @@
-#include "my_piece.h"
+#include "info_piece.h"
 #include "settings.h"
 #include <QPainter>
 

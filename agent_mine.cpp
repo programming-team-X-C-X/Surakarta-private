@@ -10,8 +10,6 @@ SurakartaMove SurakartaAgentMine::CalculateMove() {
 
     // 3.
     SurakartaMove rt = GetBestMove(Go);
-
-
     return rt;
 }
 
@@ -68,10 +66,8 @@ int SurakartaAgentMine::CalculateMarks(SurakartaBoard& _board) const
             }
             else if(_board[i][j]->GetColor() ==  PieceColor::NONE) continue;
             else  mark -= 20;
-
         }
     }
-
     return mark;
 }
 
@@ -96,22 +92,17 @@ SurakartaMove SurakartaAgentMine::GetBestMove(std::vector<std::pair<SurakartaPos
             _board[tmp.from.x][tmp.from.y]->color_ = PieceColor::NONE;
             _board[tmp.to.x][tmp.to.y]->color_     = game_info_->current_player_;
 
-
             CurP = CalculateMarks(_board);
             if(CurP > MaxP)
             {
                 MaxP = CurP;
                 best = tmp;
             }
-
             //   back
-
-            _board[tmp.from.x][tmp.from.y]->color_ = ls1 ;
+            _board[tmp.from.x][tmp.from.y]->color_ = ls1;
             _board[tmp.to.x][tmp.to.y]->color_     = ls2;
-
         }
     }
-
     return best;
 }
 

@@ -2,7 +2,6 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QSpinBox>
-#include "settings.h"
 #include "settings_dialog.h"
 
 StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {

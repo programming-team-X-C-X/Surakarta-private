@@ -1,8 +1,8 @@
-#include "my_game.h"
+#include "info_game.h"
 #include <QMainWindow>
 #include <QWidget>
 #include <QPainter>
-#include "my_common.h"
+#include "info_common.h"
 // #include "my_agent_mine.h"
 // #include "my_agent_random.h"
 

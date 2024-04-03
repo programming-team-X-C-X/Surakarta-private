@@ -18,7 +18,6 @@ SurakartaIllegalMoveReason SurakartaRuleManager::JudgeMove(/*const*/ SurakartaMo
     else if((*board_)[move.from.x][move.from.y]->GetColor() == PieceColor::NONE)
         return SurakartaIllegalMoveReason::NOT_PIECE;
 
-
     // move right piece
     else if((*board_)[move.from.x][move.from.y]->GetColor() == current_player)
     {

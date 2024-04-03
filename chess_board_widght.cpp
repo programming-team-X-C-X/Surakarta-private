@@ -1,7 +1,7 @@
 #include <QMouseEvent>
 #include "chess_board_widght.h"
-#include "my_board.h"
-#include "my_piece.h"
+#include "info_board.h"
+#include "info_piece.h"
 #include <QPainter>
 #include "settings.h"
 #include <cmath>
@@ -228,13 +228,15 @@ void ChessBoardWidget::movePiece(const SurakartaMove& move) {
             QPointF newPos = animationPath.pointAtPercent(t); // 获取路径上的位置
             piece->setPos(newPos); // 移动棋子到这个位置
         });
-        connect(animation, &QVariantAnimation::finished, this, [move, animation, piece]() {
+        connect(animation, &QVariantAnimation::finished, this, [this, move, animation, piece]() {
             animation->deleteLater(); // 删除动画对象
+            emit animationFinished();
+            pieceItems[move.from.x][move.from.y] = nullptr;
+            piece->position_ = move.to; // 更新棋子的最终位置
+            pieceItems[move.to.x][move.to.y] = piece;
         });
         animation->start(); // 开始动画
-        pieceItems[move.from.x][move.from.y] = nullptr;
-        piece->position_ = move.to; // 更新棋子的最终位置
-        pieceItems[move.to.x][move.to.y] = piece;
+
     }
 }
 

@@ -2,7 +2,7 @@
 
 #include <memory>
 #include <vector>
-#include "my_piece.h"
+#include "info_piece.h"
 
 class SurakartRow : public std::vector<std::shared_ptr<SurakartaPiece>> {
 public:
