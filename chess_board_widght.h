@@ -23,6 +23,10 @@ public:
     void setMode(DrawMode newMode);
     QPointF convertPositionToQPointF(const SurakartaPosition& position);
 
+    int arcNum = (BOARD_SIZE - 2) / 2;//环数
+    int rawNum = BOARD_SIZE + arcNum * 2 + 1;//总行数
+    int gridSize = WINDOW_SIZE / rawNum;
+
 public slots:
     void movePiece(/*const SurakartaPosition& from, const SurakartaPosition& to*/const SurakartaMove& move);
     void receiveHints(const std::vector<SurakartaPosition>& hints);

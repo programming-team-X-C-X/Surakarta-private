@@ -115,12 +115,13 @@ void MainWindow_PVE::Initialize() {
     // chessBoard->setMode(ChessBoardWidget::PieceMode);
     countdownTime = TIME_LIMIT;
     countdownTimer->start();
-    updateGameInfo();
+    judgeEnd();
     // if (game.game_info_->current_player_ == game.GetGameInfo()->computer_color_)
     //     startComputerMove();
 }
 
 void MainWindow_PVE::judgeEnd() {
+    updateGameInfo();
     if (game.IsEnd() && game.GetGameInfo()->end_reason_ != SurakartaEndReason::ILLIGAL_MOVE)
         showEndDialog();
     if (game.game_info_->current_player_ == game.GetGameInfo()->computer_color_)
@@ -128,7 +129,7 @@ void MainWindow_PVE::judgeEnd() {
 }
 
 void MainWindow_PVE::updateGameInfo() {
-    judgeEnd();
+    // judgeEnd();
     // chessBoard->setMode(ChessBoardWidget::PieceMode);
     QString player = game.GetGameInfo()->current_player_ == SurakartaPlayer::BLACK ? QString("BLACK") : QString("WHITE");
     QString currentPlayer = QString("当前回合：%1").arg(player);
@@ -141,7 +142,7 @@ void MainWindow_PVE::computerMove() {
     SurakartaMove move = agentMine->CalculateMove();
     game.Move(move);
     chessBoard->movePiece(move);
-    updateGameInfo();
+    // updateGameInfo();
 }
 
 void MainWindow_PVE::playerMove(SurakartaPosition from, SurakartaPosition to) {
@@ -236,6 +237,7 @@ MainWindow_PVE::~MainWindow_PVE() {
 void MainWindow_PVE::paintEvent(QPaintEvent */*event*/) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
+
 
     // 绘制棋盘网格
     painter.setPen(Qt::black);

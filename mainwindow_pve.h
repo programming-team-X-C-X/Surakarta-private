@@ -43,6 +43,9 @@ public:
     QTimer *computerMoveTimer;
     int computerMoveDelay = 500; // 电脑走棋的延迟时间，1000毫秒
     int countdownTime = TIME_LIMIT;
+    int arcNum = (BOARD_SIZE - 2) / 2;//环数
+    int rawNum = BOARD_SIZE + arcNum * 2 + 1;//总行数
+    int gridSize = WINDOW_SIZE / rawNum;
     QTimer *countdownTimer;
     QLabel *countdownLabel;
     QLabel *currentRoundLabel;

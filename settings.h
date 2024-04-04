@@ -3,7 +3,7 @@
 
 // int BOARD_SIZE = 6;
 extern unsigned int BOARD_SIZE;
-extern const unsigned int WINDOW_SIZE;
+extern unsigned int WINDOW_SIZE;
 extern int arcNum;
 extern int rawNum;
 extern int gridSize;

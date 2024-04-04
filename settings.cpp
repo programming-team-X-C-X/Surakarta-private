@@ -1,14 +1,16 @@
 #include "settings.h"
 
 //窗口设置
-const unsigned int WINDOW_SIZE = 700;
-
-//棋盘设置
-unsigned int BOARD_SIZE = 6;
+unsigned int WINDOW_SIZE = 700;
+// unsigned int WINDOW_SIZE = gridSize * rawNum;
 
 int arcNum = (BOARD_SIZE - 2) / 2;//环数
 int rawNum = BOARD_SIZE + arcNum * 2 + 1;//总行数
 int gridSize = WINDOW_SIZE / rawNum;//棋盘单位长度
+// int gridSize = 70;
+
+//棋盘设置
+unsigned int BOARD_SIZE = 6;
 
 //休眠设置
 const unsigned int SLEEP_TIME = 500;

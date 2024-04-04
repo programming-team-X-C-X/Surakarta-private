@@ -22,6 +22,9 @@ ChessBoardWidget::ChessBoardWidget() :
     // view->setSceneRect(chessBoardItem->boundingRect());
     // view->setBackgroundBrush(QBrush(Qt::transparent));
 
+    int arcNum = (BOARD_SIZE - 2) / 2;//环数
+    int rawNum = BOARD_SIZE + arcNum * 2 + 1;//总行数
+    int gridSize = WINDOW_SIZE / rawNum;
     for (unsigned int y = 0; y < BOARD_SIZE; y++) {
         for (unsigned int x = 0; x < BOARD_SIZE; x++) {
             if (y < 2) {
