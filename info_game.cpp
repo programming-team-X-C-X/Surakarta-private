@@ -7,18 +7,18 @@
 // #include "my_agent_random.h"
 
 void SurakartaGame::StartGame() {
-        for (unsigned int y = 0; y < board_size_; y++) {
-            for (unsigned int x = 0; x < board_size_; x++) {
-                if (y < 2) {
-                    (*board_)[x][y] = std::make_shared<SurakartaPiece>(x, y, PieceColor::BLACK);
-                } else if (y >= board_size_ - 2) {
-                    (*board_)[x][y] = std::make_shared<SurakartaPiece>(x, y, PieceColor::WHITE);
-                } else {
-                    (*board_)[x][y] = std::make_shared<SurakartaPiece>(x, y, PieceColor::NONE);
-                }
+    for (unsigned int y = 0; y < board_size_; y++) {
+        for (unsigned int x = 0; x < board_size_; x++) {
+            if (y < 2) {
+                (*board_)[x][y] = std::make_shared<SurakartaPiece>(x, y, PieceColor::BLACK);
+            } else if (y >= board_size_ - 2) {
+                (*board_)[x][y] = std::make_shared<SurakartaPiece>(x, y, PieceColor::WHITE);
+            } else {
+                (*board_)[x][y] = std::make_shared<SurakartaPiece>(x, y, PieceColor::NONE);
             }
         }
-        game_info_->Reset();
+    }
+    game_info_->Reset();
     rule_manager_->OnUpdateBoard();
 }
 
@@ -46,7 +46,8 @@ SurakartaMoveResponse SurakartaGame::Move(/*const*/ SurakartaMove& move) {
     SurakartaIllegalMoveReason move_reason = rule_manager_->JudgeMove(move/*, path*/);
     auto [end_reason, winner] = rule_manager_->JudgeEnd(move_reason);
 
-    UpdateGameInfo(move_reason, end_reason, winner);
+    if (IsLegalMoveReason(move_reason))
+        UpdateGameInfo(move_reason, end_reason, winner);
 
     if (move_reason == SurakartaIllegalMoveReason::LEGAL_NON_CAPTURE_MOVE) {
         std::swap((*board_)[move.to.x][move.to.y], (*board_)[move.from.x][move.from.y]);

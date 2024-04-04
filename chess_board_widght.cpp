@@ -1,13 +1,9 @@
-#include <QMouseEvent>
 #include "chess_board_widght.h"
+#include <QMouseEvent>
+#include <QPropertyAnimation>
+#include <QDebug>
 #include "info_board.h"
 #include "info_piece.h"
-#include <QPainter>
-#include "settings.h"
-#include <cmath>
-#include <QDebug>
-#include <QPropertyAnimation>
-#include "rule_manager.h"
 
 ChessBoardWidget::ChessBoardWidget() :
     currentMode(BoardMode), hasFirstClick(false)
@@ -21,14 +17,10 @@ ChessBoardWidget::ChessBoardWidget() :
     scene = new QGraphicsScene(this);
     view = new QGraphicsView(scene, this);
     ChessBoardGraphicsItem *chessBoardItem = new ChessBoardGraphicsItem();
+    scene->addItem(chessBoardItem);
     // view->setFixedSize(WINDOW_SIZE, WINDOW_SIZE);
     // view->setSceneRect(chessBoardItem->boundingRect());
-
-    // QRectF sceneRect = QRectF(0, 0, WINDOW_SIZE/**0.9*/, WINDOW_SIZE/**0.9*/);
-    // scene->setSceneRect(sceneRect);
-
     // view->setBackgroundBrush(QBrush(Qt::transparent));
-    scene->addItem(chessBoardItem);
 
     for (unsigned int y = 0; y < BOARD_SIZE; y++) {
         for (unsigned int x = 0; x < BOARD_SIZE; x++) {
@@ -71,7 +63,6 @@ void ChessBoardWidget::paintEvent(QPaintEvent */*event*/) {
             painter.drawLine(line2);
         }
     }
-
     for (int i = 0; i < arcNum; i++)
         painter.drawArc(gridSize*(arcNum-i), gridSize*(arcNum-i), gridSize*2*(i+1), gridSize*2*(i+1), 0, 16*270);
     for (int i = 0; i < arcNum; i++)
@@ -258,7 +249,6 @@ void ChessBoardWidget::movePiece(const SurakartaMove& move) {
             pieceItems[move.to.x][move.to.y] = piece;
         });
         animation->start(); // 开始动画
-
     }
 }
 
@@ -266,7 +256,6 @@ QPointF ChessBoardWidget::convertPositionToQPointF(const SurakartaPosition& posi
     return QPointF((arcNum + position.x + 1) * gridSize - PIECE_SIZE / 2,
                    (arcNum + position.y + 1) * gridSize - PIECE_SIZE / 2);
 }
-
 
 void ChessBoardWidget::setMode(DrawMode mode) {
     currentMode = mode;

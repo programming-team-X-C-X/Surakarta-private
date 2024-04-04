@@ -5,21 +5,28 @@
 MainWindow_PVE::MainWindow_PVE(QWidget *parent)
     : QMainWindow(parent)
 {
-
     setWindowTitle(tr("surakarta"));
     setFixedSize(WINDOW_SIZE*1.5, WINDOW_SIZE);
 
     buttonClose = new QPushButton("close", this);
     buttonStart = new QPushButton("start", this);
     buttonBack = new QPushButton("back", this);
+    playerInfoLabel = new QLabel(this);
     buttonStart->setFixedSize(100, 30);
     buttonBack->setFixedSize(100, 30);
     buttonClose->setFixedSize(100, 30);
 
+    QString playerColor = game.GetGameInfo()->player_color_ == SurakartaPlayer::BLACK ? QString("BLACK") : QString("WHITE");
+    QString computerColor = game.GetGameInfo()->computer_color_ == SurakartaPlayer::BLACK ? QString("BLACK") : QString("WHITE");
+    QString playerInfo = QString("玩家：%1\n电脑：%2").arg(playerColor, computerColor);
+    playerInfoLabel->setText(playerInfo);
+
     QVBoxLayout *vlayout = new QVBoxLayout();
     QHBoxLayout *hlayout = new QHBoxLayout();
 
-    vlayout->addStretch(30);
+    vlayout->addStretch(10);
+    vlayout->addWidget(playerInfoLabel);
+    vlayout->addStretch(20);
     vlayout->addWidget(buttonStart);
     vlayout->addStretch(1);
     vlayout->addWidget(buttonBack);
@@ -51,9 +58,14 @@ void MainWindow_PVE::Initialize() {
     // chessBoard->setGeometry(0, 0, WINDOW_SIZE, WINDOW_SIZE);
     connect(buttonGiveUp, &QPushButton::clicked, this, &MainWindow_PVE::giveUp);
     connect(chessBoard, &ChessBoardWidget::playerMove, this, &MainWindow_PVE::playerMove);
-    connect(chessBoard, &ChessBoardWidget::animationFinished, this, &MainWindow_PVE::startComputerMove);
+    connect(chessBoard, &ChessBoardWidget::animationFinished, this, &MainWindow_PVE::judgeEnd);
     connect(chessBoard, &ChessBoardWidget::requestHints, this, &MainWindow_PVE::provideHints);
     connect(this, &MainWindow_PVE::sendHints, chessBoard, &ChessBoardWidget::receiveHints);
+
+    playerInfoLabel = new QLabel(this);
+    currentPlayerLabel = new QLabel(this);
+    remainingPiecesLabel = new QLabel(this);
+    currentRoundLabel = new QLabel(this);
 
     countdownLabel = new QLabel(this);
     QFont labelFont = countdownLabel->font();
@@ -75,6 +87,9 @@ void MainWindow_PVE::Initialize() {
     buttonGiveUp->setFixedSize(100, 30);
     // buttonStart->setFixedSize(100, 30);
     vlayout->addStretch(10);
+    vlayout->addWidget(playerInfoLabel);
+    vlayout->addWidget(currentRoundLabel);
+    vlayout->addWidget(currentPlayerLabel);
     vlayout->addWidget(countdownLabel);
     vlayout->addStretch(20);
     vlayout->addWidget(buttonGiveUp);
@@ -97,44 +112,52 @@ void MainWindow_PVE::Initialize() {
 
     game.StartGame();
     chessBoard->board = game.board_;
-    chessBoard->setMode(ChessBoardWidget::PieceMode);
+    // chessBoard->setMode(ChessBoardWidget::PieceMode);
     countdownTime = TIME_LIMIT;
     countdownTimer->start();
+    updateGameInfo();
+    // if (game.game_info_->current_player_ == game.GetGameInfo()->computer_color_)
+    //     startComputerMove();
 }
 
-// void MainWindow_PVE::updateGame() {
-//     chessBoard->setMode(ChessBoardWidget::PieceMode);
-// }
+void MainWindow_PVE::judgeEnd() {
+    if (game.IsEnd() && game.GetGameInfo()->end_reason_ != SurakartaEndReason::ILLIGAL_MOVE)
+        showEndDialog();
+    if (game.game_info_->current_player_ == game.GetGameInfo()->computer_color_)
+        startComputerMove();
+}
+
+void MainWindow_PVE::updateGameInfo() {
+    judgeEnd();
+    // chessBoard->setMode(ChessBoardWidget::PieceMode);
+    QString player = game.GetGameInfo()->current_player_ == SurakartaPlayer::BLACK ? QString("BLACK") : QString("WHITE");
+    QString currentPlayer = QString("当前回合：%1").arg(player);
+    QString currentRound = QString("当前回合数：%1").arg(game.GetGameInfo()->num_round_);
+    currentPlayerLabel->setText(currentPlayer);
+    currentRoundLabel->setText(currentRound);
+}
 
 void MainWindow_PVE::computerMove() {
     SurakartaMove move = agentMine->CalculateMove();
     game.Move(move);
-    // handlePlayerMove(move.from, move.to);
     chessBoard->movePiece(move);
-    // updateGame();
-    if (game.IsEnd() && game.GetGameInfo()->end_reason_ != SurakartaEndReason::ILLIGAL_MOVE)
-        showEndDialog();
-    // countdownTimer->start(TIME_LIMIT);
+    updateGameInfo();
 }
 
 void MainWindow_PVE::playerMove(SurakartaPosition from, SurakartaPosition to) {
     if (game.IsEnd()) return;
-    // SurakartaMove move = handlePlayerMove(from, to);
     SurakartaMove move(from, to, game.GetGameInfo()->current_player_);
 
-    game.Move(move);
-    chessBoard->movePiece(move);
-    // updateGame();
-    if (game.IsEnd() && game.GetGameInfo()->end_reason_ != SurakartaEndReason::ILLIGAL_MOVE)
-        showEndDialog();
+    // game.Move(move);
+    if (game.Move(move).IsLegal())
+        chessBoard->movePiece(move);
+    updateGameInfo();
 }
 
 void MainWindow_PVE::startComputerMove() {
-    if (game.game_info_->current_player_ == SurakartaPlayer::WHITE) {
         // countdownTimer->stop();
         countdownTime = TIME_LIMIT;
         computerMoveTimer->start(computerMoveDelay);
-    }
 }
 
 void MainWindow_PVE::updateCountdown() {
@@ -149,9 +172,8 @@ void MainWindow_PVE::updateCountdown() {
 
 void MainWindow_PVE::updateCountdownDisplay() {
     QString color = "black";
-    if (countdownTime <= 10) {
+    if (countdownTime <= 10)
         color = "red";
-    }
     countdownLabel->setStyleSheet((QString("color:%1").arg(color)));
     countdownLabel->setText(tr("Remaining Time: %1").arg(countdownTime));
     // countdownLabel->show();
@@ -170,13 +192,12 @@ void MainWindow_PVE::showEndDialog() {
     endDialog *enddialog = new endDialog(this);
     // QString winnerColor = (game.game_info_->winner_ == PieceColor::BLACK) ? "Black" : "White";
     QString winnerColor;
-    if (game.game_info_->winner_ == PieceColor::BLACK) {
+    if (game.game_info_->winner_ == PieceColor::BLACK)
         winnerColor = "Black Player";
-    } else if (game.game_info_->winner_ == PieceColor::WHITE) {
+    else if (game.game_info_->winner_ == PieceColor::WHITE)
         winnerColor = "White Player";
-    } else {
+    else
         winnerColor = "Unknown";
-    }
 
     QString message = QString("<div style='text-align: center;'>"
                               "<p><span style='font-size:12pt; color:red;'>GAME OVER!</span></p>"
@@ -204,6 +225,7 @@ void MainWindow_PVE::restartGame() {
 
 void MainWindow_PVE::giveUp() {
     game.game_info_->end_reason_ = SurakartaEndReason::RESIGN;
+    buttonGiveUp->hide();
     showEndDialog();
 }
 

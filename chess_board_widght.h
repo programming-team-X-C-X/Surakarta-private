@@ -7,7 +7,6 @@
 #include <QGraphicsView>
 #include <QGraphicsScene>
 #include "info_board.h"
-#include <QPainter>
 #include "info_common.h"
 #include "settings.h"
 
@@ -17,9 +16,7 @@ public:
     enum DrawMode { BoardMode, PieceMode };
     DrawMode currentMode;
     std::shared_ptr<SurakartaBoard> board;
-    // SurakartaPiece *pieceItems[BOARD_SIZE][BOARD_SIZE];
     std::vector<std::vector<std::shared_ptr<SurakartaPiece>>> pieceItems;
-    // ChessBoardWidget(std::shared_ptr<SurakartaBoard> board_);
     ChessBoardWidget();
     void drawHint(const SurakartaPosition& position);
     void clearHints();
@@ -40,7 +37,6 @@ protected:
     void mousePressEvent(QMouseEvent *event) override;
 
 private:
-    // QPoint firstClickPos;
     SurakartaPosition firstClickPos;
     SurakartaPiece *firstClickPiece;
     bool hasFirstClick;
@@ -48,9 +44,6 @@ private:
     QGraphicsScene *scene;
     QGraphicsView *view;
 };
-
-
-
 
 class ChessBoardGraphicsItem : public QGraphicsItem {
 public:
@@ -60,7 +53,6 @@ public:
     int type() const override {
         return Type;
     }
-
 
     QRectF boundingRect() const override {
         // 返回棋盘的边界矩形
@@ -85,7 +77,6 @@ public:
                 painter->drawLine(line2);
             }
         }
-
         for (int i = 0; i < arcNum; i++)
             painter->drawArc(gridSize*(arcNum-i), gridSize*(arcNum-i), gridSize*2*(i+1), gridSize*2*(i+1), 0, 16*270);
         for (int i = 0; i < arcNum; i++)
@@ -97,28 +88,5 @@ public:
 
     }
 };
-
-// class PieceGraphicsItem : public QGraphicsItem {
-// public:
-//     QRectF boundingRect() const override {
-//         // 返回棋盘的边界矩形
-//     return QRectF(0, 0, PIECE_SIZE, PIECE_SIZE);
-//     }
-
-//     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override {
-//         Q_UNUSED(option);
-//         Q_UNUSED(widget);
-//         // 设置画刷颜色
-//         // QColor color = (this->color_ == PieceColor::BLACK) ? Qt::black : Qt::white;
-//         QColor color = Qt::white;
-//         painter->setBrush(color);
-
-//         // 绘制一个圆形来代表棋子
-//         painter->drawEllipse(boundingRect());
-//         // std::cout<<"yes";
-//     }
-
-// };
-
 
 #endif

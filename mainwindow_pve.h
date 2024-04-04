@@ -36,6 +36,7 @@ public:
     void startComputerMove();
     void showEndDialog();
     void updateCountdownDisplay();
+    void updateGameInfo();
     // std::shared_ptr<SurakartaAgentRandom> agent     = std::make_shared<SurakartaAgentRandom>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager());
     std::shared_ptr<SurakartaAgentMine>   agentMine = std::make_shared<SurakartaAgentMine>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager());
     ChessBoardWidget *chessBoard;
@@ -44,15 +45,19 @@ public:
     int countdownTime = TIME_LIMIT;
     QTimer *countdownTimer;
     QLabel *countdownLabel;
+    QLabel *currentRoundLabel;
+    QLabel *currentPlayerLabel;
+    QLabel *playerInfoLabel;
+    QLabel *remainingPiecesLabel;
 
 public slots:
     void playerMove(SurakartaPosition from, SurakartaPosition to);
     void Initialize();
-    // void updateGame();
     void updateCountdown();
     void giveUp();
     void restartGame();
     void provideHints(SurakartaPosition pos);
+    void judgeEnd();
 
 signals:
     void backToStartDialog();

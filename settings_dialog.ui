@@ -127,14 +127,17 @@
       <item>
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
-         <widget class="QRadioButton" name="radioButton">
+         <widget class="QRadioButton" name="blackButton">
           <property name="text">
            <string>黑</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QRadioButton" name="radioButton_2">
+         <widget class="QRadioButton" name="whiteButton">
           <property name="text">
            <string>白</string>
           </property>
@@ -158,7 +161,7 @@
       <item>
        <widget class="QSpinBox" name="timeLimitBox">
         <property name="value">
-         <number>20</number>
+         <number>60</number>
         </property>
        </widget>
       </item>

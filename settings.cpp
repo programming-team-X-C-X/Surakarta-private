@@ -17,5 +17,9 @@ const unsigned int SLEEP_TIME = 500;
 const unsigned int PIECE_SIZE = 30;
 double PIECE_SPEED = 100.0;
 
-//回合限时
-unsigned int TIME_LIMIT = 200;
+//回合设置
+unsigned int TIME_LIMIT = 60;
+unsigned int MAX_NO_CAPTURE_ROUND = 40;
+
+//玩家设置
+bool PLAYER_COLOR = 1; //1 black 2 white

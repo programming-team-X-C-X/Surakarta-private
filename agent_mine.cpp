@@ -81,10 +81,8 @@ SurakartaMove SurakartaAgentMine::GetBestMove(std::vector<std::pair<SurakartaPos
     PieceColor ls1,ls2;
     //CopyBoard(_board);
 
-    for(unsigned i = 0;i < uin.size(); i++ )    // number of from
-    {
-        for(unsigned j = 0;j < uin[i].second->size(); j++)
-        {
+    for(unsigned i = 0;i < uin.size(); i++ ) { // number of from
+        for(unsigned j = 0;j < uin[i].second->size(); j++) {
             tmp = {uin[i].first,uin[i].second->at(j),game_info_->current_player_};
             //   move
             ls1 = _board[tmp.from.x][tmp.from.y]->color_;
@@ -93,8 +91,7 @@ SurakartaMove SurakartaAgentMine::GetBestMove(std::vector<std::pair<SurakartaPos
             _board[tmp.to.x][tmp.to.y]->color_     = game_info_->current_player_;
 
             CurP = CalculateMarks(_board);
-            if(CurP > MaxP)
-            {
+            if(CurP > MaxP) {
                 MaxP = CurP;
                 best = tmp;
             }
