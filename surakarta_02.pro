@@ -15,7 +15,6 @@ SOURCES += \
     end_dialog.cpp \
     info_game.cpp \
     info_piece.cpp \
-    info_reason.cpp \
     main.cpp \
     mainwindow_eve.cpp \
     mainwindow_pve.cpp \

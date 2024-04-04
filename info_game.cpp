@@ -7,8 +7,6 @@
 // #include "my_agent_random.h"
 
 void SurakartaGame::StartGame() {
-    // void SurakartaGame::StartGame(std::string file_name) {
-    // if (file_name.empty()) {
         for (unsigned int y = 0; y < board_size_; y++) {
             for (unsigned int x = 0; x < board_size_; x++) {
                 if (y < 2) {
@@ -21,12 +19,6 @@ void SurakartaGame::StartGame() {
             }
         }
         game_info_->Reset();
-    // } else {
-    //     std::ifstream fin(file_name);
-    //     fin >> (*board_);
-    //     fin >> (*game_info_);
-    //     fin.close();
-    // }
     rule_manager_->OnUpdateBoard();
 }
 

@@ -52,6 +52,8 @@ void MainWindow_PVE::Initialize() {
     connect(buttonGiveUp, &QPushButton::clicked, this, &MainWindow_PVE::giveUp);
     connect(chessBoard, &ChessBoardWidget::playerMove, this, &MainWindow_PVE::playerMove);
     connect(chessBoard, &ChessBoardWidget::animationFinished, this, &MainWindow_PVE::startComputerMove);
+    connect(chessBoard, &ChessBoardWidget::requestHints, this, &MainWindow_PVE::provideHints);
+    connect(this, &MainWindow_PVE::sendHints, chessBoard, &ChessBoardWidget::receiveHints);
 
     countdownLabel = new QLabel(this);
     QFont labelFont = countdownLabel->font();
@@ -153,6 +155,12 @@ void MainWindow_PVE::updateCountdownDisplay() {
     countdownLabel->setStyleSheet((QString("color:%1").arg(color)));
     countdownLabel->setText(tr("Remaining Time: %1").arg(countdownTime));
     // countdownLabel->show();
+}
+
+void MainWindow_PVE::provideHints(SurakartaPosition pos) {
+    auto hints = game.rule_manager_->GetAllLegalTarget(pos);
+    std::vector<SurakartaPosition> hintVector = *hints;
+    emit sendHints(hintVector);
 }
 
 void MainWindow_PVE::showEndDialog() {

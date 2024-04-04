@@ -66,7 +66,6 @@ bool SurakartaRuleManager::Eat(const SurakartaMove& move, std::vector<std::share
                 else if (j == 1) j = 21;
                 else if( j == (1 + BOARD_SIZE/2) || j == (1 + 3 * BOARD_SIZE/2) || j == (1 + 5 * BOARD_SIZE/2)) j = j + BOARD_SIZE/2 - 1;
                 //else break; // I didn't understand why this is wrong
-
             }
         }
     }
@@ -99,9 +98,7 @@ bool SurakartaRuleManager::EatCircle(const SurakartaMove& move,const circle& cir
                 Pass  = 1 ;
                 path.push_back(circle[index]);
             }
-
             index = (index + 1) % (4 * BOARD_SIZE);
-
         }  // 路径上为空地的时候往后移动
         else break;
         // 表示路径上有障碍,第一条路不通
@@ -153,23 +150,17 @@ bool SurakartaRuleManager::EatCircle(const SurakartaMove& move,const circle& cir
 std::pair<SurakartaEndReason, SurakartaPlayer> SurakartaRuleManager::JudgeEnd(const SurakartaIllegalMoveReason reason) {
 
     SurakartaPlayer current_player = game_info_->current_player_;
-
-
     if(reason == SurakartaIllegalMoveReason::LEGAL_NON_CAPTURE_MOVE)
     {
-
         if((game_info_->num_round_ - game_info_->last_captured_round_)>= game_info_->max_no_capture_round_ )
         {
-
             int cnt1{},cnt2{};
             for(unsigned int i = 0;i< BOARD_SIZE;i++)
             {
                 for(unsigned int j = 0;j < BOARD_SIZE;j++)
                 {
-
                     if((*board_)[i][j]->GetColor() == PieceColor::BLACK) cnt1++;
                     else if((*board_)[i][j]->GetColor() == PieceColor::WHITE) cnt2++;
-
                 }
             }
             if(cnt1 == cnt2)
@@ -196,26 +187,22 @@ std::pair<SurakartaEndReason, SurakartaPlayer> SurakartaRuleManager::JudgeEnd(co
         if(current_player == PieceColor::BLACK)
             return std::make_pair(SurakartaEndReason::ILLIGAL_MOVE, PieceColor::WHITE);
         else return std::make_pair(SurakartaEndReason::ILLIGAL_MOVE, PieceColor::BLACK);
-
 }
 
-
 std::unique_ptr<std::vector<SurakartaPosition>> SurakartaRuleManager::GetAllLegalTarget(const SurakartaPosition postion) {
-    // TODO:
-    // We don't test this function, you don't need to implement this function if you don't need it.
     SurakartaMove move;
     move.from = postion;
-    std::unique_ptr<std::vector<SurakartaPosition>> rt = std::make_unique<std::vector<SurakartaPosition>>();
+    std::unique_ptr<std::vector<SurakartaPosition>> allLegalTargets = std::make_unique<std::vector<SurakartaPosition>>();
     for(unsigned i = 0; i < BOARD_SIZE ; i++)
     {
         for(unsigned j = 0; j < BOARD_SIZE ; j++)
         {
             move.to = {i , j};
             if(JudgeMove(move) == SurakartaIllegalMoveReason::LEGAL_NON_CAPTURE_MOVE || JudgeMove(move) == SurakartaIllegalMoveReason::LEGAL_CAPTURE_MOVE) // legal move
-                rt->push_back({i,j});
+                allLegalTargets->push_back({i,j});
         }
     }
-    return rt;
+    return allLegalTargets;
 }
 
 bool SurakartaRuleManager::IsN_C_M(const SurakartaMove& move)

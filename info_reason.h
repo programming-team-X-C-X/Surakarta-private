@@ -28,5 +28,22 @@ enum class SurakartaEndReason {
     ILLIGAL_MOVE,  // one player makes an illegal move
 };
 
-bool IsLegalMoveReason(SurakartaIllegalMoveReason reason);
-bool IsEndReason(SurakartaEndReason reason);
+inline bool IsLegalMoveReason(SurakartaIllegalMoveReason reason) {
+    switch (reason) {
+    case SurakartaIllegalMoveReason::LEGAL:
+    case SurakartaIllegalMoveReason::LEGAL_CAPTURE_MOVE:
+    case SurakartaIllegalMoveReason::LEGAL_NON_CAPTURE_MOVE:
+        return true;
+    default:
+        return false;
+    }
+}
+
+inline bool IsEndReason(SurakartaEndReason reason) {
+    switch (reason) {
+    case SurakartaEndReason::NONE:
+        return false;
+    default:
+        return true;
+    }
+}

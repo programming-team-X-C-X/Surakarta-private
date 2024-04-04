@@ -7,6 +7,7 @@
 #include <cmath>
 #include <QDebug>
 #include <QPropertyAnimation>
+#include "rule_manager.h"
 
 ChessBoardWidget::ChessBoardWidget() :
     currentMode(BoardMode), hasFirstClick(false)
@@ -85,10 +86,9 @@ void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
     scene = view->scene();
     QPointF scenePos = view->mapToScene(event->pos());
     QGraphicsItem *item = scene->itemAt(scenePos, QTransform());
-    // QList items = scene->selectedItems();
-    // QList views = scene->views();
     if (item) {
         SurakartaPiece *piece = qgraphicsitem_cast<SurakartaPiece*>(item);
+
         if (hasFirstClick) {
             SurakartaPosition secondClickPos;
             if (piece) {
@@ -105,26 +105,48 @@ void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
                 secondClickPos.x = x;
                 secondClickPos.y = y;
             }
-
             hasFirstClick = false;
-
-            // piece->position_ = secondClickPos;
-            // pieceItems[firstClickPos.x][firstClickPos.y] = pieceItems[secondClickPos.x][secondClickPos.y];
-
-            // pieceItems[firstClickPos.x][firstClickPos.y] = nullptr;
-            // pieceItems[secondClickPos.x][secondClickPos.y] = std::make_shared<SurakartaPiece>(firstClickPiece->GetPosition().x, firstClickPiece->GetPosition().y, firstClickPiece->GetColor());
+            clearHints();
             emit playerMove(firstClickPos, secondClickPos);
             qDebug() << "second:" << secondClickPos.x << "," << secondClickPos.y << '\n';
         }
-        else if (piece) {
+        else if (piece) { // 第一次点击
             SurakartaPosition pos = piece->GetPosition();
-            // 第一次点击
+            emit requestHints(pos);
+
             firstClickPos = pos;
             firstClickPiece = piece;
             hasFirstClick = true;
             qDebug() << "first:" << pos.x << "," << pos.y << '\n';
         }
     }
+}
+
+void ChessBoardWidget::receiveHints(const std::vector<SurakartaPosition>& hints) {
+    for (const auto& hintPos : hints) {
+        drawHint(hintPos);  // 您之前已创建的显示提示方法
+    }
+}
+
+// 成员函数以在指定位置绘制提示
+void ChessBoardWidget::drawHint(const SurakartaPosition& position) {
+    auto hintItem = new QGraphicsEllipseItem(convertPositionToQPointF(position).x(), convertPositionToQPointF(position).y(), PIECE_SIZE, PIECE_SIZE);
+
+    QPen pen(QColor(67, 44, 216));
+    pen.setWidth(3);
+    hintItem->setPen(pen); // 设置提示圆圈的描边颜色
+    hintItem->setBrush(QBrush(Qt::transparent)); // 设置提示圆圈填充透明
+    scene->addItem(hintItem); // 将提示添加到场景
+    hintItems.push_back(hintItem); // 保存提示，以便之后可以清理
+}
+
+// 成员函数以清除所有之前的提示
+void ChessBoardWidget::clearHints() {
+    for (auto& hintItem : hintItems) {
+        scene->removeItem(hintItem);
+        delete hintItem;
+    }
+    hintItems.clear(); // 清空列表
 }
 
 void ChessBoardWidget::movePiece(const SurakartaMove& move) {

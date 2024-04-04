@@ -21,15 +21,19 @@ public:
     std::vector<std::vector<std::shared_ptr<SurakartaPiece>>> pieceItems;
     // ChessBoardWidget(std::shared_ptr<SurakartaBoard> board_);
     ChessBoardWidget();
+    void drawHint(const SurakartaPosition& position);
+    void clearHints();
     void setMode(DrawMode newMode);
     QPointF convertPositionToQPointF(const SurakartaPosition& position);
 
 public slots:
     void movePiece(/*const SurakartaPosition& from, const SurakartaPosition& to*/const SurakartaMove& move);
+    void receiveHints(const std::vector<SurakartaPosition>& hints);
 
 signals:
     void playerMove(SurakartaPosition from, SurakartaPosition to);
     void animationFinished();
+    void requestHints(SurakartaPosition pos);
 
 protected:
     void paintEvent(QPaintEvent */*event*/) override;
@@ -40,6 +44,7 @@ private:
     SurakartaPosition firstClickPos;
     SurakartaPiece *firstClickPiece;
     bool hasFirstClick;
+    std::vector<QGraphicsEllipseItem*> hintItems;
     QGraphicsScene *scene;
     QGraphicsView *view;
 };

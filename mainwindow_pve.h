@@ -45,7 +45,6 @@ public:
     QTimer *countdownTimer;
     QLabel *countdownLabel;
 
-
 public slots:
     void playerMove(SurakartaPosition from, SurakartaPosition to);
     void Initialize();
@@ -53,9 +52,11 @@ public slots:
     void updateCountdown();
     void giveUp();
     void restartGame();
+    void provideHints(SurakartaPosition pos);
 
 signals:
     void backToStartDialog();
+    void sendHints(const std::vector<SurakartaPosition>& hints);
 
 protected:
         void paintEvent(QPaintEvent */*event*/) override;
