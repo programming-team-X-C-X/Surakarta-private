@@ -35,3 +35,5 @@
 **version 4.3  4/4**  允许选择执子方，显示更多信息，优化游戏逻辑
 
 **version 4.4  4/4**  修复多路棋盘bug
+
+**version 4.5  4/8**  修复PVP和EVE模式，重构mainwindow

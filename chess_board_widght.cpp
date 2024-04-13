@@ -20,7 +20,7 @@ ChessBoardWidget::ChessBoardWidget() :
     scene->addItem(chessBoardItem);
     // view->setFixedSize(WINDOW_SIZE, WINDOW_SIZE);
     // view->setSceneRect(chessBoardItem->boundingRect());
-    // view->setBackgroundBrush(QBrush(Qt::transparent));
+    view->setBackgroundBrush(QBrush(Qt::transparent));
 
     int arcNum = (BOARD_SIZE - 2) / 2;//环数
     int rawNum = BOARD_SIZE + arcNum * 2 + 1;//总行数

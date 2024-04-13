@@ -1,5 +1,5 @@
-#ifndef MAINWINDOW_PVE_H
-#define MAINWINDOW_PVE_H
+#ifndef GAME_MAINWINDOW_H
+#define GAME_MAINWINDOW_H
 
 #include <QMainWindow>
 #include <QWidget>
@@ -24,21 +24,14 @@ QT_END_NAMESPACE
 
 // 在绘制事件中调用此函数来绘制实心点
 
-class MainWindow_PVE : public QMainWindow
+class GameMainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    SurakartaGame game;//顺序讲究
-    MainWindow_PVE(QWidget *parent = nullptr);
-    ~MainWindow_PVE();
-    void computerMove();
-    void startComputerMove();
-    void showEndDialog();
-    void updateCountdownDisplay();
-    void updateGameInfo();
+    SurakartaGame *game;//顺序讲究
     // std::shared_ptr<SurakartaAgentRandom> agent     = std::make_shared<SurakartaAgentRandom>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager());
-    std::shared_ptr<SurakartaAgentMine>   agentMine = std::make_shared<SurakartaAgentMine>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager());
+    std::shared_ptr<SurakartaAgentMine>   agentMine = std::make_shared<SurakartaAgentMine>(game->GetBoard(), game->GetGameInfo(), game->GetRuleManager());
     ChessBoardWidget *chessBoard;
     QTimer *computerMoveTimer;
     int computerMoveDelay = 500; // 电脑走棋的延迟时间，1000毫秒
@@ -52,6 +45,13 @@ public:
     QLabel *currentPlayerLabel;
     QLabel *playerInfoLabel;
     QLabel *remainingPiecesLabel;
+    GameMainWindow(/*QWidget *parent = nullptr, */SurakartaGameMode gameMode);
+    ~GameMainWindow();
+    void computerMove();
+    void startComputerMove();
+    void showEndDialog();
+    void updateCountdownDisplay();
+    void updateGameInfo();
 
 public slots:
     void playerMove(SurakartaPosition from, SurakartaPosition to);
@@ -70,6 +70,7 @@ protected:
         void paintEvent(QPaintEvent */*event*/) override;
 
 private:
+        SurakartaGameMode gameMode;
     QPushButton *buttonGiveUp;
     QPushButton *buttonClose;
     QPushButton *buttonStart;
@@ -79,4 +80,4 @@ private:
 };
 
 
-#endif // MAINWINDOW_PVE_H
+#endif // GAME_MAINWINDOW_H

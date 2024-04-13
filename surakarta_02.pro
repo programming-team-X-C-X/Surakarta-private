@@ -13,12 +13,10 @@ SOURCES += \
     agent_random.cpp \
     chess_board_widght.cpp \
     end_dialog.cpp \
+    game_mainwindow.cpp \
     info_game.cpp \
     info_piece.cpp \
     main.cpp \
-    mainwindow_eve.cpp \
-    mainwindow_pve.cpp \
-    mainwindow_pvp.cpp \
     rule_manager.cpp \
     settings.cpp \
     settings_dialog.cpp \
@@ -33,15 +31,13 @@ HEADERS += \
     chess_board_widght.h \
     drawpoint.h \
     end_dialog.h \
+    game_mainwindow.h \
     global_random_generator.h \
     info_board.h \
     info_common.h \
     info_game.h \
     info_piece.h \
     info_reason.h \
-    mainwindow_eve.h \
-    mainwindow_pve.h \
-    mainwindow_pvp.h \
     rule_manager.h \
     settings.h \
     settings_dialog.h \
