@@ -3,8 +3,6 @@
 #include <QWidget>
 #include <QPainter>
 #include "info_common.h"
-// #include "my_agent_mine.h"
-// #include "my_agent_random.h"
 
 void SurakartaGame::StartGame() {
     for (unsigned int y = 0; y < board_size_; y++) {

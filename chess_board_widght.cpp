@@ -102,7 +102,7 @@ void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
             hasFirstClick = false;
             clearHints();
             emit playerMove(firstClickPos, secondClickPos);
-            qDebug() << "second:" << secondClickPos.x << "," << secondClickPos.y << '\n';
+            // qDebug() << "second:" << secondClickPos.x << "," << secondClickPos.y << '\n';
         }
         else if (piece) { // 第一次点击
             SurakartaPosition pos = piece->GetPosition();
@@ -111,14 +111,14 @@ void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
             firstClickPos = pos;
             firstClickPiece = piece;
             hasFirstClick = true;
-            qDebug() << "first:" << pos.x << "," << pos.y << '\n';
+            // qDebug() << "first:" << pos.x << "," << pos.y << '\n';
         }
     }
 }
 
 void ChessBoardWidget::receiveHints(const std::vector<SurakartaPosition>& hints) {
     for (const auto& hintPos : hints) {
-        drawHint(hintPos);  // 您之前已创建的显示提示方法
+        drawHint(hintPos);
     }
 }
 
@@ -236,7 +236,7 @@ void ChessBoardWidget::movePiece(const SurakartaMove& move) {
         }
         auto animation = new QVariantAnimation(this);
         int duration = static_cast<int>(pathLength / PIECE_SPEED * 1000);
-        animation->setDuration(duration); // 动画时间，例如 1000 毫秒
+        animation->setDuration(duration); // 动画时间
         animation->setStartValue(0.0);
         animation->setEndValue(1.0);
         connect(animation, &QVariantAnimation::valueChanged, [animationPath, piece](const QVariant &value) {

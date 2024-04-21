@@ -6,6 +6,7 @@
 
 StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
 
+    setWindowTitle(tr("苏拉卡尔塔棋 --programming-team-X-C-X --Powered by Qt 6.8.0"));
     setStyleSheet("StartDialog {"
                   "background-image: url(:/new/prefix2/img/board.jpg);"
                   "background-repeat: no-repeat;"
@@ -23,10 +24,7 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
     singlePlayerButton = new QPushButton(tr("单人游戏"), this);
     multiPlayerButton = new QPushButton(tr("双人游戏"), this);
     computerGameButton = new QPushButton(tr("电脑对战"), this);
-    settingsButton = new QPushButton(tr("settings"), this);
-    // singlePlayerButton->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*5/6, 100, 30);
-    // multiPlayerButton->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*5/6, 100, 30);
-    // computerGameButton->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*5/6, 100, 30);
+    settingsButton = new QPushButton(tr("游戏设置"), this);
     singlePlayerButton->setFixedSize(100, 30); // 将按钮的大小设置为100x30
     multiPlayerButton->setFixedSize(100, 30);
     computerGameButton->setFixedSize(100, 30);

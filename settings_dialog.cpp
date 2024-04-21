@@ -12,8 +12,7 @@ SettingsDialog::SettingsDialog(QWidget *parent)
 
 }
 
-SettingsDialog::~SettingsDialog()
-{
+SettingsDialog::~SettingsDialog() {
     delete ui;
 }
 

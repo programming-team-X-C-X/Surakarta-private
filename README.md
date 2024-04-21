@@ -37,3 +37,5 @@
 **version 4.4  4/4**  修复多路棋盘bug
 
 **version 4.5  4/8**  修复PVP和EVE模式，重构mainwindow
+
+**version 4.6  4/21**  改动部分细节
