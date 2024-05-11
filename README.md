@@ -39,3 +39,5 @@
 **version 4.5  4/8**  修复PVP和EVE模式，重构mainwindow
 
 **version 4.6  4/21**  改动部分细节
+
+**version 4.7  5/11**  修复结算信息，调整动画速度

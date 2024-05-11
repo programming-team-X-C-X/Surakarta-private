@@ -20,5 +20,6 @@ void SettingsDialog::saveSettings() {
     BOARD_SIZE = ui->boardSizeBox->value();
     TIME_LIMIT = ui->timeLimitBox->value();
     PLAYER_COLOR = ui->blackButton->isChecked();
+    PIECE_SPEED = ui->speedBox->value();
     accept();
 }

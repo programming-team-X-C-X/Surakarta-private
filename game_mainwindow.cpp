@@ -190,7 +190,9 @@ void GameMainWindow::updateCountdown() {
     updateCountdownDisplay();
     if (countdownTime <= 0) {
         // countdownTimer->stop();
+        game->game_info_->winner_ = ReverseColor(game->game_info_->current_player_);
         game->game_info_->end_reason_ = SurakartaEndReason::TIMEOUT;
+        buttonGiveUp->hide();
         showEndDialog();
     }
 }
@@ -202,6 +204,14 @@ void GameMainWindow::updateCountdownDisplay() {
     countdownLabel->setStyleSheet((QString("color:%1").arg(color)));
     countdownLabel->setText(tr("剩余时间: %1").arg(countdownTime));
     // countdownLabel->show();
+}
+
+void GameMainWindow::giveUp() {
+    game->game_info_->end_reason_ = SurakartaEndReason::RESIGN;
+    // game->game_info_->winner_ = PieceColor::NONE;
+    game->game_info_->winner_ = ReverseColor(game->game_info_->current_player_);
+    buttonGiveUp->hide();
+    showEndDialog();
 }
 
 void GameMainWindow::provideHints(SurakartaPosition pos) {
@@ -221,7 +231,7 @@ void GameMainWindow::showEndDialog() {
         winnerColor = "获胜者：黑方";
     else if (game->game_info_->winner_ == PieceColor::WHITE)
         winnerColor = "获胜者：白方获胜";
-    else
+    else if (game->game_info_->winner_ == PieceColor::NONE)
         winnerColor = "平局";
 
     QString message = QString("<div style='text-align: center;'>"
@@ -248,12 +258,6 @@ void GameMainWindow::restartGame() {
     Initialize();
 }
 
-void GameMainWindow::giveUp() {
-    game->game_info_->end_reason_ = SurakartaEndReason::RESIGN;
-    buttonGiveUp->hide();
-    showEndDialog();
-}
-
 GameMainWindow::~GameMainWindow() {
     // delete ui;
 }
@@ -261,7 +265,6 @@ GameMainWindow::~GameMainWindow() {
 void GameMainWindow::paintEvent(QPaintEvent */*event*/) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-
 
     // 绘制棋盘网格
     painter.setPen(Qt::black);
