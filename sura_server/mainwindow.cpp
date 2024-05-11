@@ -5,7 +5,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QTextStream>
-int Lefttime = 32;
+int Lefttime = 62;
 extern QStringList arg;
 bool istart = 0;
 int MainWindow::cnt = 0;
@@ -114,8 +114,32 @@ MainWindow::MainWindow(QWidget *parent)
 
     QTextStream moveout(movefile);
     QTextStream clientout(clientfile);
+    timer = new QTimer(this);
 
+    connect(timer,&QTimer::timeout,this,[=](){
+        //
+        Lefttime--;
+        qDebug() << "LeftTime" << Lefttime;
+        if(Lefttime <= 0) // 超时
+        {
+            istart = 0;
+            timer->stop();
+            if(game->game_info_->current_player_ == PieceColor::BLACK)
+            {
+                server->send(user1->client,NetworkData(OPCODE::END_OP,"","5","0"));
+                server->send(user2->client,NetworkData(OPCODE::END_OP,"","5","0"));
+                Smarkdown(NetworkData(OPCODE::END_OP,"","5","0"));
 
+            }
+            else
+            {
+                server->send(user1->client,NetworkData(OPCODE::END_OP,"","5","1"));
+                server->send(user2->client,NetworkData(OPCODE::END_OP,"","5","1"));
+                Smarkdown(NetworkData(OPCODE::END_OP,"","5","1"));
+            }
+
+        }
+    });
 
     connect(server,&NetworkServer::receive,this,[=](QTcpSocket* client, NetworkData data){
 
@@ -276,30 +300,8 @@ void MainWindow::ready(QTcpSocket *client, NetworkData data)
                     game->StartGame();
                     istart = 1;
                     // 连接倒计时
-                    // timer->start(1000);
-                    // connect(timer,&QTimer::timeout,this,[=](){
-                    //     //
-                    //     Lefttime--;
-                    //     if(Lefttime <= 0) // 超时
-                    //     {
-                    //         istart = 0;
-                    //         timer->stop();
-                    //         if(game->game_info_->current_player_ == PieceColor::BLACK)
-                    //         {
-                    //             server->send(user1->client,NetworkData(OPCODE::END_OP,"","5","0"));
-                    //             server->send(user2->client,NetworkData(OPCODE::END_OP,"","5","0"));
-                    //             Smarkdown(NetworkData(OPCODE::END_OP,"","5","0"));
+                    timer->start(1000);
 
-                    //         }
-                    //         else
-                    //         {
-                    //             server->send(user1->client,NetworkData(OPCODE::END_OP,"","5","1"));
-                    //             server->send(user2->client,NetworkData(OPCODE::END_OP,"","5","1"));
-                    //             Smarkdown(NetworkData(OPCODE::END_OP,"","5","1"));
-                    //         }
-
-                    //     }
-                    // });
                 }
 
                 // 返回拒绝信息
@@ -334,29 +336,8 @@ void MainWindow::ready(QTcpSocket *client, NetworkData data)
 
                     // 游戏开始，开始计时
 
-                    // timer->start(1000);
-                    // connect(timer,&QTimer::timeout,this,[=](){
-                    //     //
-                    //     Lefttime--;
-                    //     if(Lefttime <= 0) // 超时
-                    //     {
-                    //         timer->stop();
-                    //         if(game->game_info_->current_player_ == PieceColor::BLACK)
-                    //         {
-                    //             server->send(user1->client,NetworkData(OPCODE::END_OP,"","5","1"));
-                    //             server->send(user2->client,NetworkData(OPCODE::END_OP,"","5","1"));
-                    //             Smarkdown(NetworkData(OPCODE::END_OP,"","5","1"));
+                    timer->start(1000);
 
-                    //         }
-                    //         else
-                    //         {
-                    //             server->send(user1->client,NetworkData(OPCODE::END_OP,"","5","0"));
-                    //             server->send(user2->client,NetworkData(OPCODE::END_OP,"","5","0"));
-                    //             Smarkdown(NetworkData(OPCODE::END_OP,"","5","0"));
-                    //         }
-
-                    //     }
-                    // });
                 }
 
                 // 返回拒绝信息
@@ -396,9 +377,9 @@ void MainWindow::leave_op(QTcpSocket *client, NetworkData data)
 
     if(istart  && !game->IsEnd()) // 表示游戏在进行
     {
-        // timer->stop();
-        // Lefttime = 32;
-        // qDebug() << Lefttime;
+        timer->stop();
+        Lefttime = 62;
+        qDebug() << Lefttime;
         game->game_info_->end_reason_ = SurakartaEndReason::RESIGN;
         QString endcolor;
         if(client == user2->client)
@@ -430,6 +411,8 @@ void MainWindow::leave_op(QTcpSocket *client, NetworkData data)
 
     else
     {
+        timer->stop();
+        Lefttime = 62;
 
         if(client == user1->client)
         {
@@ -456,6 +439,8 @@ void MainWindow::move_op(QTcpSocket *client, NetworkData data)
 {
 
 
+    timer->stop();
+    Lefttime = 62;
     // 转发行棋    判断游戏是否结束   结束则转发endop
     SurakartaMove mv = backmove(data);
 
@@ -463,7 +448,7 @@ void MainWindow::move_op(QTcpSocket *client, NetworkData data)
     server->send(user1->client,data);
     server->send(user2->client,data);
     // 开始计时等待下一次
-    //timer->start(1000);
+    timer->start(1000);
     Smarkdown(data);
     //记录行棋
     QString info;
@@ -513,8 +498,8 @@ void MainWindow::move_op(QTcpSocket *client, NetworkData data)
     if(game->IsEnd())  // 是否结束
     {
         // 这个时候 一方吃完子了
-        // timer->stop();
-        // Lefttime = 32;
+        timer->stop();
+        Lefttime = 62;
         istart = 0;
         if(game->game_info_->end_reason_ == SurakartaEndReason::CHECKMATE )
         {

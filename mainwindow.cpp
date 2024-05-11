@@ -232,6 +232,12 @@ void MainWindow::rec_ready(NetworkData& data)
 
     });
 
+    connect(Game->chessBoard,&ChessBoardWidget::animationFinished,this,[=](){
+        gameround++;
+        Game->update_gameinfo();
+        Game->left_time = TIME_LIMIT;
+    });
+
 
     connect(Game,&game_view::return_start,this,&MainWindow::back_start);
     connect(Game,&game_view::return_start,this,[=](){
@@ -256,13 +262,7 @@ void MainWindow::rec_move(NetworkData& data)
 
 
     //  动画结束后 更新本地的玩家信息等
-    connect(Game->chessBoard,&ChessBoardWidget::animationFinished,this,[=](){
 
-        gameround++;
-        Game->update_gameinfo();
-        Game->left_time = TIME_LIMIT;
-
-    });
 }
 
 void MainWindow::rec_end(NetworkData& data)
