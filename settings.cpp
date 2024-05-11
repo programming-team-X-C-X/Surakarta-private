@@ -25,3 +25,9 @@ unsigned int MAX_NO_CAPTURE_ROUND = 40;
 
 //玩家设置
 bool PLAYER_COLOR = 1; //1 black 2 white
+
+bool RIGHT_COLOR  = 1;
+
+int gameround     = 1;
+
+QString name;

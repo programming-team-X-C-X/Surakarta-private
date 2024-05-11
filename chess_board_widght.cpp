@@ -17,6 +17,9 @@ ChessBoardWidget::ChessBoardWidget() :
     scene = new QGraphicsScene(this);
     view = new QGraphicsView(scene, this);
     ChessBoardGraphicsItem *chessBoardItem = new ChessBoardGraphicsItem();
+
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scene->addItem(chessBoardItem);
     // view->setFixedSize(WINDOW_SIZE, WINDOW_SIZE);
     // view->setSceneRect(chessBoardItem->boundingRect());
@@ -80,13 +83,31 @@ void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
     scene = view->scene();
     QPointF scenePos = view->mapToScene(event->pos());
     QGraphicsItem *item = scene->itemAt(scenePos, QTransform());
+
+    if(PLAYER_COLOR != RIGHT_COLOR) return;
+
     if (item) {
         SurakartaPiece *piece = qgraphicsitem_cast<SurakartaPiece*>(item);
 
         if (hasFirstClick) {
             SurakartaPosition secondClickPos;
             if (piece) {
-                secondClickPos = piece->GetPosition();
+                if(piece->color_ == ((PLAYER_COLOR ) ? PieceColor::BLACK: PieceColor::WHITE))
+                {
+                    clearHints();
+                    SurakartaPosition pos = piece->GetPosition();
+                    emit requestHints(pos);
+
+                    firstClickPos = pos;
+                    firstClickPiece = piece;
+                }
+                else
+                {
+                    secondClickPos = piece->GetPosition();
+                    hasFirstClick = false;
+                    clearHints();
+                    emit playerMove(firstClickPos, secondClickPos);
+                }
             }
             else {
                 // 计算格子坐标前先转换为浮点数
@@ -98,13 +119,14 @@ void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
                 // SurakartaPosition *pos = new SurakartaPosition(fx, fy);
                 secondClickPos.x = x;
                 secondClickPos.y = y;
+                hasFirstClick = false;
+                clearHints();
+                emit playerMove(firstClickPos, secondClickPos);
             }
-            hasFirstClick = false;
-            clearHints();
-            emit playerMove(firstClickPos, secondClickPos);
+
             qDebug() << "second:" << secondClickPos.x << "," << secondClickPos.y << '\n';
         }
-        else if (piece) { // 第一次点击
+        else if (piece && piece->color_ == ((PLAYER_COLOR ) ? PieceColor::BLACK: PieceColor::WHITE)) { // 第一次点击
             SurakartaPosition pos = piece->GetPosition();
             emit requestHints(pos);
 
@@ -113,6 +135,7 @@ void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
             hasFirstClick = true;
             qDebug() << "first:" << pos.x << "," << pos.y << '\n';
         }
+
     }
 }
 

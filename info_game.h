@@ -53,6 +53,13 @@ public:
 
 class SurakartaGame {
 public:
+    SurakartaGame(unsigned board_size = BOARD_SIZE/*, unsigned int max_no_capture_round = MAX_NO_CAPTURE_ROUND*/)
+        : board_size_(board_size),
+        board_(std::make_shared<SurakartaBoard>(board_size)),
+        game_info_(std::make_shared<SurakartaGameInfo>()),
+        rule_manager_(std::make_shared<SurakartaRuleManager>(board_, game_info_)),
+        agent_(std::make_shared<SurakartaAgentBase>(board_, game_info_, rule_manager_)) {}
+
     SurakartaGame(/*unsigned BOARD_SIZE = BOARD_SIZE,*/ SurakartaGameMode gameMode)
         : game_mode_(gameMode),
         board_size_(BOARD_SIZE),
