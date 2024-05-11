@@ -455,48 +455,7 @@ void MainWindow::leave_op(QTcpSocket *client, NetworkData data)
 void MainWindow::move_op(QTcpSocket *client, NetworkData data)
 {
 
-    if(game->IsEnd())  // 是否结束
-    {
-        // 这个时候 一方吃完子了
-        // timer->stop();
-        // Lefttime = 32;
-        istart = 0;
-        if(game->game_info_->end_reason_ == SurakartaEndReason::CHECKMATE )
-        {
-            if(game->game_info_->current_player_ == PieceColor::BLACK)
-            {
-                server->send(user1->client,NetworkData(OPCODE::END_OP,"","2","0"));
-                server->send(user2->client,NetworkData(OPCODE::END_OP,"","2","0"));
-                Smarkdown(NetworkData(OPCODE::END_OP,"","2","0"));
-            }
-            else
-            {
-                server->send(user1->client,NetworkData(OPCODE::END_OP,"","2","1"));
-                server->send(user2->client,NetworkData(OPCODE::END_OP,"","2","1"));
-                Smarkdown(NetworkData(OPCODE::END_OP,"","2","1"));
-            }
-            return;
-        }
 
-        else if(game->game_info_->end_reason_ == SurakartaEndReason::ILLIGAL_MOVE)
-        {
-            if(game->game_info_->current_player_ == PieceColor::WHITE) // data3 指的是什么?
-            {
-
-                server->send(user1->client,NetworkData(OPCODE::END_OP,move_reason,"6","0"));
-                server->send(user2->client,NetworkData(OPCODE::END_OP,move_reason,"6","0"));
-                Smarkdown(NetworkData(OPCODE::END_OP,"","6","0"));
-
-            }
-            else
-            {
-                server->send(user1->client,NetworkData(OPCODE::END_OP,move_reason,"6","1"));
-                server->send(user2->client,NetworkData(OPCODE::END_OP,move_reason,"6","1"));
-                Smarkdown(NetworkData(OPCODE::END_OP,move_reason,"6","1"));
-            }
-            return;
-        }
-    }
     // 转发行棋    判断游戏是否结束   结束则转发endop
     SurakartaMove mv = backmove(data);
 
@@ -550,6 +509,49 @@ void MainWindow::move_op(QTcpSocket *client, NetworkData data)
     }
 
     game->Move(mv);
+
+    if(game->IsEnd())  // 是否结束
+    {
+        // 这个时候 一方吃完子了
+        // timer->stop();
+        // Lefttime = 32;
+        istart = 0;
+        if(game->game_info_->end_reason_ == SurakartaEndReason::CHECKMATE )
+        {
+            if(game->game_info_->current_player_ == PieceColor::BLACK)
+            {
+                server->send(user1->client,NetworkData(OPCODE::END_OP,"","2","0"));
+                server->send(user2->client,NetworkData(OPCODE::END_OP,"","2","0"));
+                Smarkdown(NetworkData(OPCODE::END_OP,"","2","0"));
+            }
+            else
+            {
+                server->send(user1->client,NetworkData(OPCODE::END_OP,"","2","1"));
+                server->send(user2->client,NetworkData(OPCODE::END_OP,"","2","1"));
+                Smarkdown(NetworkData(OPCODE::END_OP,"","2","1"));
+            }
+            return;
+        }
+
+        else if(game->game_info_->end_reason_ == SurakartaEndReason::ILLIGAL_MOVE)
+        {
+            if(game->game_info_->current_player_ == PieceColor::WHITE) // data3 指的是什么?
+            {
+
+                server->send(user1->client,NetworkData(OPCODE::END_OP,move_reason,"6","0"));
+                server->send(user2->client,NetworkData(OPCODE::END_OP,move_reason,"6","0"));
+                Smarkdown(NetworkData(OPCODE::END_OP,"","6","0"));
+
+            }
+            else
+            {
+                server->send(user1->client,NetworkData(OPCODE::END_OP,move_reason,"6","1"));
+                server->send(user2->client,NetworkData(OPCODE::END_OP,move_reason,"6","1"));
+                Smarkdown(NetworkData(OPCODE::END_OP,move_reason,"6","1"));
+            }
+            return;
+        }
+    }
 
 
 
