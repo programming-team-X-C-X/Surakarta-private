@@ -90,13 +90,15 @@ MainWindow::MainWindow(QWidget *parent)
     ui->setupUi(this);
     socket = new NetworkSocket(new QTcpSocket(this),this);
 
-    // connect(socket->base(),&QTcpSocket::disconnected,this,[=](){
-    //     ui->connect_button->setDisabled(false);
-    //     ui->disconnect_button->setDisabled(true);
-    // });
+    // 服务端主动终止收不到信息 ?
+    connect(socket->base(),&QTcpSocket::disconnected,this,[=](){
+        ui->readyButton->setDisabled(false);
+        ui->readyButton->setText("准备");
+    });
 
     connect(socket->base(),&QTcpSocket::connected,this,[=](){
        ui->readyButton->setDisabled(true);
+        ui->readyButton->setText("等待玩家...");
     });
 
 
@@ -173,7 +175,7 @@ void MainWindow::on_readyButton_clicked()
     socket->send(NetworkData(OPCODE::READY_OP,name,color,room));
 
 
-    ui->readyButton->setText("等待玩家...");
+
 }
 
 void MainWindow::rec_ready(NetworkData& data)

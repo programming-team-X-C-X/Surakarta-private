@@ -9,6 +9,7 @@ game_view::game_view(QWidget *parent)
     // 初始化
     left_time = TIME_LIMIT;
     gameround = 1;
+    RIGHT_COLOR = 1;
 
     ui->setupUi(this);
     setWindowTitle(tr("surakarta"));
