@@ -2,57 +2,81 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "networksocket.h"
 #include "networkdata.h"
-#include "game_view.h"
-#include "dialog.h"
+#include "networkserver.h"
+#include <QTcpSocket>
+#include "surakarta_game.h"
 #include <QFile>
-#include <QTimer>
 #include <QTextStream>
-#include "settings.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
-
 class MainWindow;
 }
 QT_END_NAMESPACE
+
+//存储用户信息
+class UserInfo
+{
+public:
+    QString color; // 颜色
+    QString name;  // 用户名
+    QString room;  // 房间号
+    QTcpSocket* client;
+    UserInfo():color{},name{},client{nullptr}
+    {}
+
+    void clean()
+    {
+        color = "";
+        name  = "";
+        client = nullptr;
+    }
+};
 
 class MainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
+    static int cnt;
+    QString move_reason;
     MainWindow(QWidget *parent = nullptr);
     ~MainWindow();
-    SurakartaMove backmove(NetworkData data);
+
+
+
+
 private slots:
-    // void on_connect_button_clicked();
+    void on_listen_button_clicked();
 
-    // 连接信息
-    void on_readyButton_clicked();
+    void on_stop_clicked();
 
-    // void on_disconnect_button_clicked();
+    void ready(QTcpSocket* client, NetworkData data);
+    void leave_op(QTcpSocket* client, NetworkData data);
+    // void end(QTcpSocket* client, NetworkData data);
+    // void timeout(QTcpSocket* client, NetworkData data);
+     void move_op(QTcpSocket* client, NetworkData data);
+    // void resign_op(QTcpSocket* client, NetworkData data);
 
-    // 处理服务器信息
-    void rec_ready(NetworkData& data);
-    void rec_move(NetworkData& data);
-    void rec_end(NetworkData& data);
-
-    // 记录行棋信息
-    void mark_move(NetworkData& data);
-
-    // 处理再来一局
-    //void restart_game();
-signals:
-    void judge_end();
-    void back_start();
+    void on_testButton_clicked();
+    SurakartaMove  backmove(NetworkData data);
+    void Rmarkdown(NetworkData data);
+    void Smarkdown(NetworkData data);
 private:
+    QString color;
     Ui::MainWindow *ui;
-    game_view* Game;
-    NetworkSocket* socket;
+    // 1个server
+    NetworkServer * server;
+    // 2个user
+    UserInfo* user1;
+    UserInfo* user2;
+    SurakartaGame * game;
+    QTimer *timer;
+    QDateTime currentDateTime;
+
     QFile * movefile;
-    QTimer* timer;
-    bool isfirst;
+    QFile * clientfile;
+
 };
 #endif // MAINWINDOW_H
