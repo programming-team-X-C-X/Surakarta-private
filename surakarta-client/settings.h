@@ -1,5 +1,6 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
+#include "info_piece.h"
 #include <QString>
 // int BOARD_SIZE = 6;
 extern unsigned int BOARD_SIZE;
@@ -16,5 +17,6 @@ extern bool PLAYER_COLOR;
 extern int gameround;
 extern QString name;
 extern bool RIGHT_COLOR;
-
+extern bool IsAi;
+extern SurakartaPlayer mycolor;
 #endif // SETTINGS_H

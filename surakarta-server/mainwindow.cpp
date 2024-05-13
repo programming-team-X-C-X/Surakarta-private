@@ -124,7 +124,7 @@ MainWindow::MainWindow(QWidget *parent)
         {
             istart = 0;
             timer->stop();
-            if(game->game_info_->current_player_ == PieceColor::BLACK)
+            if(game->game_info_->current_player_ == PieceColor::WHITE)
             {
                 server->send(user1->client,NetworkData(OPCODE::END_OP,"","5","0"));
                 server->send(user2->client,NetworkData(OPCODE::END_OP,"","5","0"));

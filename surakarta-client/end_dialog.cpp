@@ -1,6 +1,6 @@
 #include "end_dialog.h"
 
-EndDialog::EndDialog(QWidget *parent) : QDialog(parent), label(new QLabel(this)) {
+endDialog::endDialog(QWidget *parent) : QDialog(parent), label(new QLabel(this)) {
     QVBoxLayout *layout = new QVBoxLayout(this);
     label->setTextFormat(Qt::RichText); // 设置文本格式为富文本
     layout->addWidget(label);
@@ -11,22 +11,22 @@ EndDialog::EndDialog(QWidget *parent) : QDialog(parent), label(new QLabel(this))
     layout->addWidget(buttonOK);
     layout->addWidget(buttonRE);
     layout->addWidget(buttonBA);
-    connect(buttonOK, &QPushButton::clicked, this, &EndDialog::accept);
-    connect(buttonRE, &QPushButton::clicked, this, &EndDialog::onREButtonClicked);
-    connect(buttonBA, &QPushButton::clicked, this, &EndDialog::onBAButtonClicked);
+    connect(buttonOK, &QPushButton::clicked, this, &endDialog::accept);
+    connect(buttonRE, &QPushButton::clicked, this, &endDialog::onREButtonClicked);
+    connect(buttonBA, &QPushButton::clicked, this, &endDialog::onBAButtonClicked);
 }
 
-void EndDialog::onREButtonClicked() {
+void endDialog::onREButtonClicked() {
     emit restartGame();//
     accept();//close dialog
 }
 
-void EndDialog::onBAButtonClicked() {
+void endDialog::onBAButtonClicked() {
     emit backToStart();
     accept();
 }
 
-void EndDialog::setText(const QString &text) {
+void endDialog::setText(const QString &text) {
     label->setAlignment(Qt::AlignCenter);
     label->setText(text);
 }

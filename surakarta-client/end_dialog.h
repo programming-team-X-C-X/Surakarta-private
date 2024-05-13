@@ -6,11 +6,11 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 
-class EndDialog :public QDialog
+class endDialog :public QDialog
 {
     Q_OBJECT
 public:
-    explicit EndDialog(QWidget *parent = nullptr);
+    explicit endDialog(QWidget *parent = nullptr);
     void setText(const QString &text);
 
 // public slots:

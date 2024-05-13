@@ -216,7 +216,7 @@ void GameMainWindow::showEndDialog() {
     // chessBoard->close();
     countdownTimer->stop();
     std::shared_ptr<SurakartaGameInfo> info = game->GetGameInfo();
-    EndDialog *enddialog = new EndDialog(this);
+    endDialog *enddialog = new endDialog(this);
     // QString winnerColor = (game.game_info_->winner_ == PieceColor::BLACK) ? "Black" : "White";
     QString winnerColor;
     if (game->game_info_->winner_ == PieceColor::BLACK)
@@ -240,8 +240,8 @@ void GameMainWindow::showEndDialog() {
     // .arg(info->max_no_capture_round_);
 
     enddialog->setText(message);
-    connect(enddialog, &EndDialog::restartGame, this, &GameMainWindow::restartGame);
-    connect(enddialog, &EndDialog::backToStart, this, &GameMainWindow::backToStartDialog);
+    connect(enddialog, &endDialog::restartGame, this, &GameMainWindow::restartGame);
+    connect(enddialog, &endDialog::backToStart, this, &GameMainWindow::backToStartDialog);
     enddialog->exec();
 }
 
