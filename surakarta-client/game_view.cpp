@@ -19,12 +19,12 @@ GameView::GameView(QWidget *parent)
     setCentralWidget(chessBoard);
 
     ui->giveup_button->raise();
-    ui->useAi->raise();
 
     connect(chessBoard, &ChessBoardWidget::playerMove, this, &GameView::MOVE);
     //connect(chessBoard, &ChessBoardWidget::animationFinished, this, &GameMainWindow::judgeEnd);
     connect(chessBoard, &ChessBoardWidget::requestHints, this, &GameView::provideHints);
     connect(this, &GameView::sendHints, chessBoard, &ChessBoardWidget::receiveHints);
+    // connect(this, &GameView::)
     game.StartGame();
     show();
 }
@@ -34,7 +34,7 @@ GameView::~GameView()
     delete ui;
 }
 
-void GameView::ENDSHOW(SurakartaEndReason rea, QString color, QString round)
+void GameView::endShow(SurakartaEndReason rea, QString color, QString round)
 {
     Dialog *EView = new Dialog(this);
     EView->SetInfo(rea,color,round);
@@ -47,10 +47,17 @@ void GameView::ENDSHOW(SurakartaEndReason rea, QString color, QString round)
 
 void GameView::computerMove()
 {
-   // qDebug() << "开始开始 ";
-    if(!game.IsEnd() && game.game_info_->current_player_ == mycolor){
+    qDebug() << "开始开始 ";
+    if(game.game_info_->current_player_ == game.game_info_->player_color_)
+    {
+        //
+        qDebug() << "进入移动";
         SurakartaMove move = agentMine->CalculateMove();
-        AskMove(move);
+        // 自己的回合就走
+
+        // 发起行棋请求
+        emit AskMove(move);
+        qDebug() << "computerMove End";
     }
 
 }
@@ -97,21 +104,7 @@ void GameView::on_giveup_button_clicked()
 
 void GameView::MOVE(SurakartaPosition from, SurakartaPosition to)
 {
-
     SurakartaMove move(from, to, game.GetGameInfo()->current_player_);
     AskMove(move);
-}
-
-
-void GameView::on_useAi_clicked()
-{
-    if(ui->useAi->text() == "AI托管"){
-        ui->useAi->setText("取消托管");
-        IsAi = 1;
-    }
-    else {
-        ui->useAi->setText("AI托管");
-        IsAi = 0;
-    }
 }
 

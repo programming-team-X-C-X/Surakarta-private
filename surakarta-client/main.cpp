@@ -36,21 +36,22 @@ int main(int argc, char *argv[]) {
         startGame(startDialog, gameMainWindow, SurakartaGameMode::EVE);
     });
     QObject::connect(startDialog, &StartDialog::startMultiPlayerGame, [startDialog, gameMainWindow]() {
+        startGame(startDialog, gameMainWindow, SurakartaGameMode::PVP);
+    });
+    QObject::connect(startDialog, &StartDialog::startSinglePlayerGame, [startDialog, gameMainWindow]() {
+        startGame(startDialog, gameMainWindow, SurakartaGameMode::PVE);
+    });
+    QObject::connect(startDialog, &StartDialog::onlineGameSelected, [startDialog, gameMainWindow]() {
         if (!startDialog) return; // 检查 startDialog 是否仍然存在
         startDialog->close();
         MainWindow *w = new MainWindow();
         w->setAttribute(Qt::WA_DeleteOnClose);
         w->show();
 
-
         QObject::connect(w,&MainWindow::back_start,[=](){
             w->close();
             startDialog->show();
         });
     });
-    QObject::connect(startDialog, &StartDialog::startSinglePlayerGame, [startDialog, gameMainWindow]() {
-        startGame(startDialog, gameMainWindow, SurakartaGameMode::PVE);
-    });
-
     return app.exec();
 }

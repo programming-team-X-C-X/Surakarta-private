@@ -53,7 +53,6 @@ private:
     NetworkSocket* socket;
     QFile * movefile;
     QTimer* timer;
-    QTimer *aiuser;
     bool isfirst;
 };
 #endif // MAINWINDOW_H

@@ -23,6 +23,7 @@ public:
     GameMode selectedMode() const { return mode; }
 
 signals:
+    void onlineGameSelected();
     void startSinglePlayerGame();
     void startMultiPlayerGame();
     void startComputerGame();
@@ -40,12 +41,16 @@ private:
     QPushButton *multiPlayerButton;
     QPushButton *computerGameButton;
     QPushButton *settingsButton;
+    QPushButton *localButton;
+    QPushButton *onlineButton;
 
-public slots:
+private slots:
     void selectSinglePlayerGame();
     void selectMultiPlayerGame();
     void selectComputerGame();
     void openSettingsDialog();
+    void showLocalGameOptions();
+    void showOnlineGameOptions();
 
 };
 

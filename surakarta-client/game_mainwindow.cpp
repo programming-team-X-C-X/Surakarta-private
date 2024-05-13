@@ -7,12 +7,12 @@ GameMainWindow::GameMainWindow(/*QWidget *parent*/SurakartaGameMode gameMode)
     :game(new SurakartaGame(gameMode)),
     gameMode(gameMode)
 {
-    setWindowTitle(tr("surakarta"));
-    setFixedSize(WINDOW_SIZE*1.51, WINDOW_SIZE*1.05);
+    setWindowTitle(tr("苏拉卡尔塔棋 --programming-team-X-C-X --Powered by Qt 6.8.0"));
+    setFixedSize(WINDOW_SIZE*1.5, WINDOW_SIZE);
 
-    buttonClose = new QPushButton("close", this);
-    buttonStart = new QPushButton("start", this);
-    buttonBack = new QPushButton("back", this);
+    buttonClose = new QPushButton("退出游戏", this);
+    buttonStart = new QPushButton("开始游戏", this);
+    buttonBack = new QPushButton("回到主菜单", this);
     playerInfoLabel = new QLabel(this);
     buttonStart->setFixedSize(100, 30);
     buttonBack->setFixedSize(100, 30);
@@ -86,7 +86,7 @@ void GameMainWindow::Initialize() {
     countdownLabel = new QLabel(this);
     QFont labelFont = countdownLabel->font();
     labelFont.setPointSize(50);
-    countdownLabel->setText(tr("Remaining Time: %1").arg(countdownTime));
+    countdownLabel->setText(tr("剩余时间: %1").arg(countdownTime));
 
     computerMoveTimer = new QTimer(this);
     computerMoveTimer->setSingleShot(true);
@@ -192,7 +192,9 @@ void GameMainWindow::updateCountdown() {
     updateCountdownDisplay();
     if (countdownTime <= 0) {
         // countdownTimer->stop();
+        game->game_info_->winner_ = ReverseColor(game->game_info_->current_player_);
         game->game_info_->end_reason_ = SurakartaEndReason::TIMEOUT;
+        buttonGiveUp->hide();
         showEndDialog();
     }
 }
@@ -202,7 +204,7 @@ void GameMainWindow::updateCountdownDisplay() {
     if (countdownTime <= 10)
         color = "red";
     countdownLabel->setStyleSheet((QString("color:%1").arg(color)));
-    countdownLabel->setText(tr("Remaining Time: %1").arg(countdownTime));
+    countdownLabel->setText(tr("剩余时间: %1").arg(countdownTime));
     // countdownLabel->show();
 }
 
@@ -216,19 +218,19 @@ void GameMainWindow::showEndDialog() {
     // chessBoard->close();
     countdownTimer->stop();
     std::shared_ptr<SurakartaGameInfo> info = game->GetGameInfo();
-    endDialog *enddialog = new endDialog(this);
+    EndDialog *enddialog = new EndDialog(this);
     // QString winnerColor = (game.game_info_->winner_ == PieceColor::BLACK) ? "Black" : "White";
     QString winnerColor;
     if (game->game_info_->winner_ == PieceColor::BLACK)
-        winnerColor = "Black Player";
+        winnerColor = "获胜者：黑方";
     else if (game->game_info_->winner_ == PieceColor::WHITE)
-        winnerColor = "White Player";
-    else
-        winnerColor = "Unknown";
+        winnerColor = "获胜者：白方获胜";
+    else if (game->game_info_->winner_ == PieceColor::NONE)
+        winnerColor = "平局";
 
     QString message = QString("<div style='text-align: center;'>"
                               "<p><span style='font-size:12pt; color:red;'>GAME OVER!</span></p>"
-                              "<p><span style='font-size:10pt; color:blue;'>获胜者：%1</span>.</p>"
+                              "<p><span style='font-size:10pt; color:blue;'>%1</span>.</p>"
                               "<p><span style='font-size:10pt; color:blue;'>进行轮数：%2</span>.</p>"
                               "<p><span style='font-size:10pt; color:green;'>最后捕获轮：%3</span>.</p>"
                               // "<p><span style='font-size:10pt; color:orange;'>结束原因：%4</span>.</p>"
@@ -240,8 +242,8 @@ void GameMainWindow::showEndDialog() {
     // .arg(info->max_no_capture_round_);
 
     enddialog->setText(message);
-    connect(enddialog, &endDialog::restartGame, this, &GameMainWindow::restartGame);
-    connect(enddialog, &endDialog::backToStart, this, &GameMainWindow::backToStartDialog);
+    connect(enddialog, &EndDialog::restartGame, this, &GameMainWindow::restartGame);
+    connect(enddialog, &EndDialog::backToStart, this, &GameMainWindow::backToStartDialog);
     enddialog->exec();
 }
 
@@ -252,6 +254,8 @@ void GameMainWindow::restartGame() {
 
 void GameMainWindow::giveUp() {
     game->game_info_->end_reason_ = SurakartaEndReason::RESIGN;
+    // game->game_info_->winner_ = PieceColor::NONE;
+    game->game_info_->winner_ = ReverseColor(game->game_info_->current_player_);
     buttonGiveUp->hide();
     showEndDialog();
 }
