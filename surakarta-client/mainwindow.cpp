@@ -14,43 +14,6 @@ extern bool PLAYER_COLOR;
 // 收到行棋请求 --------->  重置时间 继续减值
 // 收到endop   --------->  timer stop
 
-MainWindow::MainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-{
-
-    ui->setupUi(this);
-    socket = new NetworkSocket(new QTcpSocket(this),this);
-
-    // 服务端主动终止收不到信息 ?
-    connect(socket->base(),&QTcpSocket::disconnected,this,[=](){
-        ui->readyButton->setDisabled(false);
-        ui->readyButton->setText("准备");
-    });
-
-    connect(socket->base(),&QTcpSocket::connected,this,[=](){
-        ui->readyButton->setDisabled(true);
-        ui->readyButton->setText("等待玩家...");
-    });
-    // 处理接收到的信息
-    connect(socket,&NetworkSocket::receive,this,[=](NetworkData data){
-        if(data.op == OPCODE::READY_OP)
-        {
-            // 处理 ready op
-            rec_ready(data);
-        }
-        else if(data.op == OPCODE::MOVE_OP)
-        {
-            rec_move(data);
-            RIGHT_COLOR = !RIGHT_COLOR;
-        }
-
-        else if(data.op == OPCODE::END_OP)
-        {
-            rec_end(data);
-        }
-    });
-}
 
 QString FormatPos(const SurakartaPosition pos)
 {
@@ -119,24 +82,68 @@ SurakartaMove MainWindow::backmove(NetworkData data)
     return rt;
 }
 
+MainWindow::MainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
+{
+
+    ui->setupUi(this);
+    socket = new NetworkSocket(new QTcpSocket(this),this);
+    aiuser = new QTimer(this);
+    aiuser->start(5000);
+
+
+
+
+    // 服务端主动终止收不到信息 ?
+    connect(socket->base(),&QTcpSocket::disconnected,this,[=](){
+        ui->readyButton->setDisabled(false);
+        ui->readyButton->setText("准备");
+    });
+
+    connect(socket->base(),&QTcpSocket::connected,this,[=](){
+        ui->readyButton->setDisabled(true);
+        ui->readyButton->setText("等待玩家...");
+    });
+
+
+
+    // 处理接收到的信息
+    connect(socket,&NetworkSocket::receive,this,[=](NetworkData data){
+        if(data.op == OPCODE::READY_OP)
+        {
+            // 处理 ready op
+            rec_ready(data);
+        }
+
+
+
+        else if(data.op == OPCODE::MOVE_OP)
+        {
+            rec_move(data);
+            RIGHT_COLOR = !RIGHT_COLOR;
+
+        }
+
+        else if(data.op == OPCODE::END_OP)
+        {
+            rec_end(data);
+        }
+
+
+    });
+
+
+
+
+
+
+}
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-
-// void MainWindow::on_connect_button_clicked()
-// {
-//     // 建立连接
-//     QString ip = ui->ip_line->text();
-//     QString port = ui->port_line->text();
-//     if( ip != "" && port != "")  // 输入了有效的ip和port
-//     {
-//         socket->hello(ip,port.toUShort());
-//         qDebug() << "CONNECTED";
-//     }
-
-// }
 
 
 void MainWindow::on_readyButton_clicked()
@@ -158,6 +165,7 @@ void MainWindow::on_readyButton_clicked()
     this->socket->base()->waitForConnected(2000);
 
     socket->send(NetworkData(OPCODE::READY_OP,name,color,room));
+
 }
 
 void MainWindow::rec_ready(NetworkData& data)
@@ -166,6 +174,7 @@ void MainWindow::rec_ready(NetworkData& data)
 
     // 设置本用户的执棋颜色
     PLAYER_COLOR = (data.data2 == "BLACK") ? 1 : 0;
+    mycolor = (data.data2 == "BLACK") ? SurakartaPlayer::BLACK : SurakartaPlayer::WHITE;
 
     name = ui->ready_name->text();
     // 开始打开游戏界面  关闭自己的界面
@@ -188,6 +197,10 @@ void MainWindow::rec_ready(NetworkData& data)
     timer = new QTimer(this);
     connect(timer,&QTimer::timeout,Game,&GameView::update_time); // 更新计时器
     timer->start(1000);
+
+    connect(aiuser,&QTimer::timeout,this,[=](){
+        if(IsAi) Game->computerMove();
+    });
 
     // 连接请求移动 和 认输
     connect(Game,&GameView::AskMove,this,[=](SurakartaMove move){
@@ -241,6 +254,8 @@ void MainWindow::rec_move(NetworkData& data)
 
     // 记录行棋
     mark_move(data);
+
+
     //  动画结束后 更新本地的玩家信息等
 
 }
@@ -254,6 +269,9 @@ void MainWindow::rec_end(NetworkData& data)
     socket->send(NetworkData(OPCODE::LEAVE_OP,"","","")); // 发出离开信号
     socket->bye();
     Game->endShow(backReason(data),backColor(data),QString::number(gameround));
+
+
+
 
     // 直接断开连接 ?
 }
@@ -280,4 +298,3 @@ void MainWindow::mark_move(NetworkData& data)
 //     ui->disconnect_button->setDisabled(true);
 //     ui->readyButton->setDisabled(false);
 // }
-

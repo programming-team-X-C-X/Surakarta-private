@@ -446,7 +446,7 @@ padding-top:6px;                 /* 文字纵向偏移 */
     <string/>
    </property>
   </widget>
-  <widget class="QPushButton" name="ModeButton">
+  <widget class="QPushButton" name="useAi">
    <property name="geometry">
     <rect>
      <x>799</x>

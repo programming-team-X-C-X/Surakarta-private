@@ -30,4 +30,8 @@ bool RIGHT_COLOR  = 1;
 
 int gameround     = 1;
 
+bool IsAi = 0;
+
+SurakartaPlayer mycolor;
+
 QString name;

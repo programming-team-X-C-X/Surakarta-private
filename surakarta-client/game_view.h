@@ -22,8 +22,7 @@ public:
     // 需要游戏，棋盘的图形界面
     SurakartaGame game;
     ChessBoardWidget *chessBoard;
-    void endShow(SurakartaEndReason rea, QString color, QString round);
-    void computerMove();
+    void endShow(SurakartaEndReason rea, QString color, QString round);    void computerMove();
     void update_gameinfo();
     void update_time();
     void restartGame();
@@ -32,7 +31,7 @@ public:
 
 private slots:
     // void on_pushButton_clicked();
-
+    void on_useAi_clicked();
     void on_giveup_button_clicked();
     void MOVE(SurakartaPosition from, SurakartaPosition to);
 
