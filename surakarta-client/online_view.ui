@@ -456,7 +456,7 @@ padding-top:6px;                 /* 文字纵向偏移 */
     </rect>
    </property>
    <property name="text">
-    <string>切换模式</string>
+    <string>AI托管</string>
    </property>
   </widget>
  </widget>
