@@ -1,5 +1,5 @@
-#ifndef GAME_VIEW_H
-#define GAME_VIEW_H
+#ifndef ONLINE_VIEW_H
+#define ONLINE_VIEW_H
 
 #include <QMainWindow>
 #include "info_game.h"
@@ -45,4 +45,4 @@ signals:
     void return_start();
 };
 
-#endif // GAME_VIEW_H
+#endif // ONLINE_VIEW_H

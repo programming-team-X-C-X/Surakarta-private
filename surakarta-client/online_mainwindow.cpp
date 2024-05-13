@@ -1,4 +1,4 @@
-#include "mainwindow.h"
+#include "online_mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QDebug>
 #include <QTimer>
@@ -67,7 +67,7 @@ QString backColor(NetworkData data)
     else return "PieceColor::NONE";
 }
 
-SurakartaMove MainWindow::backmove(NetworkData data)
+SurakartaMove OnlineMainWindow::backmove(NetworkData data)
 {
     SurakartaMove rt;
 
@@ -82,7 +82,7 @@ SurakartaMove MainWindow::backmove(NetworkData data)
     return rt;
 }
 
-MainWindow::MainWindow(QWidget *parent)
+OnlineMainWindow::OnlineMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
@@ -140,13 +140,13 @@ MainWindow::MainWindow(QWidget *parent)
 
 }
 
-MainWindow::~MainWindow()
+OnlineMainWindow::~OnlineMainWindow()
 {
     delete ui;
 }
 
 
-void MainWindow::on_readyButton_clicked()
+void OnlineMainWindow::on_readyButton_clicked()
 {
     // 请求连接
     QString ip = ui->ip_line->text();
@@ -168,7 +168,7 @@ void MainWindow::on_readyButton_clicked()
 
 }
 
-void MainWindow::rec_ready(NetworkData& data)
+void OnlineMainWindow::rec_ready(NetworkData& data)
 {
     // 表示双方准备就绪   游戏开始
 
@@ -234,7 +234,7 @@ void MainWindow::rec_ready(NetworkData& data)
     });
 
 
-    connect(Game,&GameView::return_start,this,&MainWindow::back_start);
+    connect(Game,&GameView::return_start,this,&OnlineMainWindow::back_start);
     connect(Game,&GameView::return_start,this,[=](){
         Game->close();
     });
@@ -243,7 +243,7 @@ void MainWindow::rec_ready(NetworkData& data)
     Game->update_gameinfo();
 }
 
-void MainWindow::rec_move(NetworkData& data)
+void OnlineMainWindow::rec_move(NetworkData& data)
 {
     // 得到移动的信息
     SurakartaMove move = backmove(data);
@@ -260,7 +260,7 @@ void MainWindow::rec_move(NetworkData& data)
 
 }
 
-void MainWindow::rec_end(NetworkData& data)
+void OnlineMainWindow::rec_end(NetworkData& data)
 {
     // 计时器停
     timer->stop();
@@ -276,7 +276,7 @@ void MainWindow::rec_end(NetworkData& data)
     // 直接断开连接 ?
 }
 
-void MainWindow::mark_move(NetworkData& data)
+void OnlineMainWindow::mark_move(NetworkData& data)
 {
     QTextStream out(movefile);
 

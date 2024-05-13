@@ -1,15 +1,15 @@
-#include "dialog.h"
+#include "online_end_dialog.h"
 #include "ui_dialog.h"
 extern bool PLAYER_COLOR;
 
-Dialog::Dialog(QWidget *parent)
+OnlineEndDialog::OnlineEndDialog(QWidget *parent)
     : QDialog(parent)
     , ui(new Ui::Dialog)
 {
     ui->setupUi(this);
 }
 
-void Dialog::SetInfo(SurakartaEndReason rea, QString color, QString round)
+void OnlineEndDialog::SetInfo(SurakartaEndReason rea, QString color, QString round)
 {
     ui->roundnum->setText(round);
     ui->winner->setText(color);
@@ -44,13 +44,13 @@ void Dialog::SetInfo(SurakartaEndReason rea, QString color, QString round)
 
 }
 
-Dialog::~Dialog()
+OnlineEndDialog::~OnlineEndDialog()
 {
     delete ui;
 }
 
 // 处理  再来一局
-void Dialog::on_one_more_game_clicked()
+void OnlineEndDialog::on_one_more_game_clicked()
 {
     // 发出信号
     // 转到准备的界面 将本地游戏数据初始化
@@ -60,7 +60,7 @@ void Dialog::on_one_more_game_clicked()
 }
 
 
-void Dialog::on_return_start_clicked()
+void OnlineEndDialog::on_return_start_clicked()
 {
     emit return_start();
 

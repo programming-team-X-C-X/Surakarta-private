@@ -1,7 +1,7 @@
-#include "game_view.h"
+#include "online_view.h"
 #include "ui_game_view.h"
 #include <QDebug>
-#include "dialog.h"
+#include "online_end_dialog.h"
 GameView::GameView(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::game_view)
@@ -36,11 +36,11 @@ GameView::~GameView()
 
 void GameView::endShow(SurakartaEndReason rea, QString color, QString round)
 {
-    Dialog *EView = new Dialog(this);
+    OnlineEndDialog *EView = new OnlineEndDialog(this);
     EView->SetInfo(rea,color,round);
 
-    connect(EView,&Dialog::restart_game,this,&GameView::restart_game);
-    connect(EView,&Dialog::return_start,this,&GameView::return_start);
+    connect(EView,&OnlineEndDialog::restart_game,this,&GameView::restart_game);
+    connect(EView,&OnlineEndDialog::return_start,this,&GameView::return_start);
 
     EView->exec();
 }

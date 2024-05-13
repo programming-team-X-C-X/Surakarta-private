@@ -1,15 +1,13 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
+#ifndef ONLINE_MAINWINDOW_H
+#define ONLINE_MAINWINDOW_H
 
 #include <QMainWindow>
 #include "networksocket.h"
 #include "networkdata.h"
-#include "game_view.h"
-#include "dialog.h"
+#include "online_view.h"
 #include <QFile>
 #include <QTimer>
 #include <QTextStream>
-#include "settings.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -18,13 +16,13 @@ class MainWindow;
 }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
+class OnlineMainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    MainWindow(QWidget *parent = nullptr);
-    ~MainWindow();
+    OnlineMainWindow(QWidget *parent = nullptr);
+    ~OnlineMainWindow();
     SurakartaMove backmove(NetworkData data);
 private slots:
     // void on_connect_button_clicked();
@@ -56,4 +54,4 @@ private:
     QTimer *aiuser;
     bool isfirst;
 };
-#endif // MAINWINDOW_H
+#endif // ONLINE_MAINWINDOW_H

@@ -1,5 +1,5 @@
-#ifndef GAME_MAINWINDOW_H
-#define GAME_MAINWINDOW_H
+#ifndef LOCAL_MAINWINDOW_H
+#define LOCAL_MAINWINDOW_H
 
 #include <QMainWindow>
 #include <QWidget>
@@ -24,7 +24,7 @@ QT_END_NAMESPACE
 
 // 在绘制事件中调用此函数来绘制实心点
 
-class GameMainWindow : public QMainWindow
+class LocalMainWindow : public QMainWindow
 {
     Q_OBJECT
 
@@ -45,8 +45,8 @@ public:
     QLabel *currentPlayerLabel;
     QLabel *playerInfoLabel;
     QLabel *remainingPiecesLabel;
-    GameMainWindow(/*QWidget *parent = nullptr, */SurakartaGameMode gameMode);
-    ~GameMainWindow();
+    LocalMainWindow(/*QWidget *parent = nullptr, */SurakartaGameMode gameMode);
+    ~LocalMainWindow();
     void computerMove();
     void startComputerMove();
     void showEndDialog();
@@ -80,4 +80,4 @@ private:
 };
 
 
-#endif // GAME_MAINWINDOW_H
+#endif // LOCAL_MAINWINDOW_H

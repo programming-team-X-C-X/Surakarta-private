@@ -1,5 +1,5 @@
-#ifndef DIALOG_H
-#define DIALOG_H
+#ifndef ONLINE_END_DIALOG_H
+#define ONLINE_END_DIALOG_H
 
 #include <QDialog>
 #include "info_game.h"
@@ -9,14 +9,14 @@ namespace Ui {
 class Dialog;
 }
 
-class Dialog : public QDialog
+class OnlineEndDialog : public QDialog
 {
     Q_OBJECT
 
 public:
-    explicit Dialog(QWidget *parent = nullptr);
+    explicit OnlineEndDialog(QWidget *parent = nullptr);
     void SetInfo(SurakartaEndReason rea,QString color,QString round);
-    ~Dialog();
+    ~OnlineEndDialog();
 
 private slots:
     void on_one_more_game_clicked();
@@ -31,4 +31,4 @@ private:
     Ui::Dialog *ui;
 };
 
-#endif // DIALOG_H
+#endif // ONLINE_END_DIALOG_H

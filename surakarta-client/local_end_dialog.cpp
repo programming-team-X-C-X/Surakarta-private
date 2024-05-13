@@ -1,6 +1,6 @@
-#include "end_dialog.h"
+#include "local_end_dialog.h"
 
-EndDialog::EndDialog(QWidget *parent) : QDialog(parent), label(new QLabel(this)) {
+LocalEndDialog::LocalEndDialog(QWidget *parent) : QDialog(parent), label(new QLabel(this)) {
     setWindowTitle(tr("苏拉卡尔塔棋"));
     QVBoxLayout *layout = new QVBoxLayout(this);
     label->setTextFormat(Qt::RichText); // 设置文本格式为富文本
@@ -12,22 +12,22 @@ EndDialog::EndDialog(QWidget *parent) : QDialog(parent), label(new QLabel(this))
     layout->addWidget(buttonRE);
     layout->addWidget(buttonBA);
     layout->addWidget(buttonOK);
-    connect(buttonOK, &QPushButton::clicked, this, &EndDialog::accept);
-    connect(buttonRE, &QPushButton::clicked, this, &EndDialog::onREButtonClicked);
-    connect(buttonBA, &QPushButton::clicked, this, &EndDialog::onBAButtonClicked);
+    connect(buttonOK, &QPushButton::clicked, this, &LocalEndDialog::accept);
+    connect(buttonRE, &QPushButton::clicked, this, &LocalEndDialog::onREButtonClicked);
+    connect(buttonBA, &QPushButton::clicked, this, &LocalEndDialog::onBAButtonClicked);
 }
 
-void EndDialog::onREButtonClicked() {
+void LocalEndDialog::onREButtonClicked() {
     emit restartGame();//
     accept();//close dialog
 }
 
-void EndDialog::onBAButtonClicked() {
+void LocalEndDialog::onBAButtonClicked() {
     emit backToStart();
     accept();
 }
 
-void EndDialog::setText(const QString &text) {
+void LocalEndDialog::setText(const QString &text) {
     label->setAlignment(Qt::AlignCenter);
     label->setText(text);
 }

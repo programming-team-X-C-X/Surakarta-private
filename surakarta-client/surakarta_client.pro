@@ -12,17 +12,17 @@ SOURCES += \
     agent_mine.cpp \
     agent_random.cpp \
     chess_board_widght.cpp \
-    dialog.cpp \
-    end_dialog.cpp \
-    game_mainwindow.cpp \
-    game_view.cpp \
     info_game.cpp \
     info_piece.cpp \
+    local_end_dialog.cpp \
+    local_mainwindow.cpp \
     main.cpp \
-    mainwindow.cpp \
     networkdata.cpp \
     networkserver.cpp \
     networksocket.cpp \
+    online_end_dialog.cpp \
+    online_mainwindow.cpp \
+    online_view.cpp \
     rule_manager.cpp \
     settings.cpp \
     settings_dialog.cpp \
@@ -35,21 +35,21 @@ HEADERS += \
     agent_mine.h \
     agent_random.h \
     chess_board_widght.h \
-    dialog.h \
     drawpoint.h \
-    end_dialog.h \
-    game_mainwindow.h \
-    game_view.h \
     global_random_generator.h \
     info_board.h \
     info_common.h \
     info_game.h \
     info_piece.h \
     info_reason.h \
-    mainwindow.h \
+    local_end_dialog.h \
+    local_mainwindow.h \
     networkdata.h \
     networkserver.h \
     networksocket.h \
+    online_end_dialog.h \
+    online_mainwindow.h \
+    online_view.h \
     rule_manager.h \
     settings.h \
     settings_dialog.h \
@@ -71,7 +71,7 @@ RESOURCES += \
     img.qrc
 
 FORMS += \
-    dialog.ui \
-    game_view.ui \
-    mainwindow.ui \
+    online_end_dialog.ui \
+    online_mainwindow.ui \
+    online_view.ui \
     settings_dialog.ui
