@@ -48,7 +48,7 @@ void GameView::endShow(SurakartaEndReason rea, QString color, QString round)
 void GameView::computerMove()
 {
     // qDebug() << "开始开始 ";
-    if(!game.IsEnd() && game.game_info_->current_player_ == mycolor){
+    if(!game.IsEnd() && PLAYER_COLOR == RIGHT_COLOR){
         SurakartaMove move = agentMine->CalculateMove();
         emit AskMove(move);
     }
