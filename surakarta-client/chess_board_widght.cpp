@@ -96,6 +96,13 @@ void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
                 {
                     clearHints();
                     SurakartaPosition pos = piece->GetPosition();
+
+                    // 两次点击一样的  清除提示
+                    if(pos == firstClickPos) {
+                        hasFirstClick = false;
+                        return;
+                    }
+
                     emit requestHints(pos);
 
                     firstClickPos = pos;
