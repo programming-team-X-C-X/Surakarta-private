@@ -7,8 +7,6 @@
 extern QString name;
 extern bool PLAYER_COLOR;
 
-
-
 // timer 什么时候动
 // 收到 readyop 启动timer
 // 收到行棋请求 --------->  重置时间 继续减值
@@ -109,15 +107,22 @@ OnlineMainWindow::OnlineMainWindow(QWidget *parent)
             // 处理 ready op
             rec_ready(data);
         }
+
         else if(data.op == OPCODE::MOVE_OP)
         {
             rec_move(data);
-            RIGHT_COLOR = !RIGHT_COLOR;
         }
         else if(data.op == OPCODE::END_OP)
         {
             rec_end(data);
         }
+
+        else if(data.op == OPCODE::SETTIME_OP){
+            // 处理时间设置
+            TIME_LIMIT = data.data1.toUInt();
+        }
+
+
     });
 }
 
@@ -212,6 +217,7 @@ void OnlineMainWindow::rec_ready(NetworkData& data)
         gameround++;
         Game->update_gameinfo();
         Game->left_time = TIME_LIMIT;
+        RIGHT_COLOR = !RIGHT_COLOR;
     });
 
 
@@ -271,11 +277,4 @@ void OnlineMainWindow::mark_move(NetworkData& data)
 
 }
 
-// void MainWindow::on_disconnect_button_clicked()
-// {
-//     socket->send(NetworkData(OPCODE::LEAVE_OP, "", "", ""));
-//     socket->bye();
-//     ui->connect_button->setDisabled(false);
-//     ui->disconnect_button->setDisabled(true);
-//     ui->readyButton->setDisabled(false);
-// }
+

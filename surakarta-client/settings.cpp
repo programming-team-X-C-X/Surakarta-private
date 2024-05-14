@@ -26,6 +26,7 @@ unsigned int MAX_NO_CAPTURE_ROUND = 40;
 //玩家设置
 bool PLAYER_COLOR = 1; //1 black 2 white
 
+// 当前行棋颜色
 bool RIGHT_COLOR  = 1;
 
 int gameround     = 1;
