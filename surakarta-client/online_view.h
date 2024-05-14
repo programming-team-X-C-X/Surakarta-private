@@ -33,7 +33,7 @@ private slots:
     // void on_pushButton_clicked();
     void on_useAi_clicked();
     void on_giveup_button_clicked();
-    void MOVE(SurakartaPosition from, SurakartaPosition to);
+    void Move(SurakartaPosition from, SurakartaPosition to);
 
 private:
     Ui::game_view *ui;

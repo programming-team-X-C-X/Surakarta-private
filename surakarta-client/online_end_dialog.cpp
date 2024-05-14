@@ -1,5 +1,5 @@
 #include "online_end_dialog.h"
-#include "ui_dialog.h"
+#include "ui_online_end_dialog.h"
 extern bool PLAYER_COLOR;
 
 OnlineEndDialog::OnlineEndDialog(QWidget *parent)

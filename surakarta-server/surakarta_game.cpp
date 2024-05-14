@@ -1,6 +1,4 @@
 #include "surakarta_game.h"
-#include <fstream>
-#include <iostream>
 
 void SurakartaGame::StartGame() {
 

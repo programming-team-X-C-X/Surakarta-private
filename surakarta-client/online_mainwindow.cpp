@@ -1,5 +1,5 @@
 #include "online_mainwindow.h"
-#include "ui_mainwindow.h"
+#include "ui_online_mainwindow.h"
 #include <QDebug>
 #include <QTimer>
 #include <QFile>
@@ -67,7 +67,7 @@ QString backColor(NetworkData data)
     else return "PieceColor::NONE";
 }
 
-SurakartaMove OnlineMainWindow::backmove(NetworkData data)
+SurakartaMove OnlineMainWindow::backMove(NetworkData data)
 {
     SurakartaMove rt;
 
@@ -92,9 +92,6 @@ OnlineMainWindow::OnlineMainWindow(QWidget *parent)
     aiuser = new QTimer(this);
     aiuser->start(5000);
 
-
-
-
     // 服务端主动终止收不到信息 ?
     connect(socket->base(),&QTcpSocket::disconnected,this,[=](){
         ui->readyButton->setDisabled(false);
@@ -105,9 +102,6 @@ OnlineMainWindow::OnlineMainWindow(QWidget *parent)
         ui->readyButton->setDisabled(true);
         ui->readyButton->setText("等待玩家...");
     });
-
-
-
     // 处理接收到的信息
     connect(socket,&NetworkSocket::receive,this,[=](NetworkData data){
         if(data.op == OPCODE::READY_OP)
@@ -115,29 +109,16 @@ OnlineMainWindow::OnlineMainWindow(QWidget *parent)
             // 处理 ready op
             rec_ready(data);
         }
-
-
-
         else if(data.op == OPCODE::MOVE_OP)
         {
             rec_move(data);
             RIGHT_COLOR = !RIGHT_COLOR;
-
         }
-
         else if(data.op == OPCODE::END_OP)
         {
             rec_end(data);
         }
-
-
     });
-
-
-
-
-
-
 }
 
 OnlineMainWindow::~OnlineMainWindow()
@@ -246,7 +227,7 @@ void OnlineMainWindow::rec_ready(NetworkData& data)
 void OnlineMainWindow::rec_move(NetworkData& data)
 {
     // 得到移动的信息
-    SurakartaMove move = backmove(data);
+    SurakartaMove move = backMove(data);
 
     // 进行移动
     Game->game.Move(move);

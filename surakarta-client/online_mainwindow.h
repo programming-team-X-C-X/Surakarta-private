@@ -23,7 +23,7 @@ class OnlineMainWindow : public QMainWindow
 public:
     OnlineMainWindow(QWidget *parent = nullptr);
     ~OnlineMainWindow();
-    SurakartaMove backmove(NetworkData data);
+    SurakartaMove backMove(NetworkData data);
 private slots:
     // void on_connect_button_clicked();
 

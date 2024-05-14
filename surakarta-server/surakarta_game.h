@@ -1,6 +1,5 @@
 #pragma once
 
-
 #include "surakarta_common.h"
 #include "surakarta_rule_manager.h"
 

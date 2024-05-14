@@ -1,5 +1,5 @@
 #include "online_view.h"
-#include "ui_game_view.h"
+#include "ui_online_view.h"
 #include <QDebug>
 #include "online_end_dialog.h"
 GameView::GameView(QWidget *parent)
@@ -21,7 +21,7 @@ GameView::GameView(QWidget *parent)
     ui->giveup_button->raise();
     ui->useAi->raise();
 
-    connect(chessBoard, &ChessBoardWidget::playerMove, this, &GameView::MOVE);
+    connect(chessBoard, &ChessBoardWidget::playerMove, this, &GameView::Move);
     //connect(chessBoard, &ChessBoardWidget::animationFinished, this, &GameMainWindow::judgeEnd);
     connect(chessBoard, &ChessBoardWidget::requestHints, this, &GameView::provideHints);
     connect(this, &GameView::sendHints, chessBoard, &ChessBoardWidget::receiveHints);
@@ -50,7 +50,7 @@ void GameView::computerMove()
     // qDebug() << "开始开始 ";
     if(!game.IsEnd() && game.game_info_->current_player_ == mycolor){
         SurakartaMove move = agentMine->CalculateMove();
-        AskMove(move);
+        emit AskMove(move);
     }
 
 }
@@ -95,11 +95,11 @@ void GameView::on_giveup_button_clicked()
     emit Resign();
 }
 
-void GameView::MOVE(SurakartaPosition from, SurakartaPosition to)
+void GameView::Move(SurakartaPosition from, SurakartaPosition to)
 {
 
     SurakartaMove move(from, to, game.GetGameInfo()->current_player_);
-    AskMove(move);
+    emit AskMove(move);
 }
 
 
