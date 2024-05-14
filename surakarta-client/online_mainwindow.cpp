@@ -4,6 +4,7 @@
 #include <QTimer>
 #include <QFile>
 #include <QTextStream>
+#include <QMessageBox>
 extern QString name;
 extern bool PLAYER_COLOR;
 
@@ -122,6 +123,11 @@ OnlineMainWindow::OnlineMainWindow(QWidget *parent)
             TIME_LIMIT = data.data1.toUInt();
         }
 
+        else if(data.op == OPCODE::REJECT_OP){
+            // 弹出拒绝画面
+            rec_rej();
+        }
+
 
     });
 }
@@ -152,6 +158,14 @@ void OnlineMainWindow::on_readyButton_clicked()
 
     socket->send(NetworkData(OPCODE::READY_OP,name,color,room));
 
+}
+
+void OnlineMainWindow::rec_rej(){
+
+    QMessageBox::warning(0,"REJECTED", "服务器拒绝连接!请检查你的设置信息!");
+
+    ui->readyButton->setDisabled(false);
+    ui->readyButton->setText("准备");
 }
 
 void OnlineMainWindow::rec_ready(NetworkData& data)
