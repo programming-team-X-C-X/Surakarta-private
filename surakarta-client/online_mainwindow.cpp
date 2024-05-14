@@ -130,6 +130,11 @@ OnlineMainWindow::OnlineMainWindow(QWidget *parent)
             rec_end(data);
         }
 
+        else if(data.op == OPCODE::SETTIME_OP){
+            // 处理时间设置
+            TIME_LIMIT = data.data1.toUInt();
+        }
+
 
     });
 

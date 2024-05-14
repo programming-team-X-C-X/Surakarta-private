@@ -16,6 +16,7 @@ enum class OPCODE : int {
 
     // 添加的
     REJECT_OP,
+    SETTIME_OP,
 };
 
 class InvalidMessage : public QException {

@@ -13,6 +13,11 @@ enum class OPCODE : int {
     LEAVE_OP,
     CHAT_OP,
     END_OP,
+
+
+    // 添加的
+    REJECT_OP,
+    SETTIME_OP,
 };
 
 class InvalidMessage : public QException {

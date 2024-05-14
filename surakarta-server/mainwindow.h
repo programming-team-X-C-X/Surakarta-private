@@ -59,10 +59,12 @@ private slots:
      void move_op(QTcpSocket* client, NetworkData data);
     // void resign_op(QTcpSocket* client, NetworkData data);
 
-    void on_testButton_clicked();
+
     SurakartaMove  backmove(NetworkData data);
     void Rmarkdown(NetworkData data);
     void Smarkdown(NetworkData data);
+    void on_TIMELIMIT_clicked();
+
 private:
     QString color;
     Ui::MainWindow *ui;
@@ -77,6 +79,8 @@ private:
 
     QFile * movefile;
     QFile * clientfile;
+
+
 
 };
 #endif // MAINWINDOW_H

@@ -127,14 +127,27 @@
        <item>
         <widget class="QTextEdit" name="game_text"/>
        </item>
+       <item>
+        <widget class="QWidget" name="widget_7" native="true">
+         <layout class="QHBoxLayout" name="horizontalLayout_4">
+          <item>
+           <widget class="QSpinBox" name="spinBox">
+            <property name="minimum">
+             <number>10</number>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QPushButton" name="TIMELIMIT">
+            <property name="text">
+             <string>调整超时时间</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
       </layout>
-     </widget>
-    </item>
-    <item>
-     <widget class="QPushButton" name="testButton">
-      <property name="text">
-       <string>发送信息/测试</string>
-      </property>
      </widget>
     </item>
    </layout>
