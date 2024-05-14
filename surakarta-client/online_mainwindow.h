@@ -36,6 +36,7 @@ private slots:
     void rec_ready(NetworkData& data);
     void rec_move(NetworkData& data);
     void rec_end(NetworkData& data);
+    void rec_rej();
 
     // 记录行棋信息
     void mark_move(NetworkData& data);
