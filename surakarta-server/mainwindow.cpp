@@ -458,8 +458,6 @@ void MainWindow::leave_op(QTcpSocket *client, NetworkData data)
 
 void MainWindow::move_op(QTcpSocket *client, NetworkData data)
 {
-
-
     timer->stop();
     Lefttime = TIME + 2;
     // 转发行棋    判断游戏是否结束   结束则转发endop
@@ -558,16 +556,9 @@ void MainWindow::move_op(QTcpSocket *client, NetworkData data)
             return;
         }
     }
-
-
-
 }
-
-
-
 
 void MainWindow::on_TIMELIMIT_clicked()
 {
     TIME = ui->spinBox->value();
 }
-
