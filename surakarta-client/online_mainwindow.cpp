@@ -13,6 +13,57 @@ extern bool PLAYER_COLOR;
 // 收到行棋请求 --------->  重置时间 继续减值
 // 收到endop   --------->  timer stop
 
+OnlineMainWindow::OnlineMainWindow(QWidget *parent)
+    : QMainWindow(parent)
+    , ui(new Ui::MainWindow)
+{
+
+    setWindowTitle(tr("苏拉卡尔塔棋 --programming-team-X-C-X --Powered by Qt 6.8.0"));
+    ui->setupUi(this);
+    socket = new NetworkSocket(new QTcpSocket(this),this);
+    aiuser = new QTimer(this);
+    aiuser->start(5000);
+
+    // 服务端主动终止收不到信息 ?
+    connect(socket->base(),&QTcpSocket::disconnected,this,[=](){
+        ui->readyButton->setDisabled(false);
+        ui->readyButton->setText("准备");
+    });
+
+    connect(socket->base(),&QTcpSocket::connected,this,[=](){
+        ui->readyButton->setDisabled(true);
+        ui->readyButton->setText("等待玩家...");
+    });
+    // 处理接收到的信息
+    connect(socket, &NetworkSocket::receive, this, [=](NetworkData data) {
+        switch(data.op) {
+        case OPCODE::READY_OP:
+            rec_ready(data);
+            break;
+
+        case OPCODE::MOVE_OP:
+            rec_move(data);
+            break;
+
+        case OPCODE::END_OP:
+            rec_end(data);
+            break;
+
+        case OPCODE::SETTIME_OP:
+            TIME_LIMIT = data.data1.toUInt();
+            break;
+
+        case OPCODE::REJECT_OP:
+            rec_rej();
+            break;
+            // 可以添加更多的case处理其他操作码
+
+        default:
+            // 可以处理未知的操作码
+            break;
+        }
+    });
+}
 
 QString FormatPos(const SurakartaPosition pos)
 {
@@ -81,57 +132,6 @@ SurakartaMove OnlineMainWindow::backMove(NetworkData data)
     return rt;
 }
 
-OnlineMainWindow::OnlineMainWindow(QWidget *parent)
-    : QMainWindow(parent)
-    , ui(new Ui::MainWindow)
-{
-
-    ui->setupUi(this);
-    socket = new NetworkSocket(new QTcpSocket(this),this);
-    aiuser = new QTimer(this);
-    aiuser->start(5000);
-
-    // 服务端主动终止收不到信息 ?
-    connect(socket->base(),&QTcpSocket::disconnected,this,[=](){
-        ui->readyButton->setDisabled(false);
-        ui->readyButton->setText("准备");
-    });
-
-    connect(socket->base(),&QTcpSocket::connected,this,[=](){
-        ui->readyButton->setDisabled(true);
-        ui->readyButton->setText("等待玩家...");
-    });
-    // 处理接收到的信息
-    connect(socket,&NetworkSocket::receive,this,[=](NetworkData data){
-        if(data.op == OPCODE::READY_OP)
-        {
-            // 处理 ready op
-            rec_ready(data);
-        }
-
-        else if(data.op == OPCODE::MOVE_OP)
-        {
-            rec_move(data);
-        }
-        else if(data.op == OPCODE::END_OP)
-        {
-            rec_end(data);
-        }
-
-        else if(data.op == OPCODE::SETTIME_OP){
-            // 处理时间设置
-            TIME_LIMIT = data.data1.toUInt();
-        }
-
-        else if(data.op == OPCODE::REJECT_OP){
-            // 弹出拒绝画面
-            rec_rej();
-        }
-
-
-    });
-}
-
 OnlineMainWindow::~OnlineMainWindow()
 {
     delete ui;
@@ -178,6 +178,7 @@ void OnlineMainWindow::rec_ready(NetworkData& data)
 
     name = ui->ready_name->text();
     // 开始打开游戏界面  关闭自己的界面
+    this->hide();
     Game = new GameView();
     Game->setAttribute(Qt::WA_DeleteOnClose);
     isfirst = true;
@@ -198,15 +199,27 @@ void OnlineMainWindow::rec_ready(NetworkData& data)
     connect(timer,&QTimer::timeout,Game,&GameView::update_time); // 更新计时器
     timer->start(1000);
 
-    connect(aiuser,&QTimer::timeout,this,[=](){
-        if(IsAi) Game->computerMove();
-    });
+    // connect(aiuser,&QTimer::timeout,this,[=](){
+    //     if(IsAi) Game->computerMove();
+    // });
 
     // 连接请求移动 和 认输
     connect(Game,&GameView::AskMove,this,[=](SurakartaMove move){
         // 向服务端发送这个信息
         // 先转换move
         socket->send(NetworkData(OPCODE::MOVE_OP,FormatPos(move.from),FormatPos(move.to),""));
+    });
+
+    connect(Game, &GameView::AskComputerMove, this, [=](){
+        if(IsAi) Game->computerMove();
+    });
+
+    connect(Game->chessBoard,&ChessBoardWidget::animationFinished,this,[=](){
+        gameround++;
+        Game->update_gameinfo();
+        Game->left_time = TIME_LIMIT;
+        RIGHT_COLOR = !RIGHT_COLOR;
+        if(IsAi) Game->computerMove();
     });
 
     connect(Game,&GameView::Resign,this,[=](){
@@ -219,19 +232,12 @@ void OnlineMainWindow::rec_ready(NetworkData& data)
 
         Game->close();
         //socket->send(NetworkData(OPCODE::LEAVE_OP,"","","")); // 发出离开信号
-
+        this->show();
         // 再发出准备信号
         ui->readyButton->setText("准备");
         ui->readyButton->setDisabled(false);
         //on_readyButton_clicked();
 
-    });
-
-    connect(Game->chessBoard,&ChessBoardWidget::animationFinished,this,[=](){
-        gameround++;
-        Game->update_gameinfo();
-        Game->left_time = TIME_LIMIT;
-        RIGHT_COLOR = !RIGHT_COLOR;
     });
 
 
@@ -240,8 +246,9 @@ void OnlineMainWindow::rec_ready(NetworkData& data)
         Game->close();
     });
 
-    // Game->computerMove();
+
     Game->update_gameinfo();
+    if(IsAi) Game->computerMove();
 }
 
 void OnlineMainWindow::rec_move(NetworkData& data)
@@ -255,8 +262,6 @@ void OnlineMainWindow::rec_move(NetworkData& data)
 
     // 记录行棋
     mark_move(data);
-
-
     //  动画结束后 更新本地的玩家信息等
 
 }
@@ -270,9 +275,6 @@ void OnlineMainWindow::rec_end(NetworkData& data)
     socket->send(NetworkData(OPCODE::LEAVE_OP,"","","")); // 发出离开信号
     socket->bye();
     Game->endShow(backReason(data),backColor(data),QString::number(gameround));
-
-
-
 
     // 直接断开连接 ?
 }
@@ -288,7 +290,6 @@ void OnlineMainWindow::mark_move(NetworkData& data)
         out << data.data1 + '-'  + data.data2;
     }
     else out << " "<< data.data1 + '-'  + data.data2;
-
 }
 
 

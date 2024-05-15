@@ -5,7 +5,7 @@
 #include "settings_dialog.h"
 
 StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
-    setWindowTitle(tr("苏拉卡尔塔棋 --programming-team-X-C-X --Powered by Qt 6.8.0"));
+    setWindowTitle(tr("苏拉卡尔塔 --programming-team-X-C-X --Powered by Qt 6.8.0"));
     setStyleSheet("StartDialog {"
                   "background-image: url(:/new/prefix2/img/board.jpg);"
                   "background-repeat: no-repeat;"

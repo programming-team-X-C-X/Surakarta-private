@@ -31,7 +31,7 @@ bool RIGHT_COLOR  = 1;
 
 int gameround     = 1;
 
-bool IsAi = 0;
+bool IsAi = 1;
 
 SurakartaPlayer mycolor;
 

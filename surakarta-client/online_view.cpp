@@ -22,7 +22,7 @@ GameView::GameView(QWidget *parent)
     ui->useAi->raise();
 
     connect(chessBoard, &ChessBoardWidget::playerMove, this, &GameView::Move);
-    //connect(chessBoard, &ChessBoardWidget::animationFinished, this, &GameMainWindow::judgeEnd);
+    connect(chessBoard, &ChessBoardWidget::animationFinished, this, &GameView::AfterAnimationFinished);
     connect(chessBoard, &ChessBoardWidget::requestHints, this, &GameView::provideHints);
     connect(this, &GameView::sendHints, chessBoard, &ChessBoardWidget::receiveHints);
     game.StartGame();
@@ -65,7 +65,7 @@ void GameView::update_gameinfo()
 
 void GameView::update_time()
 {
-    qDebug() << left_time ;
+    // qDebug() << left_time ;
     ui->Ltime->setText( QString::number(left_time--));
     if(left_time < 0)
     {
@@ -102,12 +102,16 @@ void GameView::Move(SurakartaPosition from, SurakartaPosition to)
     emit AskMove(move);
 }
 
+void GameView::AfterAnimationFinished() {
+    emit AnimationFinished();
+}
 
 void GameView::on_useAi_clicked()
 {
     if(ui->useAi->text() == "AI托管"){
         ui->useAi->setText("取消托管");
         IsAi = 1;
+        emit AskComputerMove();
     }
     else {
         ui->useAi->setText("AI托管");

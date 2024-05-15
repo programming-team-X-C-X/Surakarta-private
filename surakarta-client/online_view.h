@@ -34,6 +34,7 @@ private slots:
     void on_useAi_clicked();
     void on_giveup_button_clicked();
     void Move(SurakartaPosition from, SurakartaPosition to);
+    void AfterAnimationFinished();
 
 private:
     Ui::game_view *ui;
@@ -41,6 +42,8 @@ signals:
     void sendHints(const std::vector<SurakartaPosition>& hints);
     void AskMove(SurakartaMove move);
     void Resign();
+    void AnimationFinished();
+    void AskComputerMove();
     void restart_game();
     void return_start();
 };
