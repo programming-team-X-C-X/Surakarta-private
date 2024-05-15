@@ -97,7 +97,7 @@ MainWindow::MainWindow(QWidget *parent)
     server = new NetworkServer(this);
     ui->cli1_info->setReadOnly(true);
     ui->cli2_info->setReadOnly(true);
-    ui->stop->setDisabled(true);
+    // ui->stop->setDisabled(true);
     ui->game_text->setReadOnly(true);
     //timer = new QTimer(this);
     game = new SurakartaGame;
@@ -119,7 +119,6 @@ MainWindow::MainWindow(QWidget *parent)
     timer = new QTimer(this);
 
     connect(timer,&QTimer::timeout,this,[=](){
-        //
         Lefttime--;
         qDebug() << "LeftTime" << Lefttime;
         if(Lefttime <= 0) // 超时
@@ -132,7 +131,6 @@ MainWindow::MainWindow(QWidget *parent)
                 server->send(user1->client,NetworkData(OPCODE::END_OP,"","5","0"));
                 server->send(user2->client,NetworkData(OPCODE::END_OP,"","5","0"));
                 Smarkdown(NetworkData(OPCODE::END_OP,"","5","0"));
-
             }
             else
             {
@@ -202,35 +200,52 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_listen_button_clicked()
 {
-    // 获取端口
-    QString port = ui->port_line->text();
-
-    // 有端口
-    if(port != "")
-    {
-        server->listen(QHostAddress::Any,port.toUShort());
-        ui->listen_button->setDisabled(true);
-        ui->stop->setDisabled(false);
-        ui->port_line->setReadOnly(true);
+    if (ui->listen_button->text() == "开始监听") {
+        // 获取端口
+        ui->listen_button->setText("停止监听");
+        QString port = ui->port_line->text();
+        // 有端口
+        if(port != "")
+        {
+            server->listen(QHostAddress::Any,port.toUShort());
+            // ui->listen_button->setDisabled(true);
+            // ui->stop->setDisabled(false);
+            ui->port_line->setReadOnly(true);
+        }
+    }
+    else {
+        ui->listen_button->setText("开始监听");
+        server->close();
+        user1->clean();
+        user2->clean();
+        ui->cli1_info->setText("");
+        ui->cli2_info->setText("");
+        // ui->listen_button->setDisabled(false);
+        // ui->stop->setDisabled(true);
+        cnt = 0;
+        color = "BLACK";
+        ui->game_text->setText("");
+        ui->port_line->setReadOnly(false);
+        ui->TIMELIMIT->setDisabled(false);
     }
 }
 
 
-void MainWindow::on_stop_clicked()
-{
-    server->close();
-    user1->clean();
-    user2->clean();
-    ui->cli1_info->setText("");
-    ui->cli2_info->setText("");
-    ui->listen_button->setDisabled(false);
-    ui->stop->setDisabled(true);
-    cnt = 0;
-    color = "BLACK";
-    ui->game_text->setText("");
-    ui->port_line->setReadOnly(false);
-    ui->TIMELIMIT->setDisabled(false);
-}
+// void MainWindow::on_stop_clicked()
+// {
+//     server->close();
+//     user1->clean();
+//     user2->clean();
+//     ui->cli1_info->setText("");
+//     ui->cli2_info->setText("");
+//     ui->listen_button->setDisabled(false);
+//     ui->stop->setDisabled(true);
+//     cnt = 0;
+//     color = "BLACK";
+//     ui->game_text->setText("");
+//     ui->port_line->setReadOnly(false);
+//     ui->TIMELIMIT->setDisabled(false);
+// }
 
 void MainWindow::ready(QTcpSocket *client, NetworkData data)
 {
@@ -365,17 +380,12 @@ void MainWindow::ready(QTcpSocket *client, NetworkData data)
                     Smarkdown(NetworkData(OPCODE::REJECT_OP,data.data1,"",""));
                 }
             }
-
-
         }
-
-
     }
     else // 表示已经满了
     {
         // 传一个 已经满的信号
         server->send(client,NetworkData(OPCODE::REJECT_OP,data.data1,"",""));
-
         Smarkdown(NetworkData(OPCODE::REJECT_OP,data.data1,"",""));
         return;
     }

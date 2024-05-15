@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>苏拉卡尔塔棋 --programming-team-X-C-X --Powered by Qt 6.8.0</string>
   </property>
   <widget class="QLabel" name="LoseWin">
    <property name="geometry">

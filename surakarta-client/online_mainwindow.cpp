@@ -21,8 +21,8 @@ OnlineMainWindow::OnlineMainWindow(QWidget *parent)
     setWindowTitle(tr("苏拉卡尔塔棋 --programming-team-X-C-X --Powered by Qt 6.8.0"));
     ui->setupUi(this);
     socket = new NetworkSocket(new QTcpSocket(this),this);
-    aiuser = new QTimer(this);
-    aiuser->start(5000);
+    // aiuser = new QTimer(this);
+    // aiuser->start(5000);
 
     // 服务端主动终止收不到信息 ?
     connect(socket->base(),&QTcpSocket::disconnected,this,[=](){
@@ -232,6 +232,7 @@ void OnlineMainWindow::rec_ready(NetworkData& data)
 
         Game->close();
         //socket->send(NetworkData(OPCODE::LEAVE_OP,"","","")); // 发出离开信号
+        IsAi = 1;
         this->show();
         // 再发出准备信号
         ui->readyButton->setText("准备");

@@ -50,7 +50,7 @@ public:
 private slots:
     void on_listen_button_clicked();
 
-    void on_stop_clicked();
+    // void on_stop_clicked();
 
     void ready(QTcpSocket* client, NetworkData data);
     void leave_op(QTcpSocket* client, NetworkData data);
