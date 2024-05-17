@@ -35,7 +35,12 @@ void OnlineEndDialog::SetInfo(SurakartaEndReason rea, QString color, QString rou
     else if(rea == SurakartaEndReason::ILLIGAL_MOVE){
         if(your_color == color) ui->LoseWin->setText("对方做出不合法步,恭喜你获得胜利!");
         else ui->LoseWin->setText("很遗憾你进行了非法移动!");
+    }
 
+    else if(rea == SurakartaEndReason::STALEMATE)
+    {
+        ui->LoseWin->setText("平局!");
+        ui->winner->setText("NONE");
     }
 
 

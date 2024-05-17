@@ -243,8 +243,10 @@ void OnlineMainWindow::rec_ready(NetworkData& data)
 
 
     connect(Game,&GameView::return_start,this,&OnlineMainWindow::back_start);
+
     connect(Game,&GameView::return_start,this,[=](){
         Game->close();
+        //socket->send(NetworkData(OPCODE::LEAVE_OP,"","","")); // 发出离开信号
     });
 
 
@@ -269,15 +271,23 @@ void OnlineMainWindow::rec_move(NetworkData& data)
 
 void OnlineMainWindow::rec_end(NetworkData& data)
 {
+
+
+    // 展示结束画面
+    if(data.data2 == "1" || data.data2 == "2") // 有移动的最后一步
+        // 最后一步倒计时不会走
+        connect(Game->chessBoard,&ChessBoardWidget::animationFinished,this,[=](){
+            Game->endShow(backReason(data),backColor(data),QString::number(gameround));
+        });
+    else Game->endShow(backReason(data),backColor(data),QString::number(gameround));
+
+    // 直接断开连接 ?
     // 计时器停
     timer->stop();
 
-    // 展示结束画面  进入结束的逻辑
+    // 进入结束的逻辑
     socket->send(NetworkData(OPCODE::LEAVE_OP,"","","")); // 发出离开信号
     socket->bye();
-    Game->endShow(backReason(data),backColor(data),QString::number(gameround));
-
-    // 直接断开连接 ?
 }
 
 void OnlineMainWindow::mark_move(NetworkData& data)
