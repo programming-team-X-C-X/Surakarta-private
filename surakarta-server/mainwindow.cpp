@@ -565,6 +565,14 @@ void MainWindow::move_op(QTcpSocket *client, NetworkData data)
             }
             return;
         }
+
+        // 补充平局
+        else if(game->game_info_->end_reason_ == SurakartaEndReason::STALEMATE)
+        {
+            server->send(user1->client,NetworkData(OPCODE::END_OP,move_reason,"1","2"));
+            server->send(user2->client,NetworkData(OPCODE::END_OP,move_reason,"1","2"));
+            Smarkdown(NetworkData(OPCODE::END_OP,"","1","2"));
+        }
     }
 }
 
