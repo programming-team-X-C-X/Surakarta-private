@@ -43,6 +43,8 @@ private slots:
 
     // 处理再来一局
     //void restart_game();
+
+    void Save_game();
 signals:
     void judge_end();
     void back_start();
@@ -54,5 +56,10 @@ private:
     QTimer* timer;
     QTimer *aiuser;
     bool isfirst;
+
+    // 历史对局的尝试
+    QString store_filename;  // 本局游戏名
+    QString store_gameinfo;  // 本局游戏步
+    QFile * history;
 };
 #endif // ONLINE_MAINWINDOW_H

@@ -18,6 +18,9 @@ OnlineMainWindow::OnlineMainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
 
+
+
+
     setWindowTitle(tr("苏拉卡尔塔棋 --programming-team-X-C-X --Powered by Qt 6.8.0"));
     ui->setupUi(this);
     socket = new NetworkSocket(new QTcpSocket(this),this);
@@ -170,8 +173,11 @@ void OnlineMainWindow::rec_rej(){
 
 void OnlineMainWindow::rec_ready(NetworkData& data)
 {
-    // 表示双方准备就绪   游戏开始
+    // 初始化历史记录相关
+    store_filename = "../history/" + QDateTime::currentDateTime().toString("yyyyMMdd_hhmmss") + "_game_history.txt";
+    store_gameinfo = "";
 
+    // 表示双方准备就绪   游戏开始
     // 设置本用户的执棋颜色
     PLAYER_COLOR = (data.data2 == "BLACK") ? 1 : 0;
     mycolor = (data.data2 == "BLACK") ? SurakartaPlayer::BLACK : SurakartaPlayer::WHITE;
@@ -190,6 +196,7 @@ void OnlineMainWindow::rec_ready(NetworkData& data)
 
     // 行棋记录
     movefile = new QFile("./record/client/Team_04.txt");
+
     if (!movefile->open(QIODevice::WriteOnly | QIODevice::Text)) {
         qDebug() << "Could not open file for writing";
     }
@@ -271,19 +278,22 @@ void OnlineMainWindow::rec_move(NetworkData& data)
 
 void OnlineMainWindow::rec_end(NetworkData& data)
 {
-
+    // 保存游戏信息
+    Save_game();
 
     // 展示结束画面
     if(data.data2 == "1" || data.data2 == "2") // 有移动的最后一步
         // 最后一步倒计时不会走
         connect(Game->chessBoard,&ChessBoardWidget::animationFinished,this,[=](){
+            timer->stop();
             Game->endShow(backReason(data),backColor(data),QString::number(gameround));
         });
-    else Game->endShow(backReason(data),backColor(data),QString::number(gameround));
-
+    else {
+        timer->stop();
+        Game->endShow(backReason(data),backColor(data),QString::number(gameround));
+    }
     // 直接断开连接 ?
-    // 计时器停
-    timer->stop();
+
 
     // 进入结束的逻辑
     socket->send(NetworkData(OPCODE::LEAVE_OP,"","","")); // 发出离开信号
@@ -301,6 +311,19 @@ void OnlineMainWindow::mark_move(NetworkData& data)
         out << data.data1 + '-'  + data.data2;
     }
     else out << " "<< data.data1 + '-'  + data.data2;
+
+
+    store_gameinfo += data.data1 + "-" + data.data2 + " ";
 }
 
+
+void OnlineMainWindow::Save_game()
+{
+    QFile file(store_filename);
+    if (file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text)) {
+        QTextStream out(&file);
+        out << store_gameinfo;
+        file.close();
+    }
+}
 
