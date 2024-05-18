@@ -180,6 +180,8 @@ MainWindow::MainWindow(QWidget *parent)
             if(endcolor == "BLACK") endcolor = "1";
             else endcolor = "0";
 
+            QTextStream out(movefile);
+            out << "R";
             server->send(user1->client,NetworkData(OPCODE::END_OP,"","4",endcolor));
             server->send(user2->client,NetworkData(OPCODE::END_OP,"","4",endcolor));
             game->game_info_->end_reason_ = SurakartaEndReason::RESIGN;
@@ -563,6 +565,7 @@ void MainWindow::move_op(QTcpSocket *client, NetworkData data)
                 server->send(user2->client,NetworkData(OPCODE::END_OP,"","2","1"));
                 Smarkdown(NetworkData(OPCODE::END_OP,"","2","1"));
             }
+            QCoreApplication::quit();
             return;
         }
 
@@ -583,14 +586,16 @@ void MainWindow::move_op(QTcpSocket *client, NetworkData data)
                 server->send(user2->client,NetworkData(OPCODE::END_OP,move_reason,"6","1"));
                 Smarkdown(NetworkData(OPCODE::END_OP,move_reason,"6","1"));
             }
+            QCoreApplication::quit();
             return;
         }
         else if(game->game_info_->end_reason_ == SurakartaEndReason::STALEMATE)
         {
             out << "S";
-            server->send(user1->client,NetworkData(OPCODE::END_OP,"","1","0"));
-            server->send(user2->client,NetworkData(OPCODE::END_OP,"","1","0"));
-            Smarkdown(NetworkData(OPCODE::END_OP,move_reason,"6","1"));
+            server->send(user1->client,NetworkData(OPCODE::END_OP,"","1","2"));
+            server->send(user2->client,NetworkData(OPCODE::END_OP,"","1","2"));
+            Smarkdown(NetworkData(OPCODE::END_OP,move_reason,"6","2"));
+            QCoreApplication::quit();
             return;
         }
     }

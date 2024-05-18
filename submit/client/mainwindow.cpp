@@ -218,6 +218,7 @@ void MainWindow::rec_end(NetworkData& data)
 
     socket->send(NetworkData(OPCODE::LEAVE_OP,"","","")); // 发出离开信号
     socket->bye();
+    QCoreApplication::quit();
 }
 
 void MainWindow::mark_move(NetworkData& data)
