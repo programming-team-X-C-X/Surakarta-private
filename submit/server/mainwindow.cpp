@@ -68,10 +68,12 @@ QString GetInfo(NetworkData data)
 SurakartaMove MainWindow::backmove(NetworkData data)
 {
     SurakartaMove rt;
-    rt.from.x = data.data1[1].unicode() - 64 -1;
-    rt.to.x   = data.data2[1].unicode() - 64 -1;
-    rt.from.y = data.data1[0].digitValue() - 1;
-    rt.to.y   = data.data2[0].digitValue() - 1;
+
+    rt.from.x = data.data1[0].unicode() - 64 -1;
+    rt.to.x   = data.data2[0].unicode() - 64 -1;
+    rt.from.y = data.data1[1].digitValue() - 1;
+    rt.to.y   = data.data2[1].digitValue() - 1;
+
     rt.player = game->game_info_->current_player_;
 
     qDebug() << "player :" << ((rt.player == PieceColor::BLACK) ? "BLACK" : "WHITE");
