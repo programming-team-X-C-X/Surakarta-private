@@ -183,7 +183,7 @@ MainWindow::MainWindow(QWidget *parent)
             else endcolor = "0";
 
             QTextStream out(movefile);
-            out << "R";
+            out << "R#";
             server->send(user1->client,NetworkData(OPCODE::END_OP,"","4",endcolor));
             server->send(user2->client,NetworkData(OPCODE::END_OP,"","4",endcolor));
             game->game_info_->end_reason_ = SurakartaEndReason::RESIGN;
@@ -435,7 +435,7 @@ void MainWindow::leave_op(QTcpSocket *client, NetworkData data)
         // qDebug() << Lefttime;
         game->game_info_->end_reason_ = SurakartaEndReason::RESIGN;
         QTextStream out(movefile);
-        out << "R";
+        out << "R#";
         QString endcolor;
         if(client == user2->client)
         {
@@ -554,7 +554,7 @@ void MainWindow::move_op(QTcpSocket *client, NetworkData data)
         istart = 0;
         if(game->game_info_->end_reason_ == SurakartaEndReason::CHECKMATE )
         {
-            out  << "C";
+            out  << "C#";
             if(game->game_info_->current_player_ == PieceColor::BLACK)
             {
                 server->send(user1->client,NetworkData(OPCODE::END_OP,"","2","0"));
@@ -573,7 +573,7 @@ void MainWindow::move_op(QTcpSocket *client, NetworkData data)
 
         else if(game->game_info_->end_reason_ == SurakartaEndReason::ILLIGAL_MOVE)
         {
-            out << "I";
+            out << "I#";
             if(game->game_info_->current_player_ == PieceColor::WHITE) // data3 指的是什么?
             {
 
@@ -593,7 +593,7 @@ void MainWindow::move_op(QTcpSocket *client, NetworkData data)
         }
         else if(game->game_info_->end_reason_ == SurakartaEndReason::STALEMATE)
         {
-            out << "S";
+            out << "S#";
             server->send(user1->client,NetworkData(OPCODE::END_OP,"","1","2"));
             server->send(user2->client,NetworkData(OPCODE::END_OP,"","1","2"));
             Smarkdown(NetworkData(OPCODE::END_OP,move_reason,"6","2"));

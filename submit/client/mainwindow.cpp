@@ -199,15 +199,15 @@ void MainWindow::rec_end(NetworkData& data)
 {
     QTextStream out(movefile);
 
-    if(data.data2 == "1") out << "S";
+    if(data.data2 == "1") out << "S#";
 
-    else if(data.data2 == "2") out << "C";
+    else if(data.data2 == "2") out << "C#";
 
-    else if(data.data2 == "4") out << "R";
+    else if(data.data2 == "4") out << "R#";
 
-    else if(data.data2 == "5") out << "T";
+    else if(data.data2 == "5") out << "T#";
 
-    else if(data.data2 == "6") out << "I";
+    else if(data.data2 == "6") out << "I#";
 
 
 
