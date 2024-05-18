@@ -117,7 +117,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
 
-    if(arg.size() == 3)
+    if(arg.size() >= 3)
     {
         ui->ip_line->setText(arg[1]);
         ui->port_line->setText(arg[2]);
