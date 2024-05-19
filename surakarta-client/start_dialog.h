@@ -40,6 +40,7 @@ private:
     QPushButton *singlePlayerButton;
     QPushButton *multiPlayerButton;
     QPushButton *computerGameButton;
+    QPushButton *backButton;
     QPushButton *settingsButton;
     QPushButton *localButton;
     QPushButton *onlineButton;
@@ -49,6 +50,7 @@ private slots:
     void selectMultiPlayerGame();
     void selectComputerGame();
     void openSettingsDialog();
+    void backToModeSelect();
     void showLocalGameOptions();
     void showOnlineGameOptions();
 

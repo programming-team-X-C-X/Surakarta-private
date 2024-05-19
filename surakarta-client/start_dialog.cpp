@@ -23,11 +23,13 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
     multiPlayerButton = new QPushButton(tr("双人游戏"), this);
     computerGameButton = new QPushButton(tr("电脑对战"), this);
     localButton = new QPushButton(tr("本地游戏"), this);
+    backButton = new QPushButton(tr("返回"), this);
     onlineButton = new QPushButton(tr("联机游戏"), this);
     settingsButton = new QPushButton(tr("游戏设置"), this);
     singlePlayerButton->hide();
     multiPlayerButton->hide();
     computerGameButton->hide();
+    backButton->hide();
     settingsButton->hide();
 
     // singlePlayerButton->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*5/6, 100, 30);
@@ -39,6 +41,7 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
     multiPlayerButton->setFixedSize(100, 30);
     computerGameButton->setFixedSize(100, 30);
     settingsButton->setFixedSize(100, 30);
+    backButton->setFixedSize(100, 30);
 
     // vLayout->setAlignment(Qt::AlignBottom);
     vLayout->addWidget(settingsButton);
@@ -46,6 +49,7 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
     vLayout->addWidget(singlePlayerButton);
     vLayout->addWidget(multiPlayerButton);
     vLayout->addWidget(computerGameButton);
+    vLayout->addWidget(backButton);
     vLayout->addWidget(localButton);
     vLayout->addWidget(onlineButton);
     hLayout->addStretch();
@@ -58,17 +62,18 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
     connect(multiPlayerButton, &QPushButton::clicked, this, &StartDialog::startMultiPlayerGame);
     connect(computerGameButton, &QPushButton::clicked, this, &StartDialog::startComputerGame);
     connect(settingsButton, &QPushButton::clicked, this, &StartDialog::openSettingsDialog);
-
+    connect(backButton, &QPushButton::clicked, this, &StartDialog::backToModeSelect);
 }
 
 void StartDialog::showLocalGameOptions() {
-    localButton->hide(); // 或者使用 localButton->deleteLater(); 如果不再需要
-    onlineButton->hide(); // 或者使用 onlineButton->deleteLater(); 如果不再需要
+    localButton->hide();
+    onlineButton->hide();
 
     singlePlayerButton->show();
     multiPlayerButton->show();
     computerGameButton->show();
     settingsButton->show();
+    backButton->show();
     // vLayout->addWidget(singlePlayerButton);
     // vLayout->addWidget(multiPlayerButton);
     // vLayout->addWidget(computerGameButton);
@@ -100,4 +105,15 @@ void StartDialog::selectComputerGame() {
 void StartDialog::openSettingsDialog() {
     SettingsDialog settingsDialog(this); // 使用 this 作为 parent 以确保设置面板居中显示
     settingsDialog.exec(); // 显示设置面板
+}
+
+void StartDialog::backToModeSelect() {
+    localButton->show();
+    onlineButton->show();
+
+    singlePlayerButton->hide();
+    multiPlayerButton->hide();
+    computerGameButton->hide();
+    settingsButton->hide();
+    backButton->hide();
 }
