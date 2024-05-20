@@ -179,6 +179,10 @@ void LocalMainWindow::playerMove(SurakartaPosition from, SurakartaPosition to) {
     if (game->Move(move).IsLegal())
         chessBoard->movePiece(move);
     updateGameInfo();
+    if (game->game_mode_ == SurakartaGameMode::PVP) {
+        PLAYER_COLOR = !PLAYER_COLOR;
+        RIGHT_COLOR = !RIGHT_COLOR;
+    }
 }
 
 void LocalMainWindow::startComputerMove() {
