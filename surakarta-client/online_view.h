@@ -5,6 +5,7 @@
 #include "info_game.h"
 #include "agent_random.h"
 #include "chess_board_widght.h"
+#include <qthread.h>
 
 namespace Ui {
 class game_view;
@@ -28,6 +29,8 @@ public:
     void restartGame();
     void provideHints(SurakartaPosition pos);
     std::shared_ptr<SurakartaAgentRandom>   agentMine = std::make_shared<SurakartaAgentRandom>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager());
+    void onAIMoveComputed(const SurakartaMove& move);
+    void startAIThread();
 
 private slots:
     // void on_pushButton_clicked();
@@ -38,6 +41,7 @@ private slots:
 
 private:
     Ui::game_view *ui;
+    QThread *aiThread;
 signals:
     void sendHints(const std::vector<SurakartaPosition>& hints);
     void AskMove(SurakartaMove move);

@@ -31,6 +31,7 @@ SOURCES += \
     # Surakarta-RuleAiTest-private\src\surakarta\surakarta_agent_base.cpp
 
 HEADERS += \
+    AI_task.h \
     agent_base.h \
     agent_mine.h \
     agent_random.h \
