@@ -10,6 +10,7 @@
 #include "info_common.h"
 #include "settings.h"
 
+
 class ChessBoardWidget : public QWidget {
     Q_OBJECT
 public:
@@ -22,6 +23,7 @@ public:
     void clearHints();
     void setMode(DrawMode newMode);
     QPointF convertPositionToQPointF(const SurakartaPosition& position);
+    void loadScene(const mini_board& board_);
 
     int arcNum = (BOARD_SIZE - 2) / 2;//环数
     int rawNum = BOARD_SIZE + arcNum * 2 + 1;//总行数

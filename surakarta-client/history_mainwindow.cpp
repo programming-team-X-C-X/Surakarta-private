@@ -4,6 +4,9 @@
 #include <QDir>
 #include <QToolBar>
 
+
+
+
 History_MainWindow::History_MainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::History_MainWindow)
@@ -43,6 +46,11 @@ void History_MainWindow::on_pushButton_clicked()
     game->StartGame();
     //boards.push_back(*game->board_.get());
 
+    // 放入最初始的状态
+    mini_board *newBoard = new mini_board;
+    *newBoard = *(game->board_.get());
+    boards.push_back(*newBoard);
+
     // 绑定 打开 对应文件
     QFile file("../history/" + ui->comboBox->currentText());
 
@@ -65,8 +73,12 @@ void History_MainWindow::on_pushButton_clicked()
         move.to   = SurakartaPosition(moveList[i][3].unicode() - 65,moveList[i][4].digitValue() - 1);
         move.player = static_cast<SurakartaPlayer> (i%2);
         moves.push_back(move);
-        game->Move(move);
-       // boards.push_back(*game->board_.get());
+
+
+        // 放入每一步
+        mini_board *newBoard = new mini_board;
+        *newBoard = *(game->board_.get());
+        boards.push_back(*newBoard);
     }
 
     // 创建对局
@@ -113,22 +125,38 @@ void History_MainWindow::on_pushButton_clicked()
 }
 
 void History_MainWindow::onNextButtonClicked()
-{
+{/*
     qDebug() << "Next button clicked";
-    // Add your handling code here
+
+    loadGame(++step);*/
     loadGame(++step);
 }
 
 void History_MainWindow::onPreButtonClicked()
 {
     qDebug() << "Previous button clicked";
-    // Add your handling code here
+
     loadGame(--step);
+}
+SurakartaBoard* History_MainWindow::toSuraBoard(const mini_board& board)
+{
+    SurakartaBoard* rt = new SurakartaBoard(BOARD_SIZE);
+    for(unsigned i = 0;i < BOARD_SIZE;++i)
+    {
+        for(unsigned j = 0;j < BOARD_SIZE;++j)
+        {
+            (*rt)[i][j]->color_ = board.board[i][j];
+        }
+    }
+
+    return rt;
 }
 
 void History_MainWindow::loadGame(unsigned cur_step)
 {
+    // mini_board  ---->   SuarkartaBoards
+
     // 清空棋盘
-   // chessBoard->clearScene(boards[cur_step]);
+    chessBoard->loadScene(boards[cur_step]);
 
 }

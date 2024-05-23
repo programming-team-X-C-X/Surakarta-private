@@ -36,3 +36,4 @@ bool IsAi = 1;
 SurakartaPlayer mycolor;
 
 QString name;
+

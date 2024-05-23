@@ -293,3 +293,52 @@ QPointF ChessBoardWidget::convertPositionToQPointF(const SurakartaPosition& posi
 void ChessBoardWidget::setMode(DrawMode mode) {
     currentMode = mode;
 }
+
+
+void ChessBoardWidget::loadScene(const mini_board& board_)
+{
+    //
+    pieceItems.clear();
+    pieceItems.resize(BOARD_SIZE, std::vector<std::shared_ptr<SurakartaPiece>>(BOARD_SIZE));
+    if (scene) {
+        delete scene; // 删除旧的场景
+    }
+    if (view) {
+        delete view; // 删除旧的视图
+    }
+
+    scene = new QGraphicsScene(this);
+    view = new QGraphicsView(scene, this);
+    ChessBoardGraphicsItem *chessBoardItem = new ChessBoardGraphicsItem();
+
+
+    view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+    scene->addItem(chessBoardItem);
+    // view->setFixedSize(WINDOW_SIZE, WINDOW_SIZE);
+    // view->setSceneRect(chessBoardItem->boundingRect());
+    view->setBackgroundBrush(QBrush(Qt::transparent));
+
+    int arcNum = (BOARD_SIZE - 2) / 2;//环数
+    int rawNum = BOARD_SIZE + arcNum * 2 + 1;//总行数
+    int gridSize = WINDOW_SIZE / rawNum;
+    for (unsigned int y = 0; y < BOARD_SIZE; y++) {
+        for (unsigned int x = 0; x < BOARD_SIZE; x++) {
+
+            if(board_.board[x][y] == PieceColor::NONE) {
+                (*board)[x][y] = std::make_shared<SurakartaPiece>(x, y, PieceColor::NONE);
+            }
+            else
+            {
+                (*board)[x][y] = std::make_shared<SurakartaPiece>(x, y, board_.board[x][y]);
+                pieceItems[x][y] = std::make_shared<SurakartaPiece>(x, y, (*board)[x][y]->color_);
+                SurakartaPiece *pieceItem = pieceItems[x][y].get();
+                int pos_x = (arcNum + x + 1) * gridSize;
+                int pos_y = (arcNum + y + 1) * gridSize;
+                pieceItem->setPos(pos_x-PIECE_SIZE/2, pos_y-PIECE_SIZE/2);
+                scene->addItem(pieceItem);
+            }
+        }
+    }
+
+}
