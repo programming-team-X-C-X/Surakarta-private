@@ -6,6 +6,9 @@
 #include "info_common.h"
 #include "settings.h"
 #include "chess_board_widght.h"
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
 #include <QToolBar>
 class mini_board;
 
@@ -25,13 +28,21 @@ public:
 
     void GetMove();
 
+signals:
+    void reachMax();
+    void reachMin();
+    void deMax();
+    void deMin();
+
 private slots:
     void on_pushButton_clicked();
     void onNextButtonClicked();
     void onPreButtonClicked();
+    void onJumpButtonClicked();
 
-    SurakartaBoard* toSuraBoard(const mini_board& board);
+
     void loadGame(unsigned cur_step);
+
 
 
 private:
@@ -44,7 +55,8 @@ private:
     std::vector<mini_board> boards;
 
     // 当前步数
-    unsigned step;
+    int step;
+    int max_step;
 
     // 文件中的游戏信息
     QString game_info;
@@ -55,6 +67,13 @@ private:
     ChessBoardWidget *chessBoard;
 
     Ui::History_MainWindow *ui;
+    QTimer* timer;
+
+    QLabel *roundLabel;
+
+    QLineEdit *jumpLineEdit;
+
+    QPushButton *jumpButton;
 };
 
 #endif // HISTORY_MAINWINDOW_H

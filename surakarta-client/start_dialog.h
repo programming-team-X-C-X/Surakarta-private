@@ -45,6 +45,9 @@ private:
     QPushButton *localButton;
     QPushButton *onlineButton;
 
+    // 历史记录
+    QPushButton *historyButton;
+
 private slots:
     void selectSinglePlayerGame();
     void selectMultiPlayerGame();
@@ -53,6 +56,8 @@ private slots:
     void backToModeSelect();
     void showLocalGameOptions();
     void showOnlineGameOptions();
+
+    void showHistory();
 
 };
 

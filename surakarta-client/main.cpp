@@ -29,10 +29,8 @@ int main(int argc, char *argv[]) {
 
     StartDialog *startDialog = new StartDialog();
     QPointer<LocalMainWindow> gameMainWindow /*= nullptr*/;
-   // startDialog->show();
+    startDialog->show();
 
-    History_MainWindow* mw = new History_MainWindow();
-    mw->show();
 
 
     // 连接开始对话框的信号到一个具体的游戏模式启动函数

@@ -2,6 +2,7 @@
 #include <QPushButton>
 #include <QVBoxLayout>
 #include <QSpinBox>
+#include "History_MainWindow.h"
 #include "settings_dialog.h"
 
 StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
@@ -26,6 +27,7 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
     backButton = new QPushButton(tr("返回"), this);
     onlineButton = new QPushButton(tr("联机游戏"), this);
     settingsButton = new QPushButton(tr("游戏设置"), this);
+    historyButton = new QPushButton(tr("历史记录"), this);
     singlePlayerButton->hide();
     multiPlayerButton->hide();
     computerGameButton->hide();
@@ -42,6 +44,7 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
     computerGameButton->setFixedSize(100, 30);
     settingsButton->setFixedSize(100, 30);
     backButton->setFixedSize(100, 30);
+    historyButton->setFixedSize(100,30);
 
     // vLayout->setAlignment(Qt::AlignBottom);
     vLayout->addWidget(settingsButton);
@@ -52,6 +55,7 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
     vLayout->addWidget(backButton);
     vLayout->addWidget(localButton);
     vLayout->addWidget(onlineButton);
+    vLayout->addWidget(historyButton);
     hLayout->addStretch();
     hLayout->addLayout(vLayout);
     this->setLayout(hLayout);// 将水平布局设置为窗口的主布局
@@ -63,6 +67,7 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
     connect(computerGameButton, &QPushButton::clicked, this, &StartDialog::startComputerGame);
     connect(settingsButton, &QPushButton::clicked, this, &StartDialog::openSettingsDialog);
     connect(backButton, &QPushButton::clicked, this, &StartDialog::backToModeSelect);
+    connect(historyButton, &QPushButton::clicked, this, &StartDialog::showHistory);
 }
 
 void StartDialog::showLocalGameOptions() {
@@ -116,4 +121,11 @@ void StartDialog::backToModeSelect() {
     computerGameButton->hide();
     settingsButton->hide();
     backButton->hide();
+}
+
+void StartDialog::showHistory()
+{
+    History_MainWindow* w = new History_MainWindow();
+    w->show();
+    w->setAttribute(Qt::WA_DeleteOnClose);
 }
