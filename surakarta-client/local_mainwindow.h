@@ -64,7 +64,8 @@ public slots:
 
 signals:
     void backToStartDialog();
-    void sendHints(const std::vector<SurakartaPosition>& hints);
+    void sendCaptureHints(const std::vector<SurakartaPosition>& hints);
+    void sendNONCaptureHints(const std::vector<SurakartaPosition>& hints);
 
 protected:
         void paintEvent(QPaintEvent */*event*/) override;

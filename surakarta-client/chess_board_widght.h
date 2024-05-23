@@ -18,7 +18,8 @@ public:
     std::shared_ptr<SurakartaBoard> board;
     std::vector<std::vector<std::shared_ptr<SurakartaPiece>>> pieceItems;
     ChessBoardWidget();
-    void drawHint(const SurakartaPosition& position);
+    void drawCaptureHint(const SurakartaPosition& position);
+    void drawNONCaptureHint(const SurakartaPosition& position);
     void clearHints();
     void setMode(DrawMode newMode);
     QPointF convertPositionToQPointF(const SurakartaPosition& position);
@@ -29,7 +30,8 @@ public:
 
 public slots:
     void movePiece(/*const SurakartaPosition& from, const SurakartaPosition& to*/const SurakartaMove& move);
-    void receiveHints(const std::vector<SurakartaPosition>& hints);
+    void receiveCaptureHints(const std::vector<SurakartaPosition>& hints);
+    void receiveNONCaptureHints(const std::vector<SurakartaPosition>& hints);
 
 signals:
     void playerMove(SurakartaPosition from, SurakartaPosition to);

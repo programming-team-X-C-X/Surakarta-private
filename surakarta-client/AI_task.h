@@ -2,12 +2,13 @@
 #define AI_TASK_H
 
 #include "agent_random.h"
+#include "agent_mine.h"
 
 class AITask : public QObject {
     Q_OBJECT
 
 public:
-    AITask(std::shared_ptr<SurakartaAgentRandom> agent)
+    AITask(std::shared_ptr<SurakartaAgentMine> agent)
         : agent_(agent) {}
 
 public slots:
@@ -22,7 +23,7 @@ signals:
     void resultReady(const SurakartaMove &move);
 
 private:
-    std::shared_ptr<SurakartaAgentRandom> agent_;
+    std::shared_ptr<SurakartaAgentMine> agent_;
 };
 
 #endif // AI_TASK_H

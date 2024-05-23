@@ -189,21 +189,38 @@ std::pair<SurakartaEndReason, SurakartaPlayer> SurakartaRuleManager::JudgeEnd(co
         else return std::make_pair(SurakartaEndReason::ILLIGAL_MOVE, PieceColor::BLACK);
 }
 
-std::unique_ptr<std::vector<SurakartaPosition>> SurakartaRuleManager::GetAllLegalTarget(const SurakartaPosition postion) {
+std::unique_ptr<std::vector<SurakartaPosition>> SurakartaRuleManager::GetAllLegalCaptureTarget(const SurakartaPosition postion) {
     SurakartaMove move;
     move.from = postion;
-    std::unique_ptr<std::vector<SurakartaPosition>> allLegalTargets = std::make_unique<std::vector<SurakartaPosition>>();
+    std::unique_ptr<std::vector<SurakartaPosition>> allLegalCaptureTargets = std::make_unique<std::vector<SurakartaPosition>>();
     for(unsigned i = 0; i < BOARD_SIZE ; i++)
     {
         for(unsigned j = 0; j < BOARD_SIZE ; j++)
         {
             move.to = {i , j};
-            if(JudgeMove(move) == SurakartaIllegalMoveReason::LEGAL_NON_CAPTURE_MOVE || JudgeMove(move) == SurakartaIllegalMoveReason::LEGAL_CAPTURE_MOVE) // legal move
-                allLegalTargets->push_back({i,j});
+            if(JudgeMove(move) == SurakartaIllegalMoveReason::LEGAL_CAPTURE_MOVE) // legal move
+                allLegalCaptureTargets->push_back({i,j});
         }
     }
-    return allLegalTargets;
+    return allLegalCaptureTargets;
 }
+
+std::unique_ptr<std::vector<SurakartaPosition>> SurakartaRuleManager::GetAllLegalNONCaptureTarget(const SurakartaPosition postion) {
+    SurakartaMove move;
+    move.from = postion;
+    std::unique_ptr<std::vector<SurakartaPosition>> allLegalNONCaptureTargets = std::make_unique<std::vector<SurakartaPosition>>();
+    for(unsigned i = 0; i < BOARD_SIZE ; i++)
+    {
+        for(unsigned j = 0; j < BOARD_SIZE ; j++)
+        {
+            move.to = {i , j};
+            if(JudgeMove(move) == SurakartaIllegalMoveReason::LEGAL_NON_CAPTURE_MOVE /*|| JudgeMove(move) == SurakartaIllegalMoveReason::LEGAL_CAPTURE_MOVE*/) // legal move
+                allLegalNONCaptureTargets->push_back({i,j});
+        }
+    }
+    return allLegalNONCaptureTargets;
+}
+
 
 bool SurakartaRuleManager::IsN_C_M(const SurakartaMove& move)
 {

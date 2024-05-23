@@ -76,7 +76,8 @@ void LocalMainWindow::Initialize() {
     connect(chessBoard, &ChessBoardWidget::playerMove, this, &LocalMainWindow::playerMove);
     connect(chessBoard, &ChessBoardWidget::animationFinished, this, &LocalMainWindow::judgeEnd);
     connect(chessBoard, &ChessBoardWidget::requestHints, this, &LocalMainWindow::provideHints);
-    connect(this, &LocalMainWindow::sendHints, chessBoard, &ChessBoardWidget::receiveHints);
+    connect(this, &LocalMainWindow::sendCaptureHints, chessBoard, &ChessBoardWidget::receiveCaptureHints);
+    connect(this, &LocalMainWindow::sendNONCaptureHints, chessBoard, &ChessBoardWidget::receiveNONCaptureHints);
 
     playerInfoLabel = new QLabel(this);
     currentPlayerLabel = new QLabel(this);
@@ -213,9 +214,13 @@ void LocalMainWindow::updateCountdownDisplay() {
 }
 
 void LocalMainWindow::provideHints(SurakartaPosition pos) {
-    auto hints = game->rule_manager_->GetAllLegalTarget(pos);
-    std::vector<SurakartaPosition> hintVector = *hints;
-    emit sendHints(hintVector);
+    auto captureHints = game->rule_manager_->GetAllLegalCaptureTarget(pos);
+    std::vector<SurakartaPosition> captureHintVector = *captureHints;
+    emit sendCaptureHints(captureHintVector);
+    auto NONcaptureHints = game->rule_manager_->GetAllLegalNONCaptureTarget(pos);
+    std::vector<SurakartaPosition> NONcaptureHintVector = *NONcaptureHints;
+    emit sendNONCaptureHints(NONcaptureHintVector);
+
 }
 
 void LocalMainWindow::showEndDialog() {

@@ -29,7 +29,8 @@ public:
     virtual void OnUpdateBoard();
     virtual SurakartaIllegalMoveReason JudgeMove(/*const*/ SurakartaMove& move);
     virtual std::pair<SurakartaEndReason, SurakartaPlayer> JudgeEnd(const SurakartaIllegalMoveReason reason);
-    virtual std::unique_ptr<std::vector<SurakartaPosition>> GetAllLegalTarget(const SurakartaPosition postion);
+    virtual std::unique_ptr<std::vector<SurakartaPosition>> GetAllLegalCaptureTarget(const SurakartaPosition postion);
+    virtual std::unique_ptr<std::vector<SurakartaPosition>> GetAllLegalNONCaptureTarget(const SurakartaPosition postion);
 
     //    protected:
     std::shared_ptr<const SurakartaBoard> board_;

@@ -28,7 +28,8 @@ GameView::GameView(QWidget *parent)
     connect(chessBoard, &ChessBoardWidget::playerMove, this, &GameView::Move);
     connect(chessBoard, &ChessBoardWidget::animationFinished, this, &GameView::AfterAnimationFinished);
     connect(chessBoard, &ChessBoardWidget::requestHints, this, &GameView::provideHints);
-    connect(this, &GameView::sendHints, chessBoard, &ChessBoardWidget::receiveHints);
+    connect(this, &GameView::sendCaptureHints, chessBoard, &ChessBoardWidget::receiveCaptureHints);
+    connect(this, &GameView::sendNONCaptureHints, chessBoard, &ChessBoardWidget::receiveNONCaptureHints);
     game.StartGame();
     show();
 }
@@ -52,6 +53,7 @@ void GameView::endShow(SurakartaEndReason rea, QString color, QString round)
 void GameView::startAIThread() {
     // 创建线程和任务对象
     aiThread = new QThread();
+    // AITask* aiTask = new AITask(agentMine);
     AITask* aiTask = new AITask(agentMine);
 
     // 移动任务对象到新线程
@@ -109,9 +111,12 @@ void GameView::update_time()
 }
 
 void GameView::provideHints(SurakartaPosition pos) {
-    auto hints = game.rule_manager_->GetAllLegalTarget(pos);
-    std::vector<SurakartaPosition> hintVector = *hints;
-    emit sendHints(hintVector);
+    auto captureHints = game.rule_manager_->GetAllLegalCaptureTarget(pos);
+    std::vector<SurakartaPosition> captureHintVector = *captureHints;
+    emit sendCaptureHints(captureHintVector);
+    auto NONcaptureHints = game.rule_manager_->GetAllLegalNONCaptureTarget(pos);
+    std::vector<SurakartaPosition> NONcaptureHintVector = *NONcaptureHints;
+    emit sendNONCaptureHints(NONcaptureHintVector);
 }
 
 void GameView::on_giveup_button_clicked()
