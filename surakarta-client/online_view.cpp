@@ -2,14 +2,18 @@
 #include "ui_online_view.h"
 #include <QDebug>
 #include "online_end_dialog.h"
+#include "AI_task.h"
+
 GameView::GameView(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::game_view)
+    , aiThread(nullptr)
 {
     // 初始化
     left_time = TIME_LIMIT;
     gameround = 1;
     RIGHT_COLOR = 1;
+    IsAi = 1;
 
     ui->setupUi(this);
     setWindowTitle(tr("surakarta"));
@@ -45,14 +49,45 @@ void GameView::endShow(SurakartaEndReason rea, QString color, QString round)
     EView->exec();
 }
 
-void GameView::computerMove()
-{
-    // qDebug() << "开始开始 ";
-    if(!game.IsEnd() && PLAYER_COLOR == RIGHT_COLOR){
-        SurakartaMove move = agentMine->CalculateMove();
-        emit AskMove(move);
-    }
+void GameView::startAIThread() {
+    // 创建线程和任务对象
+    aiThread = new QThread();
+    AITask* aiTask = new AITask(agentMine);
 
+    // 移动任务对象到新线程
+    aiTask->moveToThread(aiThread);
+
+    // 连接信号和槽
+    connect(aiThread, &QThread::started, aiTask, &AITask::doWork);
+    connect(aiTask, &AITask::resultReady, this, &GameView::onAIMoveComputed);
+
+    // 清理
+    connect(aiTask, &AITask::resultReady, aiTask, &AITask::deleteLater);
+    connect(aiThread, &QThread::finished, aiThread, &QThread::deleteLater);
+
+    // 启动线程
+    aiThread->start();
+}
+
+void GameView::computerMove() {
+    if (!game.IsEnd() && PLAYER_COLOR == RIGHT_COLOR) {
+        if (!aiThread || aiThread->isFinished()) {
+            startAIThread(); // 启动或重新启动AI线程
+        }
+    }
+}
+
+void GameView::onAIMoveComputed(const SurakartaMove& move) {
+    // 用 AI 计算的结果来更新游戏
+    emit AskMove(move);
+    // 停止和清理 AI 线程
+    if(aiThread) {
+        aiThread->quit();
+        aiThread->wait();
+        // delete aiThread;
+        aiThread->deleteLater();
+        aiThread = nullptr;
+    }
 }
 
 void GameView::update_gameinfo()
@@ -73,21 +108,11 @@ void GameView::update_time()
     }
 }
 
-
-
 void GameView::provideHints(SurakartaPosition pos) {
     auto hints = game.rule_manager_->GetAllLegalTarget(pos);
     std::vector<SurakartaPosition> hintVector = *hints;
     emit sendHints(hintVector);
 }
-
-// void GameView::on_pushButton_clicked()
-// {   SurakartaMove move({0,1},{0,2},PieceColor::BLACK);
-//     game.Move(move);
-//     chessBoard->movePiece(move);
-//     qDebug() << "正在点击";
-// }
-
 
 void GameView::on_giveup_button_clicked()
 {
