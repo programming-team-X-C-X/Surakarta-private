@@ -15,6 +15,12 @@ public:
         : /*BOARD_SIZE(board->board_size_),*/
         board_(std::const_pointer_cast<const SurakartaBoard>(board)),
         game_info_(std::const_pointer_cast<const SurakartaGameInfo>(game_info)) {}
+    SurakartaRuleManager(std::shared_ptr<SurakartaBoard> board,
+                         std::shared_ptr<SurakartaPlayer> current_player)
+        : /*BOARD_SIZE(board->board_size_),*/
+        board_(std::const_pointer_cast<const SurakartaBoard>(board)),
+        game_info_(new SurakartaGameInfo(current_player)) {}
+    // game_info_(std::const_pointer_cast<const SurakartaGameInfo>(current_player)) {}
 
     unsigned int GetBoardSize() {
         return BOARD_SIZE;
