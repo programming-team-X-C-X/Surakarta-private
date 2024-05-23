@@ -1,116 +1,221 @@
 #include "agent_mine.h"
 
-SurakartaMove SurakartaAgentMine::CalculateMove() {
-    // TODO: Implement your own ai here.
-
-    // 1. Get All posible ways to go
-    std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>>> Go = GetAllPositions();
-
-    // 2. Choose one step that has the biggest mark
-
-    // 3.
-    SurakartaMove rt = GetBestMove(Go);
-    return rt;
-}
-
-
-std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>>> SurakartaAgentMine::GetAllPositions() const
-{
-    std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>>> rt;    //  store from and all its legal to
-    SurakartaPosition _from{};                                                                       //  store from
-    std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>> tmp;
-    for(unsigned i = 0; i < board_size_; i++)
+// 计算当前棋局评分
+int EvaluateBoardFor(const SurakartaBoard& board, PieceColor currentPlayer) {
+    int score = 0;
+    // ... 实现评分逻辑
+    for(unsigned i = 0; i < board.board_size_; i++ )
     {
-        for(unsigned j = 0; j < board_size_; j++)
+        for(unsigned j = 0; j < board.board_size_; j++)
         {
-            if((*board_)[i][j]->GetColor() == game_info_->current_player_)                           //  Find own qizi
+            if(board[i][j]->GetColor() == currentPlayer)
             {
-                _from = {i,j};
-                std::unique_ptr<std::vector<SurakartaPosition>> AllTo = rule_manager_->GetAllLegalTarget(_from);    //  store all to
-                tmp = std::make_pair(_from, std::move(AllTo));
-                rt.push_back(std::move(tmp));
-            }
-        }
-    }
-    return rt;
-}
-
-int SurakartaAgentMine::CalculateMarks(SurakartaBoard& _board) const
-{
-    int mark{};
-
-    for(unsigned i = 0; i < board_size_; i++ )
-    {
-        for(unsigned j = 0; j < board_size_; j++)
-        {
-            if(_board[i][j]->GetColor() == game_info_->current_player_ )
-            {
-                if(game_info_->current_player_ == PieceColor::WHITE)
+                if(currentPlayer == PieceColor::WHITE)
                 {
-                    if((i == board_size_/2 - 1 ) || (j == board_size_/2 - 1) )
+                    if((i == board.board_size_/2 - 1 ) || (j == board.board_size_/2 - 1) )
                     {
-                        mark += 8;
+                        score += 8;
                     }
-                    else if(j >= board_size_ - 2 )  continue;
-                    else mark += 2;
+                    else if(j >= board.board_size_ - 2 )  continue;
+                    else score += 2;
                 }
                 else
                 {
-                    if((i == board_size_/2 + 1 ) || (j == board_size_/2 + 1 ) )
+                    if((i == board.board_size_/2 + 1 ) || (j == board.board_size_/2 + 1 ) )
                     {
-                        mark += 8;
+                        score += 8;
                     }
                     else if(j <= 1 )  continue;
-                    else mark += 2;
+                    else score += 2;
                 }
             }
-            else if(_board[i][j]->GetColor() ==  PieceColor::NONE) continue;
-            else  mark -= 20;
+            else if(board[i][j]->GetColor() ==  PieceColor::NONE) continue;
+            else  score -= 20;
         }
     }
-    return mark;
+    return score;
 }
 
-SurakartaMove SurakartaAgentMine::GetBestMove(std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>>>& uin) const
-{
-    int MaxP{-999};
-    int CurP{};
-    SurakartaMove tmp;
-    SurakartaMove best;
-    SurakartaBoard _board{*board_};
-    PieceColor ls1,ls2;
-    //CopyBoard(_board);
+// 检查游戏是否结束
+bool IsGameOver(const SurakartaBoard& board) {
+    // ... 实现检查逻辑
+    for(unsigned i = 0; i < board.board_size_; i++ )
+        for(unsigned j = 0; j < board.board_size_; j++)
+            if(board[i][j]->GetColor() == SurakartaPlayer::WHITE || board[i][j]->GetColor() == SurakartaPlayer::BLACK)
+                return false;
+    return true;
+}
 
-    for(unsigned i = 0;i < uin.size(); i++ ) { // number of from
-        for(unsigned j = 0;j < uin[i].second->size(); j++) {
-            tmp = {uin[i].first,uin[i].second->at(j),game_info_->current_player_};
-            //   move
-            ls1 = _board[tmp.from.x][tmp.from.y]->color_;
-            ls2 = _board[tmp.to.x][tmp.to.y]->color_ ;
-            _board[tmp.from.x][tmp.from.y]->color_ = PieceColor::NONE;
-            _board[tmp.to.x][tmp.to.y]->color_     = game_info_->current_player_;
+// minimax 的递归部分
+int Minimax(SurakartaBoard& board, int depth, bool maximizingPlayer,
+            int alpha, int beta, PieceColor currentPlayer) {
+    if (depth == 0 || IsGameOver(board)) {
+        return EvaluateBoardFor(board, currentPlayer);
+    }
 
-            CurP = CalculateMarks(_board);
-            if(CurP > MaxP) {
-                MaxP = CurP;
-                best = tmp;
+    // int bestScore;
+    std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>>> legalMoves;
+    // std::shared_ptr<const SurakartaBoard> board_ = rule_manager.board_;
+    // SurakartaBoard board_ = (*rule_manager.board_);
+
+    //找到所有可行
+    SurakartaRuleManager rule_manager(std::make_shared<SurakartaBoard>(board), std::make_shared<SurakartaPlayer>(currentPlayer));
+    for(unsigned i = 0; i < board.board_size_; i++ ){
+        for(unsigned j = 0; j < board.board_size_; j++){
+            if((board)[i][j]->GetColor() == currentPlayer)
+            // auto lagelMoves = rule_manager.GetAllLegalTarget(SurakartaPosition(i, j));
+            // legalMoves->push_back(rule_manager.GetAllLegalTarget(SurakartaPosition(i, j)));
+            {
+                SurakartaPosition _from = {i,j};
+                std::unique_ptr<std::vector<SurakartaPosition>> AllTo = rule_manager.GetAllLegalTarget(_from);    //  store all to
+                std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>> tmp;
+                tmp = std::make_pair(_from, std::move(AllTo));
+                legalMoves.push_back(std::move(tmp));
             }
-            //   back
-            _board[tmp.from.x][tmp.from.y]->color_ = ls1;
-            _board[tmp.to.x][tmp.to.y]->color_     = ls2;
         }
     }
-    return best;
+    if (maximizingPlayer) {
+        int bestScore = std::numeric_limits<int>::min();
+        // 遍历所有可能的移动，依次对每个走法调用 Minimax 确定最佳走法
+        for (const auto& move : legalMoves) {
+            // SurakartaGame game;
+            // board.ExecuteMove(move);
+            for (auto& move_ : *move.second)
+            // SurakartaMove move_(move.first, (*move.second));
+            {
+                SurakartaBoard board_ = board;
+                SurakartaMove temp_move(move.first, move_, rule_manager.game_info_->current_player_);
+                SurakartaIllegalMoveReason move_reason = rule_manager.JudgeMove(temp_move/*, path*/);
+                if (move_reason == SurakartaIllegalMoveReason::LEGAL_NON_CAPTURE_MOVE) {
+                    std::swap((board_)[temp_move.to.x][temp_move.to.y], (board_)[temp_move.from.x][temp_move.from.y]);
+                    (board_)[temp_move.to.x][temp_move.to.y]->SetPosition(temp_move.to);
+                    (board_)[temp_move.from.x][temp_move.from.y]->SetPosition(temp_move.from);
+                } else if (move_reason == SurakartaIllegalMoveReason::LEGAL_CAPTURE_MOVE) {
+                    (board_)[temp_move.to.x][temp_move.to.y] = (board_)[temp_move.from.x][temp_move.from.y];
+                    (board_)[temp_move.to.x][temp_move.to.y]->SetPosition(temp_move.to);
+                    (board_)[temp_move.from.x][temp_move.from.y] = std::make_shared<SurakartaPiece>(temp_move.from.x, temp_move.from.y, PieceColor::NONE);
+                }
+
+                // 通过Minimax递归调用评估这个走法
+                int score;
+                if (currentPlayer == SurakartaPlayer::BLACK)
+                    score = Minimax(board_, depth - 1, false, alpha, beta, SurakartaPlayer::WHITE);
+                else
+                    score = Minimax(board_, depth - 1, false, alpha, beta, SurakartaPlayer::BLACK);
+                // 撤销这个走法
+                // board.UndoMove(temp_move);
+                // 检查这个走法是否比当前已知的走法更好
+                bestScore = std::max(bestScore, score);
+                alpha = std::max(alpha, bestScore);
+                if (beta <= alpha) { // beta剪枝
+                    break;
+                }
+            }
+        }
+        return bestScore;
+    }
+    else {
+        int bestScore = std::numeric_limits<int>::max();
+        // auto possibleMoves = board.GetLegalMoves(currentPlayer);
+        for (const auto& move : legalMoves) {
+            // SurakartaGame game;
+            // board.ExecuteMove(move);
+            for (auto& move_ : *move.second)
+            // SurakartaMove move_(move.first, (*move.second));
+            {
+                SurakartaBoard board_ = board;
+                SurakartaMove temp_move(move.first, move_, rule_manager.game_info_->current_player_);
+                SurakartaIllegalMoveReason move_reason = rule_manager.JudgeMove(temp_move/*, path*/);
+                if (move_reason == SurakartaIllegalMoveReason::LEGAL_NON_CAPTURE_MOVE) {
+                    std::swap((board_)[temp_move.to.x][temp_move.to.y], (board_)[temp_move.from.x][temp_move.from.y]);
+                    (board_)[temp_move.to.x][temp_move.to.y]->SetPosition(temp_move.to);
+                    (board_)[temp_move.from.x][temp_move.from.y]->SetPosition(temp_move.from);
+                } else if (move_reason == SurakartaIllegalMoveReason::LEGAL_CAPTURE_MOVE) {
+                    (board_)[temp_move.to.x][temp_move.to.y] = (board_)[temp_move.from.x][temp_move.from.y];
+                    (board_)[temp_move.to.x][temp_move.to.y]->SetPosition(temp_move.to);
+                    (board_)[temp_move.from.x][temp_move.from.y] = std::make_shared<SurakartaPiece>(temp_move.from.x, temp_move.from.y, PieceColor::NONE);
+                }
+
+                // 通过Minimax递归调用评估这个走法
+                int score;
+                if (currentPlayer == SurakartaPlayer::BLACK)
+                    score = Minimax(board_, depth - 1, false, alpha, beta, SurakartaPlayer::WHITE);
+                else
+                    score = Minimax(board_, depth - 1, false, alpha, beta, SurakartaPlayer::BLACK);
+                // 撤销这个走法
+                // board.UndoMove(temp_move);
+                // 检查这个走法是否比当前已知的走法更好
+                bestScore = std::min(bestScore, score);
+                beta = std::min(beta, bestScore);
+                if (beta <= alpha) { // alpha剪枝
+                    break;
+                }
+            }
+        }
+        return bestScore;
+    }
 }
 
-void SurakartaAgentMine::CopyBoard(SurakartaBoard& ls) const
-{
-    for(unsigned i = 0;i < board_size_; i++)
-    {
-        for(unsigned j = 0;j < board_size_; j++)
+// Minimax 根部分，选择评分最高的走法
+SurakartaMove MinimaxRoot(SurakartaRuleManager rule_manager, int depth) {
+    int bestScore = std::numeric_limits<int>::min();
+    SurakartaMove bestMove;
+    std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>>> legalMoves;
+    // std::shared_ptr<const SurakartaBoard> board_ = rule_manager.board_;
+    SurakartaBoard board_ = (*rule_manager.board_);
+
+    for(unsigned i = 0; i < rule_manager.GetBoardSize(); i++ ){
+        for(unsigned j = 0; j < rule_manager.GetBoardSize(); j++){
+            if((board_)[i][j]->GetColor() == rule_manager.game_info_->current_player_)
+            // auto lagelMoves = rule_manager.GetAllLegalTarget(SurakartaPosition(i, j));
+            // legalMoves->push_back(rule_manager.GetAllLegalTarget(SurakartaPosition(i, j)));
+            {
+                SurakartaPosition _from = {i,j};
+                std::unique_ptr<std::vector<SurakartaPosition>> AllTo = rule_manager.GetAllLegalTarget(_from);    //  store all to
+                std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>> tmp;
+                tmp = std::make_pair(_from, std::move(AllTo));
+                legalMoves.push_back(std::move(tmp));
+            }
+        }
+    }
+    // 遍历所有可能的移动，依次对每个走法调用 Minimax 确定最佳走法
+    for (const auto& move : legalMoves) {
+        // SurakartaGame game;
+        // board.ExecuteMove(move);
+        for (auto& move_ : *move.second)
+        // SurakartaMove move_(move.first, (*move.second));
         {
-            ls[i][j]->color_ = (*board_)[i][j]->GetColor();
+            SurakartaMove temp_move(move.first, move_, rule_manager.game_info_->current_player_);
+            SurakartaIllegalMoveReason move_reason = rule_manager.JudgeMove(temp_move/*, path*/);
+            if (move_reason == SurakartaIllegalMoveReason::LEGAL_NON_CAPTURE_MOVE) {
+                std::swap((board_)[temp_move.to.x][temp_move.to.y], (board_)[temp_move.from.x][temp_move.from.y]);
+                (board_)[temp_move.to.x][temp_move.to.y]->SetPosition(temp_move.to);
+                (board_)[temp_move.from.x][temp_move.from.y]->SetPosition(temp_move.from);
+            } else if (move_reason == SurakartaIllegalMoveReason::LEGAL_CAPTURE_MOVE) {
+                (board_)[temp_move.to.x][temp_move.to.y] = (board_)[temp_move.from.x][temp_move.from.y];
+                (board_)[temp_move.to.x][temp_move.to.y]->SetPosition(temp_move.to);
+                (board_)[temp_move.from.x][temp_move.from.y] = std::make_shared<SurakartaPiece>(temp_move.from.x, temp_move.from.y, PieceColor::NONE);
+            }
+
+            // 通过Minimax递归调用评估这个走法
+            int score = Minimax(board_, depth - 1, false, std::numeric_limits<int>::min(), std::numeric_limits<int>::max(), rule_manager.game_info_->current_player_);
+            // 撤销这个走法
+            // board.UndoMove(temp_move);
+            // 检查这个走法是否比当前已知的走法更好
+            if (score > bestScore) {
+                bestScore = score;
+                bestMove = temp_move;
+            }
         }
+
     }
+    // ... 在这里实现具体遍历移动的逻辑
+    return bestMove;
 }
 
+// 你的 AI 算法调用 Minimax 的入口
+SurakartaMove SurakartaAgentMine::CalculateMove() {
+    int depth = 3; // 选择一个适当的搜索深度
+    SurakartaMove bestMove = MinimaxRoot(*rule_manager_, depth);
+    return bestMove;
+}

@@ -16,7 +16,7 @@ GameView::GameView(QWidget *parent)
     IsAi = 1;
 
     ui->setupUi(this);
-    setWindowTitle(tr("surakarta"));
+    setWindowTitle(tr("苏拉卡尔塔棋 --programming-team-X-C-X --Powered by Qt 6.8.0"));
     setFixedSize(WINDOW_SIZE*1.5, WINDOW_SIZE);
 
     chessBoard = new ChessBoardWidget();

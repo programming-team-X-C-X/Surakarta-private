@@ -55,6 +55,10 @@ public:
     bool IsInside(const SurakartaPosition& position) const {
         return position.x < board_size_ && position.y < board_size_;
     }
+
+    // void ExecuteMove(SurakartaPosition from, SurakartaPosition to) {
+
+    // }
 };
 
 // 存储棋盘状态

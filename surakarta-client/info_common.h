@@ -39,6 +39,16 @@ struct SurakartaGameInfo {
         winner_(SurakartaPlayer::NONE),
         max_no_capture_round_(MAX_NO_CAPTURE_ROUND) {}
 
+    SurakartaGameInfo(std::shared_ptr<SurakartaPlayer> current_player)
+        : current_player_(*current_player),
+        player_color_(PLAYER_COLOR ? SurakartaPlayer::BLACK : SurakartaPlayer::WHITE),
+        computer_color_(PLAYER_COLOR ? SurakartaPlayer::WHITE : SurakartaPlayer::BLACK),
+        num_round_(1),
+        last_captured_round_(0),
+        end_reason_(SurakartaEndReason::NONE),
+        winner_(SurakartaPlayer::NONE),
+        max_no_capture_round_(MAX_NO_CAPTURE_ROUND) {}
+
     void Reset() {
         current_player_ = SurakartaPlayer::BLACK;
         player_color_ = PLAYER_COLOR ? SurakartaPlayer::BLACK : SurakartaPlayer::WHITE;
