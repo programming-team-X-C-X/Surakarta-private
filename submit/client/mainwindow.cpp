@@ -123,11 +123,15 @@ MainWindow::MainWindow(QWidget *parent)
         ui->port_line->setText(arg[2]);
         QString ip = ui->ip_line->text();
         QString port = ui->port_line->text();
+
+        QString color = arg[3];
+
+
         if( ip != "" && port != "")  // 输入了有效的ip和port
         {
             socket->hello(ip,port.toUShort());
             this->socket->base()->waitForConnected(2000);
-            socket->send(NetworkData(OPCODE::READY_OP,"","",""));
+            socket->send(NetworkData(OPCODE::READY_OP,"Team4", color ,"1"));
 
         }
     }

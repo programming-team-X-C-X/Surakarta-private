@@ -5,7 +5,7 @@
 #include <QDateTime>
 #include <QFile>
 #include <QTextStream>
-int Lefttime = 32;
+int Lefttime = 3;
 extern QStringList arg;
 bool istart = 0;
 int MainWindow::cnt = 0;
@@ -431,7 +431,7 @@ void MainWindow::leave_op(QTcpSocket *client, NetworkData data)
     if(istart  && !game->IsEnd()) // 表示游戏在进行
     {
         timer->stop();
-        Lefttime = 32;
+        Lefttime = 3;
         // qDebug() << Lefttime;
         game->game_info_->end_reason_ = SurakartaEndReason::RESIGN;
         QTextStream out(movefile);
@@ -467,7 +467,7 @@ void MainWindow::leave_op(QTcpSocket *client, NetworkData data)
     else
     {
         timer->stop();
-        Lefttime = 32;
+        Lefttime = 3;
 
         if(client == user1->client)
         {
@@ -514,6 +514,8 @@ void MainWindow::move_op(QTcpSocket *client, NetworkData data)
          info = user2->name + " | " + data.data1 + " -> " + data.data2 ;
     QTextStream out(movefile);
     out << data.data1 + '-'  + data.data2 << " ";
+    QTextStream ser_out(clientfile);
+    ser_out << "[ "<< info << " ]";
 
     ui->game_text->append(info);
 
@@ -550,7 +552,7 @@ void MainWindow::move_op(QTcpSocket *client, NetworkData data)
     {
         // 这个时候 一方吃完子了
         timer->stop();
-        Lefttime = 32;
+        Lefttime = 3;
         istart = 0;
         if(game->game_info_->end_reason_ == SurakartaEndReason::CHECKMATE )
         {

@@ -6,7 +6,12 @@
 #include "info_common.h"
 #include "settings.h"
 #include "chess_board_widght.h"
+#include <QLabel>
+#include <QLineEdit>
+#include <QPushButton>
 #include <QToolBar>
+class mini_board;
+
 
 namespace Ui {
 class History_MainWindow;
@@ -17,47 +22,41 @@ class History_MainWindow : public QMainWindow
     Q_OBJECT
 
 public:
+
     explicit History_MainWindow(QWidget *parent = nullptr);
     ~History_MainWindow();
 
     void GetMove();
 
+signals:
+    void reachMax();
+    void reachMin();
+    void deMax();
+    void deMin();
+
 private slots:
     void on_pushButton_clicked();
     void onNextButtonClicked();
     void onPreButtonClicked();
+    void onJumpButtonClicked();
+
+
     void loadGame(unsigned cur_step);
+
 
 
 private:
     // 存储移动步
     std::vector<SurakartaMove> moves;
 
-    // 存储棋盘状态
-    struct mini_board{
-        mini_board()
-        {
-            board.resize(BOARD_SIZE);
-        }
-        std::vector<std::vector<PieceColor>> board;
 
-        void operator=(const SurakartaBoard& bd)
-        {
-            for(unsigned i = 0;i < BOARD_SIZE;++i)
-            {
-                for(unsigned j = 0;j < BOARD_SIZE;++j)
-                {
-                    board[i].push_back(bd[i][j]->color_);
-                }
-            }
-        }
-    };
    // std::vector<SurakartaBoard> boards;
 
-    //std::vector<mini_board> boards;
+    std::vector<mini_board> boards;
 
     // 当前步数
-    unsigned step;
+    int step;
+    int max_step;
 
     // 文件中的游戏信息
     QString game_info;
@@ -68,6 +67,13 @@ private:
     ChessBoardWidget *chessBoard;
 
     Ui::History_MainWindow *ui;
+    QTimer* timer;
+
+    QLabel *roundLabel;
+
+    QLineEdit *jumpLineEdit;
+
+    QPushButton *jumpButton;
 };
 
 #endif // HISTORY_MAINWINDOW_H

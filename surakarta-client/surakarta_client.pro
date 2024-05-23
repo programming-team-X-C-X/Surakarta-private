@@ -26,7 +26,8 @@ SOURCES += \
     rule_manager.cpp \
     settings.cpp \
     settings_dialog.cpp \
-    start_dialog.cpp
+    start_dialog.cpp   \
+    history_mainwindow.cpp
 
     # Surakarta-RuleAiTest-private\src\surakarta\surakarta_agent_base.cpp
 
@@ -54,7 +55,8 @@ HEADERS += \
     rule_manager.h \
     settings.h \
     settings_dialog.h \
-    start_dialog.h
+    start_dialog.h    \
+    history_mainwindow.h
 
 
 # FORMS += \
@@ -75,4 +77,5 @@ FORMS += \
     online_end_dialog.ui \
     online_mainwindow.ui \
     online_view.ui \
-    settings_dialog.ui
+    settings_dialog.ui \
+    history_mainwindow.ui

@@ -3,6 +3,7 @@
 #include <memory>
 #include <vector>
 #include "info_piece.h"
+#include "settings.h"
 
 class SurakartRow : public std::vector<std::shared_ptr<SurakartaPiece>> {
 public:
@@ -60,4 +61,23 @@ public:
     // }
 };
 
+// 存储棋盘状态
+class mini_board{
+public:
+    mini_board()
+    {
+        board.resize(BOARD_SIZE);
+    }
+    std::vector<std::vector<PieceColor>> board;
 
+    void operator=(const SurakartaBoard& bd)
+    {
+        for(unsigned i = 0;i < BOARD_SIZE;++i)
+        {
+            for(unsigned j = 0;j < BOARD_SIZE;++j)
+            {
+                board[i].push_back(bd[i][j]->color_);
+            }
+        }
+    }
+};
