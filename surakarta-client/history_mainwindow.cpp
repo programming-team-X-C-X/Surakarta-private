@@ -25,6 +25,9 @@ History_MainWindow::History_MainWindow(QWidget *parent)
 
     // 加入下拉框
     ui->comboBox->addItems(fileList);
+
+    //  未介入
+    isDoing = false;
 }
 
 History_MainWindow::~History_MainWindow()
@@ -95,13 +98,16 @@ void History_MainWindow::on_pushButton_clicked()
 
     QToolBar* toolBar = addToolBar("Tools");
 
-    QAction* startPauseAction = new QAction("开始");
+    // 放入 开始  上一步  下一步   介入对局  按钮
+    QAction* startPauseAction = new QAction("开始播放");
     QAction* preAction = new QAction("上一步");
     QAction* nextAction = new QAction("下一步");
+    QAction* doAction  = new QAction("介入对局");
 
     toolBar->addAction(startPauseAction);
     toolBar->addAction(preAction);
     toolBar->addAction(nextAction);
+    toolBar->addAction(doAction);
     // 轮数
     roundLabel = new QLabel("当前轮数: 0", this);
     ui->statusbar->addWidget(roundLabel);
@@ -122,8 +128,56 @@ void History_MainWindow::on_pushButton_clicked()
 
     connect(nextAction, &QAction::triggered, this, &History_MainWindow::onNextButtonClicked);
     connect(preAction, &QAction::triggered, this, &History_MainWindow::onPreButtonClicked);
+    connect(doAction,&QAction::triggered, this,[=](){
+        if(doAction->text() == "介入对局")
+        {
+            // 禁用系列按钮
+            nextAction->setDisabled(true);
+            preAction->setDisabled(true);
+            jumpButton->setDisabled(true);
+            startPauseAction->setDisabled(true);
+
+            // 初始化游戏
+            initGame();
+
+
+            // 连接对应信号
+            connect(chessBoard, &ChessBoardWidget::requestHints, this, &History_MainWindow::provideHints);
+            connect(this, &History_MainWindow::sendCaptureHints, chessBoard, &ChessBoardWidget::receiveCaptureHints);
+            connect(this, &History_MainWindow::sendNONCaptureHints, chessBoard, &ChessBoardWidget::receiveNONCaptureHints);
+            connect(chessBoard, &ChessBoardWidget::playerMove, this, &History_MainWindow::playerMove);
+
+            // 更新文字 状态
+            doAction->setText("恢复原状态");
+            isDoing = true;
+        }
+
+        else
+        {
+            // 启用系列按钮
+            nextAction->setDisabled(false);
+            preAction->setDisabled(false);
+            jumpButton->setDisabled(false);
+            startPauseAction->setDisabled(false);
+
+            // 恢复原状
+            loadGame(step);
+
+            // 断开相应信号
+            disconnect(chessBoard, &ChessBoardWidget::requestHints, this, &History_MainWindow::provideHints);
+            disconnect(this, &History_MainWindow::sendCaptureHints, chessBoard, &ChessBoardWidget::receiveCaptureHints);
+            disconnect(this, &History_MainWindow::sendNONCaptureHints, chessBoard, &ChessBoardWidget::receiveNONCaptureHints);
+            disconnect(chessBoard, &ChessBoardWidget::playerMove, this, &History_MainWindow::playerMove);
+
+            // 更新文字
+            doAction->setText("介入对局");
+            isDoing = false;
+
+        }
+    });
 
     connect(this,&History_MainWindow::reachMax,[=](){
+
         nextAction->setDisabled(true);
     });
 
@@ -139,9 +193,18 @@ void History_MainWindow::on_pushButton_clicked()
         preAction->setDisabled(false);
     });
 
+
+    connect(this,&History_MainWindow::disableJump,[=](){
+        jumpButton->setDisabled(true);
+    });
+
+    connect(this,&History_MainWindow::enableJump,[=](){
+        jumpButton->setDisabled(false);
+    });
+
     connect(startPauseAction, &QAction::triggered, this, [=](){
 
-        if(startPauseAction->text() == "开始")
+        if(startPauseAction->text() == "开始播放")
         {
 
             startPauseAction->setText("暂停");
@@ -171,7 +234,7 @@ void History_MainWindow::on_pushButton_clicked()
         {
             timer->stop();
 
-            startPauseAction->setText("开始");
+            startPauseAction->setText("开始播放");
 
             preAction->setDisabled(false);
             nextAction->setDisabled(false);
@@ -180,24 +243,44 @@ void History_MainWindow::on_pushButton_clicked()
     });
 
     connect(jumpButton, &QPushButton::clicked, this, &History_MainWindow::onJumpButtonClicked);
+
+    connect(chessBoard,&ChessBoardWidget::animationFinished,[=](){
+        if(!isDoing)
+        {
+            emit deMax();
+            emit deMin();
+            emit enableJump();
+            if(step == max_step) emit reachMax();
+            if(step <= 0) emit reachMin();
+        }
+    });
+
+
 }
 
 void History_MainWindow::onNextButtonClicked()
 {
-    emit deMin();
+    if(step == max_step)
+    {
+        return;
+    }
+
+    emit reachMin();
+    emit reachMax();
+    emit disableJump();
+
 
     chessBoard->movePiece(moves[step]);
     step++;
     roundLabel->setText(QString("当前轮数: %1").arg(step));
-    if(step == max_step)
-    {
-        emit reachMax();
-    }
+
 }
 
 void History_MainWindow::onPreButtonClicked()
 {
     emit deMax();
+    emit enableJump();
+
 
     loadGame(--step);
     roundLabel->setText(QString("当前轮数: %1").arg(step));
@@ -219,6 +302,7 @@ void History_MainWindow::onJumpButtonClicked()
         roundLabel->setText(QString("当前轮数: %1").arg(step));
     }
 }
+
 void History_MainWindow::loadGame(unsigned cur_step)
 {
     // mini_board  ---->   SuarkartaBoards
@@ -229,6 +313,16 @@ void History_MainWindow::loadGame(unsigned cur_step)
     }
 
     chessBoard = new ChessBoardWidget(boards[cur_step]);
+    connect(chessBoard,&ChessBoardWidget::animationFinished,[=](){
+        if(!isDoing)
+        {
+            emit deMax();
+            emit deMin();
+            emit enableJump();
+            if(step == max_step) emit reachMax();
+            if(step <= 0) emit reachMin();
+        }
+    });
 
     setCentralWidget(chessBoard);
 
@@ -236,4 +330,40 @@ void History_MainWindow::loadGame(unsigned cur_step)
 
 }
 
+void History_MainWindow::initGame()
+{
+    if(game) delete game;
 
+    game = new SurakartaGame;
+    game->StartGame();
+
+    // 初始化游戏
+    for(int i = 0; i < step;i++)
+    {
+        game->Move(moves[i]);
+    }
+
+    PLAYER_COLOR = RIGHT_COLOR = ((step % 2) ==  0) ? 1 : 0;
+}
+
+
+void History_MainWindow::provideHints(SurakartaPosition pos) {
+    auto captureHints = game->rule_manager_->GetAllLegalCaptureTarget(pos);
+    std::vector<SurakartaPosition> captureHintVector = *captureHints;
+    emit sendCaptureHints(captureHintVector);
+    auto NONcaptureHints = game->rule_manager_->GetAllLegalNONCaptureTarget(pos);
+    std::vector<SurakartaPosition> NONcaptureHintVector = *NONcaptureHints;
+    emit sendNONCaptureHints(NONcaptureHintVector);
+}
+
+void History_MainWindow::playerMove(SurakartaPosition from, SurakartaPosition to) {
+    if (game->IsEnd()) return;
+    SurakartaMove move(from, to, game->GetGameInfo()->current_player_);
+
+    // game.Move(move);
+    if (game->Move(move).IsLegal())
+        chessBoard->movePiece(move);
+    PLAYER_COLOR = !PLAYER_COLOR;
+    RIGHT_COLOR = !RIGHT_COLOR;
+
+}

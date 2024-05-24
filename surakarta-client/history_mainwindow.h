@@ -34,6 +34,14 @@ signals:
     void deMax();
     void deMin();
 
+    void enableJump();
+    void disableJump();
+
+    // 介入对局时的相关信号
+
+    void sendCaptureHints(const std::vector<SurakartaPosition>& hints);
+    void sendNONCaptureHints(const std::vector<SurakartaPosition>& hints);
+
 private slots:
     void on_pushButton_clicked();
     void onNextButtonClicked();
@@ -42,8 +50,11 @@ private slots:
 
 
     void loadGame(unsigned cur_step);
+    void initGame();
 
-
+    // 介入对局的相关槽函数
+    void provideHints(SurakartaPosition pos);
+    void playerMove(SurakartaPosition from, SurakartaPosition to);
 
 private:
     // 存储移动步
@@ -74,6 +85,9 @@ private:
     QLineEdit *jumpLineEdit;
 
     QPushButton *jumpButton;
+
+    // 是否正在介入
+    bool isDoing;
 };
 
 #endif // HISTORY_MAINWINDOW_H
