@@ -30,6 +30,7 @@ GameView::GameView(QWidget *parent)
     connect(chessBoard, &ChessBoardWidget::requestHints, this, &GameView::provideHints);
     connect(this, &GameView::sendCaptureHints, chessBoard, &ChessBoardWidget::receiveCaptureHints);
     connect(this, &GameView::sendNONCaptureHints, chessBoard, &ChessBoardWidget::receiveNONCaptureHints);
+    connect(agentMine.get(), &SurakartaAgentMine::updateProgress, this, &GameView::updateProgress);
     game.StartGame();
     show();
 }
@@ -48,6 +49,10 @@ void GameView::endShow(SurakartaEndReason rea, QString color, QString round)
     connect(EView,&OnlineEndDialog::return_start,this,&GameView::return_start);
 
     EView->exec();
+}
+
+void GameView::updateProgress(int progress) {
+    ui->AIprogressBar->setValue(progress);
 }
 
 void GameView::startAIThread() {
