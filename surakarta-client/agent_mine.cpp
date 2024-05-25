@@ -1,7 +1,8 @@
 #include "agent_mine.h"
+#include <QRandomGenerator>
 
 // 计算当前棋局评分
-int SurakartaAgentMine::EvaluateBoardFor(const SurakartaBoard& board, PieceColor currentPlayer) {
+int SurakartaAgentMine::EvaluateBoardFor(const SurakartaBoard& board /*PieceColor currentPlayer*/) {
     int score = 0;
     int myPieces = 0;
     int opponentPieces = 0;
@@ -17,7 +18,7 @@ int SurakartaAgentMine::EvaluateBoardFor(const SurakartaBoard& board, PieceColor
     for(unsigned i = 0; i < board.board_size_; i++) {
         for(unsigned j = 0; j < board.board_size_; j++) {
             PieceColor pieceColor = board[i][j]->GetColor();
-            if (pieceColor == currentPlayer) {
+            if (pieceColor == rule_manager_->game_info_->current_player_) {
                 myPieces++;
                 // 检查是否在中心位置
                 if ((i == board.board_size_/2 - 1 || i == board.board_size_/2) &&
@@ -39,8 +40,11 @@ int SurakartaAgentMine::EvaluateBoardFor(const SurakartaBoard& board, PieceColor
         }
     }
     // 计算剩余棋子数的差异
-    score += (myPieces - opponentPieces) * 10; // 每个棋子差异的分值
-    if (!opponentPieces) score = 100;
+    if (opponentPieces == 0)
+        score = 1000;
+    else
+        score += (myPieces - opponentPieces) * 50; // 每个棋子差异的分值
+    // if (!opponentPieces) score = 100;
     return score;
 }
 
@@ -116,7 +120,7 @@ std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPos
 int SurakartaAgentMine::Minimax(SurakartaBoard& board, int depth, bool maximizingPlayer,
                                 int alpha, int beta, PieceColor currentPlayer) {
     if (depth == 0 || IsGameOver(board)) {
-        return EvaluateBoardFor(board, currentPlayer);
+        return EvaluateBoardFor(board/*, currentPlayer*/);
     }
 
     //找到所有可行
@@ -211,6 +215,9 @@ SurakartaMove SurakartaAgentMine::MinimaxRoot(SurakartaRuleManager rule_manager,
             if (score > bestScore) {
                 bestScore = score;
                 bestMove = temp_move;
+            }else if (score == bestScore) { // 随机化
+                int randomValue = QRandomGenerator::global()->bounded(2);
+                if (randomValue) bestMove = temp_move;
             }
         }
     }
@@ -219,7 +226,7 @@ SurakartaMove SurakartaAgentMine::MinimaxRoot(SurakartaRuleManager rule_manager,
 
 // 调用 Minimax 的入口
 SurakartaMove SurakartaAgentMine::CalculateMove() {
-    int depth = 3; // 选择一个适当的搜索深度
+    int depth = 4; // 选择一个适当的搜索深度
     updateInterval = depth * 10;
     SurakartaMove bestMove = MinimaxRoot(*rule_manager_, depth);
     emit updateProgress(100);

@@ -14,7 +14,7 @@ History_MainWindow::History_MainWindow(QWidget *parent)
     , ui(new Ui::History_MainWindow)
 {
     ui->setupUi(this);
-    QString directoryPath = "../history";
+    QString directoryPath = "D:/programming/project/Surakarta-game/SurakartaApp/SurakartaOnline/history";
 
     // 打开该路径下
     QDir directory(directoryPath);
@@ -57,7 +57,7 @@ void History_MainWindow::on_pushButton_clicked()
     boards.push_back(*newBoard);
 
     // 绑定 打开 对应文件
-    QFile file("../history/" + ui->comboBox->currentText());
+    QFile file("D:/programming/project/Surakarta-game/SurakartaApp/SurakartaOnline/history/" + ui->comboBox->currentText());
 
     if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
         qDebug() << "Failed to open file here";

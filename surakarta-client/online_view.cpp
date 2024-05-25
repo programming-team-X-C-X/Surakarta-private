@@ -132,7 +132,6 @@ void GameView::on_giveup_button_clicked()
 
 void GameView::Move(SurakartaPosition from, SurakartaPosition to)
 {
-
     SurakartaMove move(from, to, game.GetGameInfo()->current_player_);
     emit AskMove(move);
 }
