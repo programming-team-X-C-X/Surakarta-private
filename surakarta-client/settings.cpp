@@ -37,3 +37,5 @@ SurakartaPlayer mycolor;
 
 QString name;
 
+// 濒死搜索深度设置
+int DEPTH = 1;

@@ -5,7 +5,7 @@
 #include "rule_manager.h"
 #include <QObject>
 
-class SurakartaAgentBase : public QObject {
+class SurakartaAgentBase {
 public:
     SurakartaAgentBase(std::shared_ptr<SurakartaBoard> board,
                        std::shared_ptr<SurakartaGameInfo> game_info,

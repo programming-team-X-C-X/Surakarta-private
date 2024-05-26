@@ -52,11 +52,19 @@ int SurakartaAgentMine::EvaluateBoardFor(const SurakartaBoard& board /*PieceColo
 // 检查游戏是否结束
 bool IsGameOver(const SurakartaBoard& board) {
     // ... 实现检查逻辑
+    int whitecnt = 0;
+    int blackcnt = 0;
     for(unsigned i = 0; i < board.board_size_; i++ )
         for(unsigned j = 0; j < board.board_size_; j++)
-            if(board[i][j]->GetColor() == SurakartaPlayer::WHITE || board[i][j]->GetColor() == SurakartaPlayer::BLACK)
-                return false;
-    return true;
+            if(board[i][j]->GetColor() == SurakartaPlayer::WHITE)
+                whitecnt++;
+            else if ( board[i][j]->GetColor() == SurakartaPlayer::BLACK)
+                // return false;
+                blackcnt++;
+    if (!whitecnt || !blackcnt)
+        return true;
+    else
+        return false;
 }
 
 std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>>> SurakartaAgentMine::getLegalMoves(SurakartaRuleManager rule_manager) {
@@ -64,8 +72,6 @@ std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPos
     for(unsigned i = 0; i < rule_manager.GetBoardSize(); i++ ){
         for(unsigned j = 0; j < rule_manager.GetBoardSize(); j++){
             if((*rule_manager.board_)[i][j]->GetColor() == rule_manager.game_info_->current_player_)
-            // auto lagelMoves = rule_manager.GetAllLegalTarget(SurakartaPosition(i, j));
-            // legalMoves->push_back(rule_manager.GetAllLegalTarget(SurakartaPosition(i, j)));
             {
                 SurakartaPosition _from = {i,j};
                 std::unique_ptr<std::vector<SurakartaPosition>> AllTo = rule_manager.GetAllLegalNONCaptureTarget(_from);
@@ -226,7 +232,7 @@ SurakartaMove SurakartaAgentMine::MinimaxRoot(SurakartaRuleManager rule_manager,
 
 // 调用 Minimax 的入口
 SurakartaMove SurakartaAgentMine::CalculateMove() {
-    int depth = 4; // 选择一个适当的搜索深度
+    int depth = 3; // 选择一个适当的搜索深度
     updateInterval = depth * 10;
     SurakartaMove bestMove = MinimaxRoot(*rule_manager_, depth);
     emit updateProgress(100);

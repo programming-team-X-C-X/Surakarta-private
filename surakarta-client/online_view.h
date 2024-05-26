@@ -3,7 +3,6 @@
 
 #include <QMainWindow>
 #include "info_game.h"
-#include "agent_random.h"
 #include "agent_mine.h"
 #include "chess_board_widght.h"
 #include <qthread.h>
@@ -32,8 +31,9 @@ public:
     // std::shared_ptr<SurakartaAgentRandom>   agentMine = std::make_shared<SurakartaAgentRandom>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager());
     std::shared_ptr<SurakartaAgentMine>agentMine = std::make_shared<SurakartaAgentMine>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager());
     void onAIMoveComputed(const SurakartaMove& move);
+    void onDEADCalculateComputed(std::vector<SurakartaPosition> pos);
     void startAIThread();
-
+    void startDEADCalculatorThread(SurakartaPosition fromPos, std::vector<SurakartaPosition> toPos);
 
 private slots:
     // void on_pushButton_clicked();
@@ -45,8 +45,10 @@ private slots:
 private:
     Ui::game_view *ui;
     QThread *aiThread;
+    QThread *DEADCalculateThread;
 signals:
     void sendCaptureHints(const std::vector<SurakartaPosition>& hints);
+    void sendDengerousHints(const std::vector<SurakartaPosition>& hints);
     void sendNONCaptureHints(const std::vector<SurakartaPosition>& hints);
     void AskMove(SurakartaMove move);
     void Resign();

@@ -19,4 +19,5 @@ extern QString name;
 extern bool RIGHT_COLOR;
 extern bool IsAi;
 extern SurakartaPlayer mycolor;
+extern int DEPTH;
 #endif // SETTINGS_H

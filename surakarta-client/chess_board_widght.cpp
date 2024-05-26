@@ -153,6 +153,12 @@ void ChessBoardWidget::receiveCaptureHints(const std::vector<SurakartaPosition>&
     }
 }
 
+void ChessBoardWidget::receiveDangerousHints(const std::vector<SurakartaPosition>& hints) {
+    for (const auto& hintPos : hints) {
+        drawDangerousHint(hintPos);  // 您之前已创建的显示提示方法
+    }
+}
+
 void ChessBoardWidget::receiveNONCaptureHints(const std::vector<SurakartaPosition>& hints) {
     for (const auto& hintPos : hints) {
         drawNONCaptureHint(hintPos);  // 您之前已创建的显示提示方法
@@ -172,7 +178,19 @@ void ChessBoardWidget::drawCaptureHint(const SurakartaPosition& position) {
 
     scene->addItem(hintItem); // 将提示添加到场景中
     hintItems.push_back(hintItem); // 保存提示项，方便后续移除
+}
 
+void ChessBoardWidget::drawDangerousHint(const SurakartaPosition& position) {
+    auto hintItem = new QGraphicsEllipseItem(convertPositionToQPointF(position).x()+0.75, convertPositionToQPointF(position).y()+0.75, PIECE_SIZE-1.5, PIECE_SIZE-1.5);
+
+    QPen pen(Qt::NoPen); // 我们将不设置描边
+    hintItem->setPen(pen); // 应用无描边
+
+    QColor fillColor(255, 0, 0, 127); // 半透明的绿色（R, G, B, Alpha）
+    hintItem->setBrush(QBrush(fillColor)); // 设置填充为半透明的绿色
+
+    scene->addItem(hintItem); // 将提示添加到场景中
+    hintItems.push_back(hintItem); // 保存提示项，方便后续移除
 }
 
 void ChessBoardWidget::drawNONCaptureHint(const SurakartaPosition& position) {

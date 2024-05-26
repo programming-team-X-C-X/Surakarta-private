@@ -68,6 +68,36 @@ public:
         rule_manager_(std::make_shared<SurakartaRuleManager>(board_, game_info_)),
         agent_(std::make_shared<SurakartaAgentBase>(board_, game_info_, rule_manager_)) {}
 
+    // 拷贝构造函数
+    SurakartaGame(const SurakartaGame& other)
+        : game_mode_(other.game_mode_),
+        white_player_(other.white_player_),
+        black_player_(other.black_player_),
+        board_size_(other.board_size_),
+        board_(std::make_shared<SurakartaBoard>(*other.board_)), // 假设SurakartaBoard有拷贝构造函数
+        game_info_(std::make_shared<SurakartaGameInfo>(*other.game_info_)), // 假设SurakartaGameInfo有拷贝构造函数
+        rule_manager_(std::make_shared<SurakartaRuleManager>(*other.rule_manager_)), // 假设SurakartaRuleManager有拷贝构造函数
+        agent_(std::make_shared<SurakartaAgentBase>(*other.agent_)) // 假设SurakartaAgentBase有拷贝构造函数
+    {
+        // 如果有其他需要深拷贝的成员，也在这里处理
+    }
+
+    // 拷贝赋值运算符
+    SurakartaGame& operator=(const SurakartaGame& other) {
+        if (this != &other) { // 防止自赋值
+            game_mode_ = other.game_mode_;
+            white_player_ = other.white_player_;
+            black_player_ = other.black_player_;
+            board_size_ = other.board_size_;
+            board_ = std::make_shared<SurakartaBoard>(*other.board_);
+            game_info_ = std::make_shared<SurakartaGameInfo>(*other.game_info_);
+            rule_manager_ = std::make_shared<SurakartaRuleManager>(*other.rule_manager_);
+            agent_ = std::make_shared<SurakartaAgentBase>(*other.agent_);
+            // 处理其他成员
+        }
+        return *this;
+    }
+
     void StartGame(/*std::string file_name = ""*/);
     // void SaveGame(std::string file_name) const;
     void UpdateGameInfo(SurakartaIllegalMoveReason move_reason, SurakartaEndReason end_reason, SurakartaPlayer winner);

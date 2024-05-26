@@ -17,10 +17,6 @@ OnlineMainWindow::OnlineMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
 {
-
-
-
-
     setWindowTitle(tr("苏拉卡尔塔棋 --programming-team-X-C-X --Powered by Qt 6.8.0"));
     ui->setupUi(this);
     socket = new NetworkSocket(new QTcpSocket(this),this);

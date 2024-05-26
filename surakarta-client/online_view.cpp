@@ -3,6 +3,7 @@
 #include <QDebug>
 #include "online_end_dialog.h"
 #include "AI_task.h"
+#include <QDebug>
 
 GameView::GameView(QWidget *parent)
     : QMainWindow(parent)
@@ -76,6 +77,34 @@ void GameView::startAIThread() {
     aiThread->start();
 }
 
+void GameView::startDEADCalculatorThread(SurakartaPosition fromPos, std::vector<SurakartaPosition> toPos) {
+    // 创建线程和任务对象
+    DEADCalculateThread = new QThread();
+    // AITask* aiTask = new AITask(agentMine);
+    DEADCalculator* deadCalcutor = new DEADCalculator(game, fromPos, toPos, DEPTH);
+
+    // 移动任务对象到新线程
+    deadCalcutor->moveToThread(DEADCalculateThread);
+
+    // 连接信号和槽
+    connect(DEADCalculateThread, &QThread::started, deadCalcutor, &DEADCalculator::doWork);
+    connect(deadCalcutor, &DEADCalculator::resultReady, this, &GameView::onDEADCalculateComputed);
+
+    // 在对象销毁前输出调试信息
+    connect(deadCalcutor, &QObject::destroyed, this, [](QObject* obj){
+        qDebug() << "DEADCalculator object" << obj << "is being deleted" << Qt::endl;
+    });
+
+    // 清理
+    connect(deadCalcutor, &DEADCalculator::resultReady, deadCalcutor, &DEADCalculator::deleteLater);
+    connect(DEADCalculateThread, &QThread::finished, DEADCalculateThread, &QThread::deleteLater);
+
+    // 启动线程
+    DEADCalculateThread->start();
+}
+
+
+
 void GameView::computerMove() {
     if (!game.IsEnd() && PLAYER_COLOR == RIGHT_COLOR) {
         if (!aiThread || aiThread->isFinished()) {
@@ -91,9 +120,32 @@ void GameView::onAIMoveComputed(const SurakartaMove& move) {
     if(aiThread) {
         aiThread->quit();
         aiThread->wait();
-        // delete aiThread;
         aiThread->deleteLater();
         aiThread = nullptr;
+    }
+}
+
+void GameView::onDEADCalculateComputed(std::vector<SurakartaPosition> pos) {
+    // 用 AI 计算的结果来更新游戏
+
+    qDebug() << "finish" << Qt::endl;
+    if (pos.empty()) {
+        qDebug() << "nothing" << Qt::endl;
+    } else {
+        emit sendDengerousHints(pos);
+        qDebug() << "Positions:";
+        for (const auto& position : pos) {
+            // 假设SurakartaPosition有一个输出友好的方式，例如重载了<<运算符
+            qDebug() << position.x << position.y << Qt::endl;
+        }
+    }
+    // 停止和清理 AI 线程
+    if(DEADCalculateThread) {
+        DEADCalculateThread->quit();
+        DEADCalculateThread->wait();
+        DEADCalculateThread->deleteLater();
+        DEADCalculateThread = nullptr;
+        qDebug() << "delete" << Qt::endl;
     }
 }
 
@@ -118,10 +170,19 @@ void GameView::update_time()
 void GameView::provideHints(SurakartaPosition pos) {
     auto captureHints = game.rule_manager_->GetAllLegalCaptureTarget(pos);
     std::vector<SurakartaPosition> captureHintVector = *captureHints;
+    // startDEADCalculatorThread(pos, captureHintVector);
     emit sendCaptureHints(captureHintVector);
+
     auto NONcaptureHints = game.rule_manager_->GetAllLegalNONCaptureTarget(pos);
     std::vector<SurakartaPosition> NONcaptureHintVector = *NONcaptureHints;
+    // startDEADCalculatorThread(pos, NONcaptureHintVector);
     emit sendNONCaptureHints(NONcaptureHintVector);
+
+    std::vector<SurakartaPosition> combinedHintVector = *captureHints;
+    combinedHintVector.insert(combinedHintVector.end(), NONcaptureHints->begin(), NONcaptureHints->end());
+
+    // 只启动一个线程来处理合并后的提示
+    startDEADCalculatorThread(pos, combinedHintVector);
 }
 
 void GameView::on_giveup_button_clicked()
@@ -132,9 +193,28 @@ void GameView::on_giveup_button_clicked()
 
 void GameView::Move(SurakartaPosition from, SurakartaPosition to)
 {
+    // 如果DEADCalculator线程正在运行，尝试结束它
+    if (DEADCalculateThread && DEADCalculateThread->isRunning()) {
+        // 请求线程退出
+        DEADCalculateThread->requestInterruption();
+
+        // 等待线程响应退出请求并结束
+        if (!DEADCalculateThread->wait(500)) { // 等待500毫秒
+            // 如果线程没有在指定时间内结束，强制终止它
+            DEADCalculateThread->terminate();
+            DEADCalculateThread->wait(); // 等待线程完全结束
+        }
+
+        // 清理线程对象
+        DEADCalculateThread->deleteLater();
+        DEADCalculateThread = nullptr;
+    }
+
+    // 创建并发出移动请求
     SurakartaMove move(from, to, game.GetGameInfo()->current_player_);
     emit AskMove(move);
 }
+
 
 void GameView::AfterAnimationFinished() {
     emit AnimationFinished();
