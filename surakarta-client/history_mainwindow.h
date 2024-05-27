@@ -48,6 +48,8 @@ private slots:
     void onPreButtonClicked();
     void onJumpButtonClicked();
 
+    void changeGameColor();
+
 
     void loadGame(unsigned cur_step);
     void initGame();
@@ -81,6 +83,12 @@ private:
     QTimer* timer;
 
     QLabel *roundLabel;
+
+    QLabel *player_color;
+
+    QString game_color;
+
+    QString userin_color;
 
     QLineEdit *jumpLineEdit;
 

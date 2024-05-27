@@ -45,6 +45,7 @@ void History_MainWindow::on_pushButton_clicked()
 
     game_info = "";
     moves.clear();
+    game_color = "BLACK";
     //boards.clear();
     step = 0;
     game = new SurakartaGame;
@@ -115,10 +116,13 @@ void History_MainWindow::on_pushButton_clicked()
     // 跳转
     jumpLineEdit = new QLineEdit(this);
     jumpButton = new QPushButton("跳转", this);
+    player_color = new QLabel(game_color,this);
     jumpLineEdit->setFixedSize(50, 20);
+    player_color->setFixedSize(50,20);
     ui->statusbar->addWidget(new QLabel("跳转到步数:", this));
     ui->statusbar->addWidget(jumpLineEdit);
     ui->statusbar->addWidget(jumpButton);
+    ui->statusbar->addWidget(player_color);
 
     // 初始点击状态
     preAction->setDisabled(true);
@@ -139,6 +143,7 @@ void History_MainWindow::on_pushButton_clicked()
 
             // 初始化游戏
             initGame();
+            userin_color = game_color;
 
 
             // 连接对应信号
@@ -149,6 +154,7 @@ void History_MainWindow::on_pushButton_clicked()
 
             // 更新文字 状态
             doAction->setText("恢复原状态");
+            player_color->setText(userin_color);
             isDoing = true;
         }
 
@@ -162,6 +168,7 @@ void History_MainWindow::on_pushButton_clicked()
 
             // 恢复原状
             loadGame(step);
+            player_color->setText(game_color);
 
             // 断开相应信号
             disconnect(chessBoard, &ChessBoardWidget::requestHints, this, &History_MainWindow::provideHints);
@@ -214,6 +221,7 @@ void History_MainWindow::on_pushButton_clicked()
             jumpButton->setDisabled(true);
             timer = new QTimer;
             timer->start(3000);
+            player_color->setText(game_color);
 
             connect(timer,&QTimer::timeout,this,[=](){
                 if(step < max_step)
@@ -252,6 +260,13 @@ void History_MainWindow::on_pushButton_clicked()
             emit enableJump();
             if(step == max_step) emit reachMax();
             if(step <= 0) emit reachMin();
+            changeGameColor();
+            player_color->setText(game_color);
+        }
+        else
+        {
+            changeGameColor();
+            player_color->setText(userin_color);
         }
     });
 
@@ -284,6 +299,8 @@ void History_MainWindow::onPreButtonClicked()
 
     loadGame(--step);
     roundLabel->setText(QString("当前轮数: %1").arg(step));
+    changeGameColor();
+    player_color->setText(game_color);
     //
 
     if(step <= 0)
@@ -300,6 +317,8 @@ void History_MainWindow::onJumpButtonClicked()
         step = targetStep;
         loadGame(step);
         roundLabel->setText(QString("当前轮数: %1").arg(step));
+        game_color = (step % 2) ? "WHITE" : "BLACK";
+        player_color->setText(game_color);
     }
 }
 
@@ -321,6 +340,13 @@ void History_MainWindow::loadGame(unsigned cur_step)
             emit enableJump();
             if(step == max_step) emit reachMax();
             if(step <= 0) emit reachMin();
+            changeGameColor();
+            player_color->setText(game_color);
+        }
+        else
+        {
+            changeGameColor();
+            player_color->setText(userin_color);
         }
     });
     setCentralWidget(chessBoard);
@@ -361,5 +387,29 @@ void History_MainWindow::playerMove(SurakartaPosition from, SurakartaPosition to
         chessBoard->movePiece(move);
     PLAYER_COLOR = !PLAYER_COLOR;
     RIGHT_COLOR = !RIGHT_COLOR;
+}
 
+void History_MainWindow::changeGameColor(){
+    if(!isDoing)
+    {
+        if(game_color == "BLACK")
+        {
+            game_color = "WHITE";
+        }
+        else
+        {
+            game_color = "BLACK";
+        }
+    }
+    else
+    {
+        if(userin_color == "BLACK")
+        {
+            userin_color = "WHITE";
+        }
+        else
+        {
+            userin_color = "BLACK";
+        }
+    }
 }
