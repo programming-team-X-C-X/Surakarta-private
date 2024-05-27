@@ -6,7 +6,7 @@
 #include <QFile>
 #include <QTextStream>
 // 超时时间
-int TIME = 30;
+int TIME = 20;
 int Lefttime = TIME + 2;
 extern QStringList arg;
 bool istart = 0;
