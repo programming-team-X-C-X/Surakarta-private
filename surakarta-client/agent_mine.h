@@ -4,6 +4,8 @@
 #include "rule_manager.h"
 #include <QObject>
 
+using MoveList = std::vector<std::pair<SurakartaPosition, std::unique_ptr<std::vector<SurakartaPosition>>>>;
+
 class SurakartaAgentMine : public QObject {
     Q_OBJECT
 public:
@@ -21,8 +23,8 @@ public:
         rule_manager_ = rule_manager;
     }
     SurakartaMove CalculateMove();
-    std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>>> getLegalMoves(SurakartaRuleManager rule_manager, int& averangeCnt);
-    std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>>> getLegalMoves(SurakartaRuleManager rule_manager);
+    MoveList getLegalMoves(SurakartaRuleManager rule_manager, int& averangeCnt);
+    MoveList getLegalMoves(SurakartaRuleManager rule_manager);
     SurakartaMove MinimaxRoot(SurakartaRuleManager rule_manager, int depth);
     int EvaluateBoardFor(const SurakartaBoard& board /*PieceColor currentPlayer*/);
     int Minimax(SurakartaBoard& board, int depth, bool maximizingPlayer,

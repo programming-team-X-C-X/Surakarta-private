@@ -1,6 +1,7 @@
 #include "agent_mine.h"
 #include <QRandomGenerator>
 
+
 // 计算当前棋局评分
 int SurakartaAgentMine::EvaluateBoardFor(const SurakartaBoard& board /*PieceColor currentPlayer*/) {
     int score = 0;
@@ -67,7 +68,7 @@ bool IsGameOver(const SurakartaBoard& board) {
         return false;
 }
 
-std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>>> SurakartaAgentMine::getLegalMoves(SurakartaRuleManager rule_manager) {
+MoveList SurakartaAgentMine::getLegalMoves(SurakartaRuleManager rule_manager) {
     std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>>> legalMoves;
     for(unsigned i = 0; i < rule_manager.GetBoardSize(); i++ ){
         for(unsigned j = 0; j < rule_manager.GetBoardSize(); j++){
@@ -88,7 +89,7 @@ std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPos
     return legalMoves;
 }
 
-std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>>> SurakartaAgentMine::getLegalMoves(SurakartaRuleManager rule_manager, int& averangeCnt) {
+MoveList SurakartaAgentMine::getLegalMoves(SurakartaRuleManager rule_manager, int& averangeCnt) {
     int totalMoves = 0;
     std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>>> legalMoves;
     for(unsigned i = 0; i < rule_manager.GetBoardSize(); i++ ){
@@ -232,7 +233,7 @@ SurakartaMove SurakartaAgentMine::MinimaxRoot(SurakartaRuleManager rule_manager,
 
 // 调用 Minimax 的入口
 SurakartaMove SurakartaAgentMine::CalculateMove() {
-    int depth = 4; // 选择一个适当的搜索深度
+    int depth = 3; // 选择一个适当的搜索深度
     updateInterval = depth * 10;
     SurakartaMove bestMove = MinimaxRoot(*rule_manager_, depth);
     emit updateProgress(100);

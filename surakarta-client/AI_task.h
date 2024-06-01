@@ -3,6 +3,7 @@
 
 #include "agent_mine.h"
 #include "info_game.h"
+#include <QMutex>
 
 class AITask : public QObject {
     Q_OBJECT
@@ -31,27 +32,37 @@ class DEADCalculator : public QObject {
 
 public:
     DEADCalculator(SurakartaGame game, SurakartaPosition fromPos, std::vector<SurakartaPosition> to_pos, int depth)
-        : game(game), player(game.GetGameInfo()->current_player_),/* agent_(std::make_shared<SurakartaAgentMine>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager())),*/  fromPos(fromPos),HintVector(to_pos), depth(depth) {}
+        : game(game), player(game.GetGameInfo()->current_player_),/* agent_(std::make_shared<SurakartaAgentMine>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager())),*/  fromPos(fromPos),HintVector(to_pos), dangerousPos(NULL), depth(depth),shouldExit(false) {}
+    void requestStop() {
+        shouldExit = true;
+    }
 
 public slots:
     void doWork() {
-        for (auto toPos : HintVector) {
-            SurakartaGame game_ = game;
-            SurakartaMove move_ = SurakartaMove(fromPos, toPos, player);
-            SurakartaAgentMine agent_ = SurakartaAgentMine(game_.GetBoard(), game_.GetGameInfo(), game_.GetRuleManager());
+        // while(!shouldExit){
+            for (auto toPos : HintVector) {
+            if(shouldExit) break;
+                qDebug() << "calculating" << Qt::endl;
+                SurakartaGame game_ = game;
+                SurakartaMove move_ = SurakartaMove(fromPos, toPos, player);
+                SurakartaAgentMine agent_ = SurakartaAgentMine(game_.GetBoard(), game_.GetGameInfo(), game_.GetRuleManager());
 
-            for (int i = 0; i < depth; i++) {
-                game_.Move(move_);
-                if(calculator(game_)) {
-                    dangerousPos.push_back(toPos);
-                    break;
+                for (int i = 0; i < depth; i++) {
+                    qDebug() << "searching" << Qt::endl;
+                    game_.Move(move_);
+                    if(!calculator(game_)) {
+                        mutex.lock();
+                        dangerousPos.push_back(toPos);
+                        mutex.unlock();
+                        break;
+                    }
+                    move_ = agent_.CalculateMove();
                 }
-                move_ = agent_.CalculateMove();
             }
-            // emit resultReady(toPos, true);
-        }
-        emit resultReady(dangerousPos);
+        // }
+
         qDebug() << "finish calculate" << Qt::endl;
+        emit resultReady(dangerousPos);
     }
 public:
     bool calculator(SurakartaGame game) {
@@ -79,6 +90,8 @@ private:
     std::vector<SurakartaPosition> dangerousPos;
     // SurakartaRuleManager rule_manager;
     int depth;
+    std::atomic<bool> shouldExit{false};
+    QMutex mutex;
 };
 
 

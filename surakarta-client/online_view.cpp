@@ -31,9 +31,29 @@ GameView::GameView(QWidget *parent)
     connect(chessBoard, &ChessBoardWidget::requestHints, this, &GameView::provideHints);
     connect(this, &GameView::sendCaptureHints, chessBoard, &ChessBoardWidget::receiveCaptureHints);
     connect(this, &GameView::sendNONCaptureHints, chessBoard, &ChessBoardWidget::receiveNONCaptureHints);
+    connect(this, &GameView::sendDengerousHints, chessBoard, &ChessBoardWidget::receiveDangerousHints);
     connect(agentMine.get(), &SurakartaAgentMine::updateProgress, this, &GameView::updateProgress);
     game.StartGame();
     show();
+
+
+
+    // 移动任务对象到新线程
+    // deadCalcutor->moveToThread(DEADCalculateThread);
+
+    // // 连接信号和槽
+    // connect(DEADCalculateThread, &QThread::started, deadCalcutor, &DEADCalculator::doWork);
+    // connect(deadCalcutor, &DEADCalculator::resultReady, this, &GameView::onDEADCalculateComputed);
+
+    // // 在对象销毁前输出调试信息
+    // connect(deadCalcutor, &QObject::destroyed, this, [](QObject* obj){
+    //     qDebug() << "DEADCalculator object" << obj << "is being deleted" << Qt::endl;
+    // });
+
+    // // 清理
+    // connect(deadCalcutor, &DEADCalculator::resultReady, deadCalcutor, &DEADCalculator::deleteLater);
+    // connect(DEADCalculateThread, &QThread::finished, DEADCalculateThread, &QThread::deleteLater);
+
 }
 
 GameView::~GameView()
@@ -79,13 +99,25 @@ void GameView::startAIThread() {
 
 void GameView::startDEADCalculatorThread(SurakartaPosition fromPos, std::vector<SurakartaPosition> toPos) {
     // 创建线程和任务对象
+    if (DEADCalculateThread && DEADCalculateThread->isRunning()) {
+        deadCalcutor->requestStop(); // 请求停止工作对象
+        DEADCalculateThread->quit(); // 请求线程退出
+        DEADCalculateThread->wait(); // 等待线程结束
+        deadCalcutor->deleteLater(); // 安排删除工作对象
+        DEADCalculateThread->deleteLater(); // 安排删除线程对象
+        qDebug() << "delete" << Qt::endl;
+    }
+
     DEADCalculateThread = new QThread();
     // AITask* aiTask = new AITask(agentMine);
-    DEADCalculator* deadCalcutor = new DEADCalculator(game, fromPos, toPos, DEPTH);
+    /*DEADCalculator* */deadCalcutor = new DEADCalculator(game, fromPos, toPos, DEPTH);
 
-    // 移动任务对象到新线程
+    // // 移动任务对象到新线程
     deadCalcutor->moveToThread(DEADCalculateThread);
 
+    // 断开之前的连接（如果有）
+    disconnect(DEADCalculateThread, &QThread::started, deadCalcutor, &DEADCalculator::doWork);
+    disconnect(deadCalcutor, &DEADCalculator::resultReady, this, &GameView::onDEADCalculateComputed);
     // 连接信号和槽
     connect(DEADCalculateThread, &QThread::started, deadCalcutor, &DEADCalculator::doWork);
     connect(deadCalcutor, &DEADCalculator::resultReady, this, &GameView::onDEADCalculateComputed);
@@ -182,7 +214,9 @@ void GameView::provideHints(SurakartaPosition pos) {
     combinedHintVector.insert(combinedHintVector.end(), NONcaptureHints->begin(), NONcaptureHints->end());
 
     // 只启动一个线程来处理合并后的提示
+    if (!DEADCalculateThread || DEADCalculateThread->isFinished())
     startDEADCalculatorThread(pos, combinedHintVector);
+    else qDebug() << "deadthread is running" << Qt::endl;
 }
 
 void GameView::on_giveup_button_clicked()
@@ -196,18 +230,35 @@ void GameView::Move(SurakartaPosition from, SurakartaPosition to)
     // 如果DEADCalculator线程正在运行，尝试结束它
     if (DEADCalculateThread && DEADCalculateThread->isRunning()) {
         // 请求线程退出
-        DEADCalculateThread->requestInterruption();
+        // DEADCalculateThread->requestInterruption();
+        // 设置退出标志
+        // dynamic_cast<DEADCalculator*>(DEADCalculateThread->workerObject())->shouldExit = true
+        // 获取线程的工作对象并安全地请求线程停止
+        // auto worker = dynamic_cast<DEADCalculator*>(DEADCalculateThread->workerObject());
+        // if (worker) {
+            // worker->requestStop();
+        // }
+
+        deadCalcutor->requestStop();
+        // DEADCalculateThread->wait(); // 等待线程结束
+
+        // delete deadCalcutor;
+        // deadCalcutor = nullptr;
+
+        // delete DEADCalculateThread;
+        // DEADCalculateThread = nullptr;
+
 
         // 等待线程响应退出请求并结束
-        if (!DEADCalculateThread->wait(500)) { // 等待500毫秒
+        // if (!DEADCalculateThread->wait(500)) { // 等待500毫秒
             // 如果线程没有在指定时间内结束，强制终止它
-            DEADCalculateThread->terminate();
-            DEADCalculateThread->wait(); // 等待线程完全结束
-        }
+            // DEADCalculateThread->terminate();
+            // DEADCalculateThread->wait(); // 等待线程完全结束
+        // }
 
         // 清理线程对象
-        DEADCalculateThread->deleteLater();
-        DEADCalculateThread = nullptr;
+        // DEADCalculateThread->deleteLater();
+        // DEADCalculateThread = nullptr;
     }
 
     // 创建并发出移动请求

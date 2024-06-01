@@ -116,7 +116,11 @@
           </spacer>
          </item>
          <item>
-          <widget class="QLineEdit" name="port_line"/>
+          <widget class="QLineEdit" name="port_line">
+           <property name="text">
+            <string>9090</string>
+           </property>
+          </widget>
          </item>
         </layout>
        </item>

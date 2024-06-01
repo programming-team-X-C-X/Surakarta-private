@@ -6,6 +6,7 @@
 #include "agent_mine.h"
 #include "chess_board_widght.h"
 #include <qthread.h>
+#include "AI_task.h"
 
 namespace Ui {
 class game_view;
@@ -46,6 +47,7 @@ private:
     Ui::game_view *ui;
     QThread *aiThread;
     QThread *DEADCalculateThread;
+    DEADCalculator* deadCalcutor;
 signals:
     void sendCaptureHints(const std::vector<SurakartaPosition>& hints);
     void sendDengerousHints(const std::vector<SurakartaPosition>& hints);
