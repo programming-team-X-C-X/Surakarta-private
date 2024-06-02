@@ -4,15 +4,11 @@
 #include "start_dialog.h"
 #include "local_mainwindow.h"
 #include "online_mainwindow.h"
-#include "history_mainwindow.h"
 
-// 这个函数接受游戏模式，并创建 Main Game Window
+// 接受游戏模式，并创建 Main Game Window
 void startGame(/*QApplication &app, */StartDialog *startDialog, QPointer<LocalMainWindow>gameMainWindow, SurakartaGameMode mode) {
     if (!startDialog) return; // 检查 startDialog 是否仍然存在
     startDialog->close();
-    
-    
-    
     gameMainWindow = new LocalMainWindow(mode);
     gameMainWindow->setAttribute(Qt::WA_DeleteOnClose);
     gameMainWindow->show();

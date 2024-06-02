@@ -290,7 +290,6 @@ void OnlineMainWindow::rec_end(NetworkData& data)
     }
     // 直接断开连接 ?
 
-
     // 进入结束的逻辑
     socket->send(NetworkData(OPCODE::LEAVE_OP,"","","")); // 发出离开信号
     socket->bye();
@@ -307,8 +306,6 @@ void OnlineMainWindow::mark_move(NetworkData& data)
         out << data.data1 + '-'  + data.data2;
     }
     else out << " "<< data.data1 + '-'  + data.data2;
-
-
     store_gameinfo += data.data1 + "-" + data.data2 + " ";
 }
 

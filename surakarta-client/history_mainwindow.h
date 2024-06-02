@@ -10,7 +10,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QToolBar>
-class mini_board;
+class MiniBoard;
 
 
 namespace Ui {
@@ -65,7 +65,7 @@ private:
 
    // std::vector<SurakartaBoard> boards;
 
-    std::vector<mini_board> boards;
+    std::vector<MiniBoard> boards;
 
     // 当前步数
     int step;

@@ -4,10 +4,6 @@
 #include <QDir>
 #include <QTimer>
 #include <QToolBar>
-#include <iostream>
-
-
-
 
 History_MainWindow::History_MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -53,7 +49,7 @@ void History_MainWindow::on_pushButton_clicked()
     //boards.push_back(*game->board_.get());
 
     // 放入最初始的状态
-    mini_board *newBoard = new mini_board;
+    MiniBoard *newBoard = new MiniBoard;
     *newBoard = *(game->board_.get());
     boards.push_back(*newBoard);
 
@@ -87,7 +83,7 @@ void History_MainWindow::on_pushButton_clicked()
         moves.push_back(move);
 
         // 放入每一步
-        mini_board *newBoard = new mini_board;
+        MiniBoard *newBoard = new MiniBoard;
         *newBoard = *(game->board_.get());
         boards.push_back(*newBoard);
     }
@@ -393,23 +389,15 @@ void History_MainWindow::changeGameColor(){
     if(!isDoing)
     {
         if(game_color == "BLACK")
-        {
             game_color = "WHITE";
-        }
         else
-        {
             game_color = "BLACK";
-        }
     }
     else
     {
         if(userin_color == "BLACK")
-        {
             userin_color = "WHITE";
-        }
         else
-        {
             userin_color = "BLACK";
-        }
     }
 }

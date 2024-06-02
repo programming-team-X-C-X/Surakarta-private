@@ -10,7 +10,6 @@ CONFIG += c++17
 
 SOURCES += \
     agent_mine.cpp \
-    agent_random.cpp \
     chess_board_widght.cpp \
     info_game.cpp \
     info_piece.cpp \
@@ -33,12 +32,8 @@ SOURCES += \
 
 HEADERS += \
     AI_task.h \
-    agent_base.h \
     agent_mine.h \
-    agent_random.h \
     chess_board_widght.h \
-    drawpoint.h \
-    global_random_generator.h \
     info_board.h \
     info_common.h \
     info_game.h \

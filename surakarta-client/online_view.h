@@ -6,7 +6,6 @@
 #include "agent_mine.h"
 #include "chess_board_widght.h"
 #include <qthread.h>
-#include "AI_task.h"
 
 namespace Ui {
 class game_view;
@@ -29,7 +28,6 @@ public:
     void update_time();
     void restartGame();
     void provideHints(SurakartaPosition pos);
-    // std::shared_ptr<SurakartaAgentRandom>   agentMine = std::make_shared<SurakartaAgentRandom>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager());
     std::shared_ptr<SurakartaAgentMine>agentMine = std::make_shared<SurakartaAgentMine>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager());
     void onAIMoveComputed(const SurakartaMove& move);
     void onDEADCalculateComputed(std::vector<SurakartaPosition> pos);
@@ -46,8 +44,8 @@ private slots:
 private:
     Ui::game_view *ui;
     QThread *aiThread;
-    QThread *DEADCalculateThread;
-    DEADCalculator* deadCalcutor;
+    // QThread *DEADCalculateThread;
+    // DEADCalculator* deadCalcutor;
 signals:
     void sendCaptureHints(const std::vector<SurakartaPosition>& hints);
     void sendDengerousHints(const std::vector<SurakartaPosition>& hints);

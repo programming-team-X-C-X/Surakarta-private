@@ -3,7 +3,6 @@
 
 #include "agent_mine.h"
 #include "info_game.h"
-#include <QMutex>
 
 class AITask : public QObject {
     Q_OBJECT
@@ -32,7 +31,7 @@ class DEADCalculator : public QObject {
 
 public:
     DEADCalculator(SurakartaGame game, SurakartaPosition fromPos, std::vector<SurakartaPosition> to_pos, int depth)
-        : game(game), player(game.GetGameInfo()->current_player_),/* agent_(std::make_shared<SurakartaAgentMine>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager())),*/  fromPos(fromPos),HintVector(to_pos), dangerousPos(NULL), depth(depth),shouldExit(false) {}
+        : game(game), player(game.GetGameInfo()->current_player_),/* agent_(std::make_shared<SurakartaAgentMine>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager())),*/  fromPos(fromPos),HintVector(to_pos), depth(depth),shouldExit(false) {}
     void requestStop() {
         shouldExit = true;
     }
@@ -40,37 +39,40 @@ public:
 public slots:
     void doWork() {
         // while(!shouldExit){
-            for (auto toPos : HintVector) {
+        for (auto toPos : HintVector) {
             if(shouldExit) break;
-                qDebug() << "calculating" << Qt::endl;
-                SurakartaGame game_ = game;
-                SurakartaMove move_ = SurakartaMove(fromPos, toPos, player);
-                SurakartaAgentMine agent_ = SurakartaAgentMine(game_.GetBoard(), game_.GetGameInfo(), game_.GetRuleManager());
+            // qDebug() << "calculating to " << toPos.x << toPos.y << Qt::endl;
+            SurakartaGame *game_ = new SurakartaGame(game);
+            // qDebug() << "current player is " << (game_->GetGameInfo()->current_player_==SurakartaPlayer::BLACK ? "black" : "white") << Qt::endl;
+            SurakartaMove move_ = SurakartaMove(fromPos, toPos, player);
+            if (game_->Move(move_).IsLegal())
+                qDebug() << "the initial move is " << move_.from.x << move_.from.y << move_.to.x << move_.to.y << Qt::endl;
 
-                for (int i = 0; i < depth; i++) {
-                    qDebug() << "searching" << Qt::endl;
-                    game_.Move(move_);
-                    if(!calculator(game_)) {
-                        mutex.lock();
-                        dangerousPos.push_back(toPos);
-                        mutex.unlock();
-                        break;
-                    }
-                    move_ = agent_.CalculateMove();
+            for (int i = 0; i < depth*2; i++) {
+                // qDebug() << "searching" << Qt::endl;
+                if(checkEnd(*game_)) {
+                    dangerousPos.push_back(toPos);
+                    break;
+                }
+                if (i + 1 != depth * 2) {
+                    // qDebug() << "current player is " << (game_->GetGameInfo()->current_player_==SurakartaPlayer::BLACK ? "black" : "white") << Qt::endl;
+                    move_ = game_->agent_->CalculateMove();
+                    // qDebug() << "calculated move is " << move_.from.x << move_.from.y << move_.to.x << move_.to.y << Qt::endl;
                 }
             }
-        // }
+        }
 
-        qDebug() << "finish calculate" << Qt::endl;
+        // qDebug() << "finish calculate" << Qt::endl;
         emit resultReady(dangerousPos);
     }
 public:
-    bool calculator(SurakartaGame game) {
-        qDebug() << "calculating" << Qt::endl;
+    bool checkEnd(SurakartaGame game) {
+        // qDebug() << "calculating" << Qt::endl;
         for(unsigned i = 0; i < game.GetBoardSize(); i++ ){
             for(unsigned j = 0; j < game.GetBoardSize(); j++){
                 if((*game.GetRuleManager()->board_)[i][j]->GetColor() == player)
                 {
+                    // qDebug() << "find player in" << i << j << Qt::endl;
                     return false;
                 }
             }
@@ -88,12 +90,8 @@ private:
     SurakartaPosition fromPos;
     std::vector<SurakartaPosition> HintVector;
     std::vector<SurakartaPosition> dangerousPos;
-    // SurakartaRuleManager rule_manager;
     int depth;
     std::atomic<bool> shouldExit{false};
-    QMutex mutex;
 };
-
-
 
 #endif // AI_TASK_H

@@ -22,6 +22,20 @@ public:
         game_info_(new SurakartaGameInfo(current_player)) {}
     // game_info_(std::const_pointer_cast<const SurakartaGameInfo>(current_player)) {}
 
+    SurakartaRuleManager(const SurakartaRuleManager& other)
+        : board_(std::make_shared<const SurakartaBoard>(*other.board_)),
+        game_info_(std::make_shared<const SurakartaGameInfo>(*other.game_info_)) {}
+
+    SurakartaRuleManager& operator=(const SurakartaRuleManager& other) {
+        if (this != &other) {
+            board_ = std::make_shared<const SurakartaBoard>(*other.board_);
+            game_info_ = std::make_shared<const SurakartaGameInfo>(*other.game_info_);
+        }
+        return *this;
+    }
+
+
+
     unsigned int GetBoardSize() {
         return BOARD_SIZE;
     }

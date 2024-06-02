@@ -1,9 +1,8 @@
 #ifndef ONLINE_END_DIALOG_H
 #define ONLINE_END_DIALOG_H
 
+#include "info_reason.h"
 #include <QDialog>
-#include "info_game.h"
-#include "settings.h"
 
 namespace Ui {
 class Dialog;

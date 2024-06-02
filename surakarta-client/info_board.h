@@ -5,9 +5,9 @@
 #include "info_piece.h"
 #include "settings.h"
 
-class SurakartRow : public std::vector<std::shared_ptr<SurakartaPiece>> {
+class SurakartaRow : public std::vector<std::shared_ptr<SurakartaPiece>> {
 public:
-    SurakartRow(unsigned int board_size)
+    SurakartaRow(unsigned int board_size)
         : std::vector<std::shared_ptr<SurakartaPiece>>(board_size) {}
 };
 
@@ -19,7 +19,7 @@ public:
 };
 
 
-class SurakartaBoard : public std::vector<SurakartRow>{
+class SurakartaBoard : public std::vector<SurakartaRow>{
 public:
     unsigned int board_size_;
     std::vector<circle> Cir;
@@ -27,7 +27,7 @@ public:
         : board_size_(board_size),Cir(board_size_)
     {
         for (unsigned int i = 0; i < board_size_; i++) {
-            this->push_back(SurakartRow(board_size_));
+            this->push_back(SurakartaRow(board_size_));
         }
         for (unsigned int i = 0; i < board_size_/2 - 1; i++)
         {
@@ -49,22 +49,17 @@ public:
                 }
             }
         }
-
     }
 
     bool IsInside(const SurakartaPosition& position) const {
         return position.x < board_size_ && position.y < board_size_;
     }
-
-    // void ExecuteMove(SurakartaPosition from, SurakartaPosition to) {
-
-    // }
 };
 
 // 存储棋盘状态
-class mini_board{
+class MiniBoard{
 public:
-    mini_board()
+    MiniBoard()
     {
         board.resize(BOARD_SIZE);
     }

@@ -3,7 +3,7 @@
 
 
 // 计算当前棋局评分
-int SurakartaAgentMine::EvaluateBoardFor(const SurakartaBoard& board /*PieceColor currentPlayer*/) {
+int SurakartaAgentMine::EvaluateBoardFor(const SurakartaBoard& board) {
     int score = 0;
     int myPieces = 0;
     int opponentPieces = 0;
@@ -42,7 +42,7 @@ int SurakartaAgentMine::EvaluateBoardFor(const SurakartaBoard& board /*PieceColo
     }
     // 计算剩余棋子数的差异
     if (opponentPieces == 0)
-        score = 1000;
+        score = 10000;
     else
         score += (myPieces - opponentPieces) * 50; // 每个棋子差异的分值
     // if (!opponentPieces) score = 100;
@@ -52,7 +52,6 @@ int SurakartaAgentMine::EvaluateBoardFor(const SurakartaBoard& board /*PieceColo
 
 // 检查游戏是否结束
 bool IsGameOver(const SurakartaBoard& board) {
-    // ... 实现检查逻辑
     int whitecnt = 0;
     int blackcnt = 0;
     for(unsigned i = 0; i < board.board_size_; i++ )
@@ -76,7 +75,6 @@ MoveList SurakartaAgentMine::getLegalMoves(SurakartaRuleManager rule_manager) {
             {
                 SurakartaPosition _from = {i,j};
                 std::unique_ptr<std::vector<SurakartaPosition>> AllTo = rule_manager.GetAllLegalNONCaptureTarget(_from);
-                // AllTo->push_back(rule_manager.GetAllLegalNONCaptureTarget(_from));               //  store all to
                 std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>> tmp;
                 tmp = std::make_pair(_from, std::move(AllTo));
                 legalMoves.push_back(std::move(tmp));
@@ -94,19 +92,13 @@ MoveList SurakartaAgentMine::getLegalMoves(SurakartaRuleManager rule_manager, in
     std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>>> legalMoves;
     for(unsigned i = 0; i < rule_manager.GetBoardSize(); i++ ){
         for(unsigned j = 0; j < rule_manager.GetBoardSize(); j++){
-            if((*rule_manager.board_)[i][j]->GetColor() == rule_manager.game_info_->current_player_)
-            // auto lagelMoves = rule_manager.GetAllLegalTarget(SurakartaPosition(i, j));
-            // legalMoves->push_back(rule_manager.GetAllLegalTarget(SurakartaPosition(i, j)));
-            {
+            if((*rule_manager.board_)[i][j]->GetColor() == rule_manager.game_info_->current_player_) {
                 totalPiece++;
                 SurakartaPosition _from = {i,j};
                 std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>> tmp;
                 std::unique_ptr<std::vector<SurakartaPosition>> AllTo = rule_manager.GetAllLegalNONCaptureTarget(_from);
                 if (AllTo)
                     totalMoves += (*AllTo).size();
-                // std::vector<SurakartaPosition> AllTo;
-
-                // AllTo =( rule_manager.GetAllLegalNONCaptureTarget(_from));
                 tmp = std::make_pair(_from, std::move(AllTo));
                 legalMoves.push_back(std::move(tmp));
 
@@ -127,7 +119,7 @@ MoveList SurakartaAgentMine::getLegalMoves(SurakartaRuleManager rule_manager, in
 int SurakartaAgentMine::Minimax(SurakartaBoard& board, int depth, bool maximizingPlayer,
                                 int alpha, int beta, PieceColor currentPlayer) {
     if (depth == 0 || IsGameOver(board)) {
-        return EvaluateBoardFor(board/*, currentPlayer*/);
+        return EvaluateBoardFor(board) + depth;
     }
 
     //找到所有可行
@@ -155,7 +147,7 @@ int SurakartaAgentMine::Minimax(SurakartaBoard& board, int depth, bool maximizin
             int score = Minimax(board_, depth - 1, !maximizingPlayer, alpha, beta, nextPlayer);
 
             // 撤销这个走法
-            // board.UndoMove(temp_move);
+            // board.UndoMove(temp_move); // 未实现的思路
             // 检查这个走法是否比当前已知的走法更好
             if (maximizingPlayer){
                 bestScore = std::numeric_limits<int>::min();
@@ -196,10 +188,7 @@ SurakartaMove SurakartaAgentMine::MinimaxRoot(SurakartaRuleManager rule_manager,
     }
     // 遍历所有可能的移动，依次对每个走法调用 Minimax 确定最佳走法
     for (const auto& move : legalMoves) {
-        // SurakartaGame game;
-        // board.ExecuteMove(move);
         for (auto& move_ : *move.second)
-        // SurakartaMove move_(move.first, (*move.second));
         {
             SurakartaBoard board_ = (*rule_manager.board_);
             SurakartaMove temp_move(move.first, move_, rule_manager.game_info_->current_player_);

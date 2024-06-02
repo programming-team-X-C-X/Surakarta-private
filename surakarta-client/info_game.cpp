@@ -3,8 +3,6 @@
 #include <QWidget>
 #include <QPainter>
 #include "info_common.h"
-// #include "my_agent_mine.h"
-// #include "my_agent_random.h"
 
 void SurakartaGame::StartGame() {
     for (unsigned int y = 0; y < board_size_; y++) {
@@ -21,13 +19,6 @@ void SurakartaGame::StartGame() {
     game_info_->Reset();
     rule_manager_->OnUpdateBoard();
 }
-
-// void SurakartaGame::SaveGame(std::string file_name) const {
-//     std::ofstream fout(file_name);
-//     // fout << (*board_);
-//     // fout << (*game_info_);
-//     fout.close();
-// }
 
 void SurakartaGame::UpdateGameInfo(SurakartaIllegalMoveReason move_reason, SurakartaEndReason end_reason, SurakartaPlayer winner) {
     if (move_reason == SurakartaIllegalMoveReason::LEGAL_CAPTURE_MOVE) {

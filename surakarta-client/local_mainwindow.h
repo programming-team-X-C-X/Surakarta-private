@@ -11,7 +11,6 @@
 #include <QPainter>
 #include "info_game.h"
 #include "agent_mine.h"
-// #include "my_agent_random.h"
 #include "chess_board_widght.h"
 #include "settings.h"
 
@@ -21,20 +20,17 @@ class MainWindow;
 }
 QT_END_NAMESPACE
 
-
-// 在绘制事件中调用此函数来绘制实心点
-
 class LocalMainWindow : public QMainWindow
 {
     Q_OBJECT
 
 public:
-    SurakartaGame *game;//顺序讲究
+    SurakartaGame *game;
     // std::shared_ptr<SurakartaAgentRandom> agent     = std::make_shared<SurakartaAgentRandom>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager());
     std::shared_ptr<SurakartaAgentMine>   agentMine = std::make_shared<SurakartaAgentMine>(game->GetBoard(), game->GetGameInfo(), game->GetRuleManager());
     ChessBoardWidget *chessBoard;
     QTimer *computerMoveTimer;
-    int computerMoveDelay = 500; // 电脑走棋的延迟时间，1000毫秒
+    int computerMoveDelay = 500; // 电脑走棋的延迟时间
     int countdownTime = TIME_LIMIT;
     int arcNum = (BOARD_SIZE - 2) / 2;//环数
     int rawNum = BOARD_SIZE + arcNum * 2 + 1;//总行数
@@ -68,10 +64,10 @@ signals:
     void sendNONCaptureHints(const std::vector<SurakartaPosition>& hints);
 
 protected:
-        void paintEvent(QPaintEvent */*event*/) override;
+    void paintEvent(QPaintEvent */*event*/) override;
 
 private:
-        SurakartaGameMode gameMode;
+    SurakartaGameMode gameMode;
     QPushButton *buttonGiveUp;
     QPushButton *buttonClose;
     QPushButton *buttonStart;

@@ -30,8 +30,6 @@ LocalMainWindow::LocalMainWindow(/*QWidget *parent*/SurakartaGameMode gameMode)
         game->white_player_ = SurakartaRealPlayer::PLAYER;
         game->black_player_ = SurakartaRealPlayer::PLAYER;
     }
-    // QString whiteColor = game->GetGameInfo()->player_color_ == SurakartaPlayer::BLACK ? QString("BLACK") : QString("WHITE");
-    // QString blackColor = game->GetGameInfo()->computer_color_ == SurakartaPlayer::BLACK ? QString("BLACK") : QString("WHITE");
     QString whiteColor = game->black_player_ == SurakartaRealPlayer::COMPUTER ? QString("电脑") : QString("玩家");
     QString blackColor = game->white_player_ == SurakartaRealPlayer::COMPUTER ? QString("电脑") : QString("玩家");
     QString playerInfo = QString("黑方：%1\n白方：%2").arg(whiteColor, blackColor);
@@ -53,8 +51,6 @@ LocalMainWindow::LocalMainWindow(/*QWidget *parent*/SurakartaGameMode gameMode)
     hlayout->addStretch(6);
     hlayout->addLayout(vlayout);
     hlayout->addStretch(1);
-    // setLayout(hlayout);
-    // 创建一个新的容器并设置布局
     QWidget *container = new QWidget();
     container->setLayout(hlayout);
     setCentralWidget(container);
@@ -68,7 +64,6 @@ LocalMainWindow::LocalMainWindow(/*QWidget *parent*/SurakartaGameMode gameMode)
 void LocalMainWindow::Initialize() {
     chessBoard = new ChessBoardWidget();
     buttonGiveUp = new QPushButton("认输", this);
-    // buttonGiveUp->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*4/6, 100, 30);
 
     setCentralWidget(chessBoard);
     // chessBoard->setGeometry(0, 0, WINDOW_SIZE, WINDOW_SIZE);
@@ -96,10 +91,8 @@ void LocalMainWindow::Initialize() {
     countdownTimer = new QTimer(this);
     countdownTimer->setInterval(1000); // 设置定时器每秒触发一次
     connect(countdownTimer, &QTimer::timeout, this, &LocalMainWindow::updateCountdown);
-    // 创建一个新的布局
     QVBoxLayout *vlayout = new QVBoxLayout();
     QHBoxLayout *hlayout = new QHBoxLayout();
-    // 将按钮添加到布局中
     buttonClose->setFixedSize(100, 30);
     buttonGiveUp->setFixedSize(100, 30);
     // buttonStart->setFixedSize(100, 30);
@@ -141,8 +134,6 @@ void LocalMainWindow::judgeEnd() {
     updateGameInfo();
     if (game->IsEnd() && game->GetGameInfo()->end_reason_ != SurakartaEndReason::ILLIGAL_MOVE)
         showEndDialog();
-    // if (game->game_mode_ == SurakartaGameMode::PVE || game->game_mode_ == SurakartaGameMode::EVE) {
-    // if (game->game_info_->current_player_ == game->GetGameInfo()->computer_color_)
     if (game->game_info_->current_player_ == SurakartaPlayer::BLACK) {
         if (game->black_player_ == SurakartaRealPlayer::COMPUTER)
             startComputerMove();
@@ -151,8 +142,6 @@ void LocalMainWindow::judgeEnd() {
         if (game->white_player_ == SurakartaRealPlayer::COMPUTER)
             startComputerMove();
     }
-    // }
-
 }
 
 void LocalMainWindow::updateGameInfo() {
@@ -210,7 +199,6 @@ void LocalMainWindow::updateCountdownDisplay() {
         color = "red";
     countdownLabel->setStyleSheet((QString("color:%1").arg(color)));
     countdownLabel->setText(tr("剩余时间: %1").arg(countdownTime));
-    // countdownLabel->show();
 }
 
 void LocalMainWindow::provideHints(SurakartaPosition pos) {
@@ -224,11 +212,9 @@ void LocalMainWindow::provideHints(SurakartaPosition pos) {
 }
 
 void LocalMainWindow::showEndDialog() {
-    // chessBoard->close();
     countdownTimer->stop();
     std::shared_ptr<SurakartaGameInfo> info = game->GetGameInfo();
     LocalEndDialog *enddialog = new LocalEndDialog(this);
-    // QString winnerColor = (game.game_info_->winner_ == PieceColor::BLACK) ? "Black" : "White";
     QString winnerColor;
     if (game->game_info_->winner_ == PieceColor::BLACK)
         winnerColor = "获胜者：黑方";
@@ -247,7 +233,7 @@ void LocalMainWindow::showEndDialog() {
                           .arg(winnerColor)
                           .arg(info->num_round_)
                           .arg(info->last_captured_round_);
-    // .arg(endReasonToString(info->end_reason_)) // 假设有一个endReasonToString函数将结束原因转换为字符串
+    // .arg(endReasonToString(info->end_reason_)) // endReasonToString将结束原因转换为字符串
     // .arg(info->max_no_capture_round_);
 
     enddialog->setText(message);
@@ -276,7 +262,6 @@ LocalMainWindow::~LocalMainWindow() {
 void LocalMainWindow::paintEvent(QPaintEvent */*event*/) {
     QPainter painter(this);
     painter.setRenderHint(QPainter::Antialiasing);
-
 
     // 绘制棋盘网格
     painter.setPen(Qt::black);

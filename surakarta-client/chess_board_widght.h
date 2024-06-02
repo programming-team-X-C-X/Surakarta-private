@@ -25,14 +25,14 @@ public:
     void clearHints();
     void setMode(DrawMode newMode);
     QPointF convertPositionToQPointF(const SurakartaPosition& position);
-    ChessBoardWidget(const mini_board& board_);
+    ChessBoardWidget(const MiniBoard& board_);
 
     int arcNum = (BOARD_SIZE - 2) / 2;//环数
     int rawNum = BOARD_SIZE + arcNum * 2 + 1;//总行数
     int gridSize = WINDOW_SIZE / rawNum;
 
 public slots:
-    void movePiece(/*const SurakartaPosition& from, const SurakartaPosition& to*/const SurakartaMove& move);
+    void movePiece(const SurakartaMove& move);
     void receiveCaptureHints(const std::vector<SurakartaPosition>& hints);
     void receiveDangerousHints(const std::vector<SurakartaPosition>& hints);
     void receiveNONCaptureHints(const std::vector<SurakartaPosition>& hints);

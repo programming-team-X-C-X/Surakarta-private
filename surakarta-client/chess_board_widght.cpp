@@ -10,8 +10,6 @@ ChessBoardWidget::ChessBoardWidget() :
     currentMode(BoardMode), hasFirstClick(false)
 {
     board = std::make_shared<SurakartaBoard>(BOARD_SIZE);
-    // setFixedSize(WINDOW_SIZE * 1.5, WINDOW_SIZE);
-    // setStyleSheet("background-color: grey;");
 
     pieceItems.resize(BOARD_SIZE, std::vector<std::shared_ptr<SurakartaPiece>>(BOARD_SIZE));
 
@@ -22,13 +20,8 @@ ChessBoardWidget::ChessBoardWidget() :
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
     scene->addItem(chessBoardItem);
-    // view->setFixedSize(WINDOW_SIZE, WINDOW_SIZE);
-    // view->setSceneRect(chessBoardItem->boundingRect());
     view->setBackgroundBrush(QBrush(Qt::transparent));
 
-    int arcNum = (BOARD_SIZE - 2) / 2;//环数
-    int rawNum = BOARD_SIZE + arcNum * 2 + 1;//总行数
-    int gridSize = WINDOW_SIZE / rawNum;
     for (unsigned int y = 0; y < BOARD_SIZE; y++) {
         for (unsigned int x = 0; x < BOARD_SIZE; x++) {
             if (y < 2) {
@@ -103,14 +96,11 @@ void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
                         hasFirstClick = false;
                         return;
                     }
-
                     emit requestHints(pos);
-
                     firstClickPos = pos;
                     firstClickPiece = piece;
                 }
-                else
-                {
+                else {
                     secondClickPos = piece->GetPosition();
                     hasFirstClick = false;
                     clearHints();
@@ -132,16 +122,15 @@ void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
                 emit playerMove(firstClickPos, secondClickPos);
             }
 
-            qDebug() << "second:" << secondClickPos.x << "," << secondClickPos.y << '\n';
+            // qDebug() << "second:" << secondClickPos.x << "," << secondClickPos.y << '\n';
         }
         else if (piece && piece->color_ == ((PLAYER_COLOR ) ? PieceColor::BLACK: PieceColor::WHITE)) { // 第一次点击
             SurakartaPosition pos = piece->GetPosition();
             emit requestHints(pos);
-
             firstClickPos = pos;
             firstClickPiece = piece;
             hasFirstClick = true;
-            qDebug() << "first:" << pos.x << "," << pos.y << '\n';
+            // qDebug() << "first:" << pos.x << "," << pos.y << '\n';
         }
 
     }
@@ -170,38 +159,38 @@ void ChessBoardWidget::drawCaptureHint(const SurakartaPosition& position) {
     drawNONCaptureHint(position);
     auto hintItem = new QGraphicsEllipseItem(convertPositionToQPointF(position).x()+0.75, convertPositionToQPointF(position).y()+0.75, PIECE_SIZE-1.5, PIECE_SIZE-1.5);
 
-    QPen pen(Qt::NoPen); // 我们将不设置描边
-    hintItem->setPen(pen); // 应用无描边
+    QPen pen(Qt::NoPen);
+    hintItem->setPen(pen);
 
-    QColor fillColor(193, 255, 193, 127); // 半透明的绿色（R, G, B, Alpha）
-    hintItem->setBrush(QBrush(fillColor)); // 设置填充为半透明的绿色
+    QColor fillColor(193, 255, 193, 127); // 半透明的绿色
+    hintItem->setBrush(QBrush(fillColor));
 
-    scene->addItem(hintItem); // 将提示添加到场景中
-    hintItems.push_back(hintItem); // 保存提示项，方便后续移除
+    scene->addItem(hintItem);
+    hintItems.push_back(hintItem);
 }
 
 void ChessBoardWidget::drawDangerousHint(const SurakartaPosition& position) {
     auto hintItem = new QGraphicsEllipseItem(convertPositionToQPointF(position).x()+0.75, convertPositionToQPointF(position).y()+0.75, PIECE_SIZE-1.5, PIECE_SIZE-1.5);
 
-    QPen pen(Qt::NoPen); // 我们将不设置描边
-    hintItem->setPen(pen); // 应用无描边
+    QPen pen(Qt::NoPen);
+    hintItem->setPen(pen);
 
-    QColor fillColor(255, 0, 0, 127);
-    hintItem->setBrush(QBrush(fillColor)); // 设置填充为半透明的绿色
+    QColor fillColor(255, 0, 0, 127); // 半透明的红色
+    hintItem->setBrush(QBrush(fillColor));
 
-    scene->addItem(hintItem); // 将提示添加到场景中
-    hintItems.push_back(hintItem); // 保存提示项，方便后续移除
+    scene->addItem(hintItem);
+    hintItems.push_back(hintItem);
 }
 
 void ChessBoardWidget::drawNONCaptureHint(const SurakartaPosition& position) {
     auto hintItem = new QGraphicsEllipseItem(convertPositionToQPointF(position).x(), convertPositionToQPointF(position).y(), PIECE_SIZE, PIECE_SIZE);
 
-    QPen pen(QColor(67, 44, 216));
+    QPen pen(QColor(67, 44, 216)); // 蓝色
     pen.setWidth(3);
-    hintItem->setPen(pen); // 设置提示圆圈的描边颜色
-    hintItem->setBrush(QBrush(Qt::transparent)); // 设置提示圆圈填充透明
-    scene->addItem(hintItem); // 将提示添加到场景
-    hintItems.push_back(hintItem); // 保存提示，以便之后可以清理
+    hintItem->setPen(pen);
+    hintItem->setBrush(QBrush(Qt::transparent));
+    scene->addItem(hintItem);
+    hintItems.push_back(hintItem);
 }
 
 // 成员函数以清除所有之前的提示
@@ -306,7 +295,7 @@ void ChessBoardWidget::movePiece(const SurakartaMove& move) {
         }
         auto animation = new QVariantAnimation(this);
         int duration = static_cast<int>(pathLength / PIECE_SPEED * 1000);
-        animation->setDuration(duration); // 动画时间，例如 1000 毫秒
+        animation->setDuration(duration); // 动画时间
         animation->setStartValue(0.0);
         animation->setEndValue(1.0);
         connect(animation, &QVariantAnimation::valueChanged, [animationPath, piece](const QVariant &value) {
@@ -335,54 +324,8 @@ void ChessBoardWidget::setMode(DrawMode mode) {
 }
 
 
-ChessBoardWidget::ChessBoardWidget(const mini_board& board_)
+ChessBoardWidget::ChessBoardWidget(const MiniBoard& board_)
 {
-    // //
-    // pieceItems.clear();
-    // pieceItems.resize(BOARD_SIZE, std::vector<std::shared_ptr<SurakartaPiece>>(BOARD_SIZE));
-
-    // if (scene) {
-    //     delete scene; // 删除旧的场景
-    // }
-    // if (view) {
-    //     delete view; // 删除旧的视图
-    // }
-
-    // scene = new QGraphicsScene(this);
-    // view = new QGraphicsView(scene, this);
-    // ChessBoardGraphicsItem *chessBoardItem = new ChessBoardGraphicsItem();
-
-
-    // view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    // view->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    // scene->addItem(chessBoardItem);
-    // // view->setFixedSize(WINDOW_SIZE, WINDOW_SIZE);
-    // // view->setSceneRect(chessBoardItem->boundingRect());
-    // view->setBackgroundBrush(QBrush(Qt::transparent));
-
-    // int arcNum = (BOARD_SIZE - 2) / 2;//环数
-    // int rawNum = BOARD_SIZE + arcNum * 2 + 1;//总行数
-    // int gridSize = WINDOW_SIZE / rawNum;
-    // for (unsigned int y = 0; y < BOARD_SIZE; y++) {
-    //     for (unsigned int x = 0; x < BOARD_SIZE; x++) {
-
-    //         if(board_.board[x][y] == PieceColor::NONE) {
-    //             (*board)[x][y] = std::make_shared<SurakartaPiece>(x, y, PieceColor::NONE);
-    //         }
-    //         else
-    //         {
-    //             (*board)[x][y] = std::make_shared<SurakartaPiece>(x, y, board_.board[x][y]);
-    //             pieceItems[x][y] = std::make_shared<SurakartaPiece>(x, y, (*board)[x][y]->color_);
-    //             SurakartaPiece *pieceItem = pieceItems[x][y].get();
-    //             int pos_x = (arcNum + x + 1) * gridSize;
-    //             int pos_y = (arcNum + y + 1) * gridSize;
-    //             pieceItem->setPos(pos_x-PIECE_SIZE/2, pos_y-PIECE_SIZE/2);
-    //             scene->addItem(pieceItem);
-    //         }
-    //     }
-    // }
-
-
     // 创建新的场景和视图
     scene = new QGraphicsScene(this);
     view = new QGraphicsView(scene, this);
@@ -402,10 +345,6 @@ ChessBoardWidget::ChessBoardWidget(const mini_board& board_)
     view->setFixedSize(WINDOW_SIZE, WINDOW_SIZE);
     scene->setSceneRect(0, 0, WINDOW_SIZE, WINDOW_SIZE);
 
-    int arcNum = (BOARD_SIZE - 2) / 2; // 环数
-    int rawNum = BOARD_SIZE + arcNum * 2 + 1; // 总行数
-    int gridSize = WINDOW_SIZE / rawNum;
-
     // 添加棋子
     for (unsigned int y = 0; y < BOARD_SIZE; y++) {
         for (unsigned int x = 0; x < BOARD_SIZE; x++) {
@@ -422,7 +361,4 @@ ChessBoardWidget::ChessBoardWidget(const mini_board& board_)
             }
         }
     }
-
-
-
 }

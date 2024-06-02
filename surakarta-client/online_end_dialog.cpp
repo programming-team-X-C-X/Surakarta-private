@@ -1,4 +1,5 @@
 #include "online_end_dialog.h"
+#include "settings.h"
 #include "ui_online_end_dialog.h"
 extern bool PLAYER_COLOR;
 
@@ -60,7 +61,6 @@ void OnlineEndDialog::on_one_more_game_clicked()
     // 发出信号
     // 转到准备的界面 将本地游戏数据初始化
     emit restart_game();
-
     this->close();
 }
 
@@ -68,7 +68,6 @@ void OnlineEndDialog::on_one_more_game_clicked()
 void OnlineEndDialog::on_return_start_clicked()
 {
     emit return_start();
-
     this->close();
 }
 

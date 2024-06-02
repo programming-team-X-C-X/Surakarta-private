@@ -1,6 +1,6 @@
 #pragma once
 
-#include "agent_base.h"
+#include "agent_mine.h"
 #include "rule_manager.h"
 #include "settings.h"
 #include "info_piece.h"
@@ -58,7 +58,7 @@ public:
         board_(std::make_shared<SurakartaBoard>(board_size)),
         game_info_(std::make_shared<SurakartaGameInfo>()),
         rule_manager_(std::make_shared<SurakartaRuleManager>(board_, game_info_)),
-        agent_(std::make_shared<SurakartaAgentBase>(board_, game_info_, rule_manager_)) {}
+        agent_(std::make_shared<SurakartaAgentMine>(board_, game_info_, rule_manager_)) {}
 
     SurakartaGame(/*unsigned BOARD_SIZE = BOARD_SIZE,*/ SurakartaGameMode gameMode)
         : game_mode_(gameMode),
@@ -66,10 +66,10 @@ public:
         board_(std::make_shared<SurakartaBoard>(BOARD_SIZE)),
         game_info_(std::make_shared<SurakartaGameInfo>()),
         rule_manager_(std::make_shared<SurakartaRuleManager>(board_, game_info_)),
-        agent_(std::make_shared<SurakartaAgentBase>(board_, game_info_, rule_manager_)) {}
+        agent_(std::make_shared<SurakartaAgentMine>(board_, game_info_, rule_manager_)) {}
 
     // 拷贝构造函数
-    SurakartaGame(const SurakartaGame& other)
+    SurakartaGame(SurakartaGame& other)
         : game_mode_(other.game_mode_),
         white_player_(other.white_player_),
         black_player_(other.black_player_),
@@ -77,10 +77,8 @@ public:
         board_(std::make_shared<SurakartaBoard>(*other.board_)), // 假设SurakartaBoard有拷贝构造函数
         game_info_(std::make_shared<SurakartaGameInfo>(*other.game_info_)), // 假设SurakartaGameInfo有拷贝构造函数
         rule_manager_(std::make_shared<SurakartaRuleManager>(*other.rule_manager_)), // 假设SurakartaRuleManager有拷贝构造函数
-        agent_(std::make_shared<SurakartaAgentBase>(*other.agent_)) // 假设SurakartaAgentBase有拷贝构造函数
-    {
-        // 如果有其他需要深拷贝的成员，也在这里处理
-    }
+        agent_(std::make_shared<SurakartaAgentMine>(*other.agent_)) // 假设SurakartaAgentBase有拷贝构造函数
+    {}
 
     // 拷贝赋值运算符
     SurakartaGame& operator=(const SurakartaGame& other) {
@@ -92,7 +90,7 @@ public:
             board_ = std::make_shared<SurakartaBoard>(*other.board_);
             game_info_ = std::make_shared<SurakartaGameInfo>(*other.game_info_);
             rule_manager_ = std::make_shared<SurakartaRuleManager>(*other.rule_manager_);
-            agent_ = std::make_shared<SurakartaAgentBase>(*other.agent_);
+            agent_ = std::make_shared<SurakartaAgentMine>(*other.agent_);
             // 处理其他成员
         }
         return *this;
@@ -102,12 +100,12 @@ public:
     // void SaveGame(std::string file_name) const;
     void UpdateGameInfo(SurakartaIllegalMoveReason move_reason, SurakartaEndReason end_reason, SurakartaPlayer winner);
     SurakartaMoveResponse Move(/*const*/ SurakartaMove& move);
-    void SetAgent(std::shared_ptr<SurakartaAgentBase> agent) { agent_ = agent; }
+    void SetAgent(std::shared_ptr<SurakartaAgentMine> agent) { agent_ = agent; }
 
     unsigned int GetBoardSize() const { return board_size_; }
     std::shared_ptr<SurakartaBoard> GetBoard() const { return board_; }
     std::shared_ptr<SurakartaGameInfo> GetGameInfo() const { return game_info_; }
-    std::shared_ptr<SurakartaAgentBase> GetAgent() const { return agent_; }
+    std::shared_ptr<SurakartaAgentMine> GetAgent() const { return agent_; }
     bool IsEnd() const { return game_info_->IsEnd(); }
 
     void SetRuleManager(std::shared_ptr<SurakartaRuleManager> rule_manager) {  // For testing.
@@ -123,7 +121,7 @@ public:
     std::shared_ptr<SurakartaBoard> board_;
     std::shared_ptr<SurakartaGameInfo> game_info_;
     std::shared_ptr<SurakartaRuleManager> rule_manager_;
-    std::shared_ptr<SurakartaAgentBase> agent_;
+    std::shared_ptr<SurakartaAgentMine> agent_;
     // std::shared_ptr<ChessBoardWidget> chessboardwight_;
 
 };
