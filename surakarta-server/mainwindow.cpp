@@ -5,13 +5,16 @@
 #include <QDateTime>
 #include <QFile>
 #include <QTextStream>
+
 // 超时时间
 int TIME = 20;
 int Lefttime = TIME + 2;
 extern QStringList arg;
 bool istart = 0;
-int MainWindow::cnt = 0;
 bool fi{1};
+
+
+int MainWindow::cnt = 0;
 
 
 QString GetInfo(NetworkData data);
@@ -36,6 +39,7 @@ void MainWindow::Smarkdown(NetworkData data)
     clientout <<  currentDateTime.toString() +" server send : " + GetInfo(data)+ "\n";
 }
 
+// 记录日志
 QString GetInfo(NetworkData data)
 {
 
@@ -81,6 +85,7 @@ SurakartaMove MainWindow::backmove(NetworkData data)
     qDebug() << "player :" << ((rt.player == PieceColor::BLACK) ? "BLACK" : "WHITE");
     return rt;
 }
+
 // 判断用户名是否合法
 bool isValidUsername(const QString& username) {
     QRegularExpression regex("^[a-zA-Z0-9_]*$");
@@ -89,7 +94,6 @@ bool isValidUsername(const QString& username) {
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
-    , color{"BLACK"}
     , ui(new Ui::MainWindow)
 
 {
@@ -186,6 +190,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     });
 
+
+    // 命令行
     if(arg.size() == 2){
     ui->port_line->setText(arg[1]);
     on_listen_button_clicked();
@@ -223,7 +229,7 @@ void MainWindow::on_listen_button_clicked()
         // ui->listen_button->setDisabled(false);
         // ui->stop->setDisabled(true);
         cnt = 0;
-        color = "BLACK";
+
         ui->game_text->setText("");
         ui->port_line->setReadOnly(false);
         ui->TIMELIMIT->setDisabled(false);
@@ -479,6 +485,8 @@ void MainWindow::move_op(QTcpSocket *client, NetworkData data)
     else out << " "<< data.data1 + '-'  + data.data2;
 
     ui->game_text->append(info);
+
+    QString move_reason;
 
     switch(game->rule_manager_->JudgeMove(mv))
     {

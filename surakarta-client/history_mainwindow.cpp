@@ -24,6 +24,7 @@ History_MainWindow::History_MainWindow(QWidget *parent)
 
     //  未介入
     isDoing = false;
+    isStaring = false;
 }
 
 History_MainWindow::~History_MainWindow()
@@ -34,19 +35,13 @@ History_MainWindow::~History_MainWindow()
 void History_MainWindow::on_pushButton_clicked()
 {
     // 点击确定开始载入游戏
-    qDebug() << "Failed to open file";
-
     // 初始化
-    //std::vector<SurakartaBoard> boards;
-
     game_info = "";
     moves.clear();
     game_color = "BLACK";
-    //boards.clear();
     step = 0;
     game = new SurakartaGame;
     game->StartGame();
-    //boards.push_back(*game->board_.get());
 
     // 放入最初始的状态
     MiniBoard *newBoard = new MiniBoard;
@@ -67,7 +62,6 @@ void History_MainWindow::on_pushButton_clicked()
     // 将文件存储变成对应步数
     QStringList moveList = game_info.split(' ');
     max_step = moveList.size() - 1;
-    // 5步  step 最高取 4
 
     for(unsigned i = 0; i < moveList.size() - 1;i++)
     {
@@ -93,8 +87,8 @@ void History_MainWindow::on_pushButton_clicked()
     setCentralWidget(chessBoard);
 
 
+    // 加入 上一步 下一步等控件
     QToolBar* toolBar = addToolBar("Tools");
-
     // 放入 开始  上一步  下一步   介入对局  按钮
     QAction* startPauseAction = new QAction("开始播放");
     QAction* preAction = new QAction("上一步");
@@ -214,28 +208,25 @@ void History_MainWindow::on_pushButton_clicked()
             preAction->setDisabled(true);
             nextAction->setDisabled(true);
             jumpButton->setDisabled(true);
-            timer = new QTimer;
-            timer->start(3000);
+
             player_color->setText(game_color);
 
-            connect(timer,&QTimer::timeout,this,[=](){
-                if(step < max_step)
-                {
-                    chessBoard->movePiece(moves[step]);
-                    step++;
-                    roundLabel->setText(QString("当前轮数: %1").arg(step));
-                }
-                else
-                {
-                    timer->stop();
-                }
-            });
+
+
+            if(step < max_step)
+            {
+                chessBoard->movePiece(moves[step]);
+                step++;
+                roundLabel->setText(QString("当前轮数: %1").arg(step));
+                isStaring = true;
+            }
+
 
 
         }
         else
         {
-            timer->stop();
+            isStaring = false;
 
             startPauseAction->setText("开始播放");
 
@@ -257,6 +248,17 @@ void History_MainWindow::on_pushButton_clicked()
             if(step <= 0) emit reachMin();
             changeGameColor();
             player_color->setText(game_color);
+            if(isStaring)
+            {
+                if(step < max_step)
+                {
+                    chessBoard->movePiece(moves[step]);
+                    step++;
+                    roundLabel->setText(QString("当前轮数: %1").arg(step));
+                    isStaring = true;
+                }
+            }
+
         }
         else
         {
@@ -319,13 +321,12 @@ void History_MainWindow::onJumpButtonClicked()
 
 void History_MainWindow::loadGame(unsigned cur_step)
 {
-    // mini_board  ---->   SuarkartaBoards
-
     // 清空棋盘
     if (chessBoard) {
         delete chessBoard;
     }
 
+    // 重新设置棋盘
     chessBoard = new ChessBoardWidget(boards[cur_step]);
     connect(chessBoard,&ChessBoardWidget::animationFinished,[=](){
         if(!isDoing)
@@ -337,6 +338,16 @@ void History_MainWindow::loadGame(unsigned cur_step)
             if(step <= 0) emit reachMin();
             changeGameColor();
             player_color->setText(game_color);
+            if(isStaring)
+            {
+                if(step < max_step)
+                {
+                    chessBoard->movePiece(moves[step]);
+                    step++;
+                    roundLabel->setText(QString("当前轮数: %1").arg(step));
+                    isStaring = true;
+                }
+            }
         }
         else
         {
@@ -344,6 +355,7 @@ void History_MainWindow::loadGame(unsigned cur_step)
             player_color->setText(userin_color);
         }
     });
+
     setCentralWidget(chessBoard);
 }
 

@@ -8,11 +8,6 @@
 extern QString NAME;
 extern bool PLAYER_COLOR;
 
-// timer 什么时候动
-// 收到 readyop 启动timer
-// 收到行棋请求 --------->  重置时间 继续减值
-// 收到endop   --------->  timer stop
-
 OnlineMainWindow::OnlineMainWindow(QWidget *parent)
     : QMainWindow(parent)
     , ui(new Ui::MainWindow)
@@ -20,8 +15,6 @@ OnlineMainWindow::OnlineMainWindow(QWidget *parent)
     setWindowTitle(tr("苏拉卡尔塔棋 --programming-team-X-C-X --Powered by Qt 6.8.0"));
     ui->setupUi(this);
     socket = new NetworkSocket(new QTcpSocket(this),this);
-    // aiuser = new QTimer(this);
-    // aiuser->start(5000);
 
     // 服务端主动终止收不到信息 ?
     connect(socket->base(),&QTcpSocket::disconnected,this,[=](){
@@ -136,7 +129,6 @@ OnlineMainWindow::~OnlineMainWindow()
     delete ui;
 }
 
-
 void OnlineMainWindow::on_readyButton_clicked()
 {
     // 请求连接
@@ -184,8 +176,6 @@ void OnlineMainWindow::rec_ready(NetworkData& data)
     Game = new GameView();
     Game->setAttribute(Qt::WA_DeleteOnClose);
     isfirst = true;
-    // 能关闭吗 ?
-    // this->close();
 
     // 设置 按钮字样
     ui->readyButton->setText("游戏中...");
@@ -201,10 +191,6 @@ void OnlineMainWindow::rec_ready(NetworkData& data)
     timer = new QTimer(this);
     connect(timer,&QTimer::timeout,Game,&GameView::update_time); // 更新计时器
     timer->start(1000);
-
-    // connect(aiuser,&QTimer::timeout,this,[=](){
-    //     if(IsAi) Game->computerMove();
-    // });
 
     // 连接请求移动 和 认输
     connect(Game,&GameView::AskMove,this,[=](SurakartaMove move){
@@ -310,7 +296,6 @@ void OnlineMainWindow::mark_move(NetworkData& data)
     else out << " "<< data.data1 + '-'  + data.data2;
     store_gameinfo += data.data1 + "-" + data.data2 + " ";
 }
-
 
 void OnlineMainWindow::Save_game()
 {

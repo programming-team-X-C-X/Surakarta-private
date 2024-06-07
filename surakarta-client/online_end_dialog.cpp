@@ -64,7 +64,7 @@ void OnlineEndDialog::on_one_more_game_clicked()
     this->close();
 }
 
-
+// 回到开始界面
 void OnlineEndDialog::on_return_start_clicked()
 {
     emit return_start();
