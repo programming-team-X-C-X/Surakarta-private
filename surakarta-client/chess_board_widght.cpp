@@ -307,7 +307,7 @@ void ChessBoardWidget::movePiece(const SurakartaMove& move) {
             animation->deleteLater(); // 删除动画对象
             emit animationFinished();
             pieceItems[move.from.x][move.from.y] = nullptr;
-            piece->GetPosition() = move.to; // 更新棋子的最终位置
+            piece->SetPosition(move.to); // 更新棋子的最终位置
             pieceItems[move.to.x][move.to.y] = piece;
         });
         animation->start(); // 开始动画

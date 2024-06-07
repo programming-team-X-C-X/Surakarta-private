@@ -67,7 +67,6 @@ void LocalMainWindow::Initialize() {
     buttonGiveUp = new QPushButton("认输", this);
 
     setCentralWidget(chessBoard);
-    // chessBoard->setGeometry(0, 0, WINDOW_SIZE, WINDOW_SIZE);
     connect(buttonGiveUp, &QPushButton::clicked, this, &LocalMainWindow::giveUp);
     connect(chessBoard, &ChessBoardWidget::playerMove, this, &LocalMainWindow::playerMove);
     connect(chessBoard, &ChessBoardWidget::animationFinished, this, &LocalMainWindow::judgeEnd);
