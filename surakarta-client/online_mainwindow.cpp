@@ -220,7 +220,7 @@ void OnlineMainWindow::rec_ready(NetworkData& data)
     });
 
     connect(Game->chessBoard,&ChessBoardWidget::animationFinished,this,[=](){
-        gameround++;
+        GAME_ROUND++;
         Game->update_gameinfo();
         Game->left_time = TIME_LIMIT;
         RIGHT_COLOR = !RIGHT_COLOR;
@@ -284,11 +284,11 @@ void OnlineMainWindow::rec_end(NetworkData& data)
         // 最后一步倒计时不会走
         connect(Game->chessBoard,&ChessBoardWidget::animationFinished,this,[=](){
             timer->stop();
-            Game->endShow(backReason(data),backColor(data),QString::number(gameround));
+            Game->endShow(backReason(data),backColor(data),QString::number(GAME_ROUND));
         });
     else {
         timer->stop();
-        Game->endShow(backReason(data),backColor(data),QString::number(gameround));
+        Game->endShow(backReason(data),backColor(data),QString::number(GAME_ROUND));
     }
     // 直接断开连接 ?
 

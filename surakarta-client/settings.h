@@ -14,7 +14,7 @@ extern double PIECE_SPEED;
 extern unsigned int TIME_LIMIT;
 extern unsigned int MAX_NO_CAPTURE_ROUND;
 extern bool PLAYER_COLOR;
-extern int gameround;
+extern int GAME_ROUND;
 extern QString NAME;
 extern bool RIGHT_COLOR;
 extern bool IsAi;

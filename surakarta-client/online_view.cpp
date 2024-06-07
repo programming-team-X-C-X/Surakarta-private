@@ -12,7 +12,7 @@ GameView::GameView(QWidget *parent)
 {
     // 初始化
     left_time = TIME_LIMIT;
-    gameround = 1;
+    GAME_ROUND = 1;
     RIGHT_COLOR = 1;
     IsAi = 1;
 
@@ -149,8 +149,9 @@ void GameView::onDEADCalculateComputed(std::vector<SurakartaPosition> pos) {
 void GameView::update_gameinfo()
 {
     ui->Lname->setText(QString(NAME));
+    ui->Lcolor->setText((game.GetGameInfo()->current_player_ == PieceColor::BLACK) ? "BLACK" : "WHITE");
     ui->Lplayercolor->setText((PLAYER_COLOR == 1) ? "BLACK" : "WHITE");
-    ui->Lround ->setText(QString::number(gameround));
+    ui->Lround ->setText(QString::number(GAME_ROUND));
 }
 
 void GameView::update_time()
