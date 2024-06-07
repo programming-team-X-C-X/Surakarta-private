@@ -61,19 +61,12 @@ private slots:
 private:
     // 存储移动步
     std::vector<SurakartaMove> moves;
-
-
-   // std::vector<SurakartaBoard> boards;
-
     std::vector<MiniBoard> boards;
-
     // 当前步数
     int step;
     int max_step;
-
     // 文件中的游戏信息
     QString game_info;
-
     // 游戏
     SurakartaGame *game;
     // 棋盘
@@ -81,19 +74,12 @@ private:
 
     Ui::History_MainWindow *ui;
     QTimer* timer;
-
     QLabel *roundLabel;
-
     QLabel *player_color;
-
     QString game_color;
-
     QString userin_color;
-
     QLineEdit *jumpLineEdit;
-
     QPushButton *jumpButton;
-
     // 是否正在介入
     bool isDoing;
 };

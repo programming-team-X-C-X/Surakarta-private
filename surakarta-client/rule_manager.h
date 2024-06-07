@@ -12,15 +12,14 @@ public:
 
     SurakartaRuleManager(std::shared_ptr<SurakartaBoard> board,
                          std::shared_ptr<SurakartaGameInfo> game_info)
-        : /*BOARD_SIZE(board->board_size_),*/
+        :
         board_(std::const_pointer_cast<const SurakartaBoard>(board)),
         game_info_(std::const_pointer_cast<const SurakartaGameInfo>(game_info)) {}
     SurakartaRuleManager(std::shared_ptr<SurakartaBoard> board,
                          std::shared_ptr<SurakartaPlayer> current_player)
-        : /*BOARD_SIZE(board->board_size_),*/
+        :
         board_(std::const_pointer_cast<const SurakartaBoard>(board)),
         game_info_(new SurakartaGameInfo(current_player)) {}
-    // game_info_(std::const_pointer_cast<const SurakartaGameInfo>(current_player)) {}
 
     SurakartaRuleManager(const SurakartaRuleManager& other)
         : board_(std::make_shared<const SurakartaBoard>(*other.board_)),
@@ -36,9 +35,9 @@ public:
 
 
 
-    unsigned int GetBoardSize() {
-        return BOARD_SIZE;
-    }
+    unsigned int GetBoardSize() { return BOARD_SIZE; }
+    std::shared_ptr<const SurakartaBoard> GetBoard() { return board_; }
+    std::shared_ptr<const SurakartaGameInfo> GetGameInfo() { return game_info_; }
 
     virtual void OnUpdateBoard();
     virtual SurakartaIllegalMoveReason JudgeMove(/*const*/ SurakartaMove& move);
@@ -46,7 +45,7 @@ public:
     virtual std::unique_ptr<std::vector<SurakartaPosition>> GetAllLegalCaptureTarget(const SurakartaPosition postion);
     virtual std::unique_ptr<std::vector<SurakartaPosition>> GetAllLegalNONCaptureTarget(const SurakartaPosition postion);
 
-    //    protected:
+protected:
     std::shared_ptr<const SurakartaBoard> board_;
     std::shared_ptr<const SurakartaGameInfo> game_info_;
 

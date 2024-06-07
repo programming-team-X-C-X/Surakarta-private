@@ -18,7 +18,6 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
     resize(imageSize);
 
     vLayout = new QVBoxLayout();//no this
-    //  QHBoxLayout和QVBoxLayout不应该直接用this（指向窗口的指针）初始化，因为这样会导致它们试图设置窗口的布局两次
     hLayout = new QHBoxLayout();
     singlePlayerButton = new QPushButton(tr("单人游戏"), this);
     multiPlayerButton = new QPushButton(tr("双人游戏"), this);
@@ -34,9 +33,6 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
     backButton->hide();
     settingsButton->hide();
 
-    // singlePlayerButton->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*5/6, 100, 30);
-    // multiPlayerButton->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*5/6, 100, 30);
-    // computerGameButton->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*5/6, 100, 30);
     localButton->setFixedSize(100, 30);
     onlineButton->setFixedSize(100, 30);
     singlePlayerButton->setFixedSize(100, 30); // 将按钮的大小设置为100x30
@@ -46,7 +42,6 @@ StartDialog::StartDialog(QWidget *parent) : QDialog(parent) {
     backButton->setFixedSize(100, 30);
     historyButton->setFixedSize(100,30);
 
-    // vLayout->setAlignment(Qt::AlignBottom);
     vLayout->addWidget(settingsButton);
     vLayout->addStretch();
     vLayout->addWidget(singlePlayerButton);
@@ -79,11 +74,6 @@ void StartDialog::showLocalGameOptions() {
     computerGameButton->show();
     settingsButton->show();
     backButton->show();
-    // vLayout->addWidget(singlePlayerButton);
-    // vLayout->addWidget(multiPlayerButton);
-    // vLayout->addWidget(computerGameButton);
-
-    // 不需要重新设置布局，因为是在现有的布局中添加按钮
 }
 
 void StartDialog::showOnlineGameOptions() {
@@ -125,7 +115,7 @@ void StartDialog::backToModeSelect() {
 
 void StartDialog::showHistory()
 {
-    History_MainWindow* w = new History_MainWindow();
-    w->show();
-    w->setAttribute(Qt::WA_DeleteOnClose);
+    History_MainWindow* historyMainwindow = new History_MainWindow();
+    historyMainwindow->show();
+    historyMainwindow->setAttribute(Qt::WA_DeleteOnClose);
 }

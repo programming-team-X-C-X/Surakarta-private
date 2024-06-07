@@ -1,7 +1,7 @@
 #pragma once
 
+#include "qpainter.h"
 #include <QGraphicsObject>
-// #include <QRectF>
 
 using PieceColorMemoryType = int;
 enum class PieceColor : PieceColorMemoryType { BLACK,
@@ -27,10 +27,6 @@ struct SurakartaPosition {
     unsigned int y;
     SurakartaPosition(unsigned int x = 0, unsigned int y = 0)
         : x(x), y(y) {}
-    // friend std::ostream& operator<<(std::ostream& os, const SurakartaPosition& pos) {
-    //     os << "(" << pos.x << ", " << pos.y << ")";
-    //     return os;
-    // }
     bool operator==(const SurakartaPosition& rhs) const {
         return x == rhs.x && y == rhs.y;
     }
@@ -68,9 +64,8 @@ public:
 
     QRectF boundingRect() const override;
     void paint(QPainter* painter, const QStyleOptionGraphicsItem* option, QWidget* widget) override;
-    // void mousePressEvent(QGraphicsSceneMouseEvent* event) override;
 
-    //    private:
+private:
     SurakartaPosition position_;
     PieceColor color_;
 };

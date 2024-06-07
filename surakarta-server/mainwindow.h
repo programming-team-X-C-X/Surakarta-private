@@ -49,15 +49,9 @@ public:
 
 private slots:
     void on_listen_button_clicked();
-
-    // void on_stop_clicked();
-
     void ready(QTcpSocket* client, NetworkData data);
     void leave_op(QTcpSocket* client, NetworkData data);
-    // void end(QTcpSocket* client, NetworkData data);
-    // void timeout(QTcpSocket* client, NetworkData data);
-     void move_op(QTcpSocket* client, NetworkData data);
-    // void resign_op(QTcpSocket* client, NetworkData data);
+    void move_op(QTcpSocket* client, NetworkData data);
 
 
     SurakartaMove  backmove(NetworkData data);

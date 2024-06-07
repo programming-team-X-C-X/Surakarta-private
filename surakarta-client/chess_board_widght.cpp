@@ -26,7 +26,7 @@ ChessBoardWidget::ChessBoardWidget() :
         for (unsigned int x = 0; x < BOARD_SIZE; x++) {
             if (y < 2) {
                 (*board)[x][y] = std::make_shared<SurakartaPiece>(x, y, PieceColor::BLACK);
-                pieceItems[x][y] = std::make_shared<SurakartaPiece>(x, y, (*board)[x][y]->color_);
+                pieceItems[x][y] = std::make_shared<SurakartaPiece>(x, y, (*board)[x][y]->GetColor());
                 SurakartaPiece *pieceItem = pieceItems[x][y].get();
                 int pos_x = (arcNum + x + 1) * gridSize;
                 int pos_y = (arcNum + y + 1) * gridSize;
@@ -34,7 +34,7 @@ ChessBoardWidget::ChessBoardWidget() :
                 scene->addItem(pieceItem);
             } else if (y >= BOARD_SIZE - 2) {
                 (*board)[x][y] = std::make_shared<SurakartaPiece>(x, y, PieceColor::WHITE);
-                pieceItems[x][y] = std::make_shared<SurakartaPiece>(x, y, (*board)[x][y]->color_);
+                pieceItems[x][y] = std::make_shared<SurakartaPiece>(x, y, (*board)[x][y]->GetColor());
                 SurakartaPiece *pieceItem = pieceItems[x][y].get();
                 int pos_x = (arcNum + x + 1) * gridSize;
                 int pos_y = (arcNum + y + 1) * gridSize;
@@ -86,7 +86,7 @@ void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
         if (hasFirstClick) {
             SurakartaPosition secondClickPos;
             if (piece) {
-                if(piece->color_ == ((PLAYER_COLOR ) ? PieceColor::BLACK: PieceColor::WHITE))
+                if(piece->GetColor() == ((PLAYER_COLOR ) ? PieceColor::BLACK: PieceColor::WHITE))
                 {
                     clearHints();
                     SurakartaPosition pos = piece->GetPosition();
@@ -124,7 +124,7 @@ void ChessBoardWidget::mousePressEvent(QMouseEvent *event) {
 
             // qDebug() << "second:" << secondClickPos.x << "," << secondClickPos.y << '\n';
         }
-        else if (piece && piece->color_ == ((PLAYER_COLOR ) ? PieceColor::BLACK: PieceColor::WHITE)) { // 第一次点击
+        else if (piece && piece->GetColor() == ((PLAYER_COLOR ) ? PieceColor::BLACK: PieceColor::WHITE)) { // 第一次点击
             SurakartaPosition pos = piece->GetPosition();
             emit requestHints(pos);
             firstClickPos = pos;
@@ -307,7 +307,7 @@ void ChessBoardWidget::movePiece(const SurakartaMove& move) {
             animation->deleteLater(); // 删除动画对象
             emit animationFinished();
             pieceItems[move.from.x][move.from.y] = nullptr;
-            piece->position_ = move.to; // 更新棋子的最终位置
+            piece->GetPosition() = move.to; // 更新棋子的最终位置
             pieceItems[move.to.x][move.to.y] = piece;
         });
         animation->start(); // 开始动画
@@ -332,8 +332,8 @@ ChessBoardWidget::ChessBoardWidget(const MiniBoard& board_)
 
     ChessBoardGraphicsItem *chessBoardItem = new ChessBoardGraphicsItem();
     scene->addItem(chessBoardItem);
-     board = std::make_shared<SurakartaBoard>(BOARD_SIZE);
-     pieceItems.resize(BOARD_SIZE, std::vector<std::shared_ptr<SurakartaPiece>>(BOARD_SIZE));
+    board = std::make_shared<SurakartaBoard>(BOARD_SIZE);
+    pieceItems.resize(BOARD_SIZE, std::vector<std::shared_ptr<SurakartaPiece>>(BOARD_SIZE));
 
     // 设置视图属性
     view->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
@@ -352,7 +352,7 @@ ChessBoardWidget::ChessBoardWidget(const MiniBoard& board_)
                 (*board)[x][y] = std::make_shared<SurakartaPiece>(x, y, PieceColor::NONE);
             } else {
                 (*board)[x][y] = std::make_shared<SurakartaPiece>(x, y, board_.board[x][y]);
-                pieceItems[x][y] = std::make_shared<SurakartaPiece>(x, y, (*board)[x][y]->color_);
+                pieceItems[x][y] = std::make_shared<SurakartaPiece>(x, y, (*board)[x][y]->GetColor());
                 SurakartaPiece *pieceItem = pieceItems[x][y].get();
                 int pos_x = (arcNum + x + 1) * gridSize;
                 int pos_y = (arcNum + y + 1) * gridSize;

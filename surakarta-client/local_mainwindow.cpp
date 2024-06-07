@@ -18,20 +18,21 @@ LocalMainWindow::LocalMainWindow(/*QWidget *parent*/SurakartaGameMode gameMode)
     buttonBack->setFixedSize(100, 30);
     buttonClose->setFixedSize(100, 30);
 
-    if (game->game_mode_ == SurakartaGameMode::PVE) {
-        game->white_player_ = PLAYER_COLOR ? SurakartaRealPlayer::COMPUTER : SurakartaRealPlayer::PLAYER;
-        game->black_player_ = PLAYER_COLOR ? SurakartaRealPlayer::PLAYER : SurakartaRealPlayer::COMPUTER;
+    if (game->GetGameMode() == SurakartaGameMode::PVE) {
+        game->SetWhitePlayer(PLAYER_COLOR ? SurakartaRealPlayer::COMPUTER : SurakartaRealPlayer::PLAYER);
+        game->SetBlackPlayer(PLAYER_COLOR ? SurakartaRealPlayer::PLAYER : SurakartaRealPlayer::COMPUTER);
     }
-    else if (game->game_mode_ == SurakartaGameMode::EVE) {
-        game->white_player_ = SurakartaRealPlayer::COMPUTER;
-        game->black_player_ = SurakartaRealPlayer::COMPUTER;
+    else if (game->GetGameMode() == SurakartaGameMode::EVE) {
+        game->SetWhitePlayer(SurakartaRealPlayer::COMPUTER);
+        game->SetBlackPlayer(SurakartaRealPlayer::COMPUTER);
     }
-    else if (game->game_mode_ == SurakartaGameMode::PVP) {
-        game->white_player_ = SurakartaRealPlayer::PLAYER;
-        game->black_player_ = SurakartaRealPlayer::PLAYER;
+    else if (game->GetGameMode() == SurakartaGameMode::PVP) {
+        game->SetWhitePlayer(SurakartaRealPlayer::PLAYER);
+        game->SetBlackPlayer(SurakartaRealPlayer::PLAYER);
     }
-    QString whiteColor = game->black_player_ == SurakartaRealPlayer::COMPUTER ? QString("电脑") : QString("玩家");
-    QString blackColor = game->white_player_ == SurakartaRealPlayer::COMPUTER ? QString("电脑") : QString("玩家");
+
+    QString whiteColor = game->GetBlackPlayer() == SurakartaRealPlayer::COMPUTER ? QString("电脑") : QString("玩家");
+    QString blackColor = game->GetWhitePlayer() == SurakartaRealPlayer::COMPUTER ? QString("电脑") : QString("玩家");
     QString playerInfo = QString("黑方：%1\n白方：%2").arg(whiteColor, blackColor);
     playerInfoLabel->setText(playerInfo);
 
@@ -117,36 +118,31 @@ void LocalMainWindow::Initialize() {
     QWidget *container = new QWidget();
     container->setLayout(hlayout);
     // 将容器设置为中央组件
-    // container->setGeometry(WINDOW_SIZE*7/6, WINDOW_SIZE*4/6, 100, 30);
     setCentralWidget(container);
 
     game->StartGame();
-    chessBoard->board = game->board_;
+    chessBoard->board = game->GetBoard();
     // chessBoard->setMode(ChessBoardWidget::PieceMode);
     countdownTime = TIME_LIMIT;
     countdownTimer->start();
     judgeEnd();
-    // if (game.game_info_->current_player_ == game.GetGameInfo()->computer_color_)
-    //     startComputerMove();
 }
 
 void LocalMainWindow::judgeEnd() {
     updateGameInfo();
     if (game->IsEnd() && game->GetGameInfo()->end_reason_ != SurakartaEndReason::ILLIGAL_MOVE)
         showEndDialog();
-    if (game->game_info_->current_player_ == SurakartaPlayer::BLACK) {
-        if (game->black_player_ == SurakartaRealPlayer::COMPUTER)
+    if (game->GetGameInfo()->current_player_ == SurakartaPlayer::BLACK) {
+        if (game->GetBlackPlayer() == SurakartaRealPlayer::COMPUTER)
             startComputerMove();
     }
-    else if (game->game_info_->current_player_ == SurakartaPlayer::WHITE) {
-        if (game->white_player_ == SurakartaRealPlayer::COMPUTER)
+    else if (game->GetGameInfo()->current_player_ == SurakartaPlayer::WHITE) {
+        if (game->GetWhitePlayer() == SurakartaRealPlayer::COMPUTER)
             startComputerMove();
     }
 }
 
 void LocalMainWindow::updateGameInfo() {
-    // judgeEnd();
-    // chessBoard->setMode(ChessBoardWidget::PieceMode);
     QString player = game->GetGameInfo()->current_player_ == SurakartaPlayer::BLACK ? QString("BLACK") : QString("WHITE");
     QString currentPlayer = QString("当前回合：%1").arg(player);
     QString currentRound = QString("当前回合数：%1").arg(game->GetGameInfo()->num_round_);
@@ -169,7 +165,7 @@ void LocalMainWindow::playerMove(SurakartaPosition from, SurakartaPosition to) {
     if (game->Move(move).IsLegal())
         chessBoard->movePiece(move);
     updateGameInfo();
-    if (game->game_mode_ == SurakartaGameMode::PVP) {
+    if (game->GetGameMode() == SurakartaGameMode::PVP) {
         PLAYER_COLOR = !PLAYER_COLOR;
         RIGHT_COLOR = !RIGHT_COLOR;
     }
@@ -186,8 +182,8 @@ void LocalMainWindow::updateCountdown() {
     updateCountdownDisplay();
     if (countdownTime <= 0) {
         // countdownTimer->stop();
-        game->game_info_->winner_ = ReverseColor(game->game_info_->current_player_);
-        game->game_info_->end_reason_ = SurakartaEndReason::TIMEOUT;
+        game->GetGameInfo()->winner_ = ReverseColor(game->GetGameInfo()->current_player_);
+        game->GetGameInfo()->end_reason_ = SurakartaEndReason::TIMEOUT;
         buttonGiveUp->hide();
         showEndDialog();
     }
@@ -202,10 +198,10 @@ void LocalMainWindow::updateCountdownDisplay() {
 }
 
 void LocalMainWindow::provideHints(SurakartaPosition pos) {
-    auto captureHints = game->rule_manager_->GetAllLegalCaptureTarget(pos);
+    auto captureHints = game->GetRuleManager()->GetAllLegalCaptureTarget(pos);
     std::vector<SurakartaPosition> captureHintVector = *captureHints;
     emit sendCaptureHints(captureHintVector);
-    auto NONcaptureHints = game->rule_manager_->GetAllLegalNONCaptureTarget(pos);
+    auto NONcaptureHints = game->GetRuleManager()->GetAllLegalNONCaptureTarget(pos);
     std::vector<SurakartaPosition> NONcaptureHintVector = *NONcaptureHints;
     emit sendNONCaptureHints(NONcaptureHintVector);
 
@@ -216,11 +212,11 @@ void LocalMainWindow::showEndDialog() {
     std::shared_ptr<SurakartaGameInfo> info = game->GetGameInfo();
     LocalEndDialog *enddialog = new LocalEndDialog(this);
     QString winnerColor;
-    if (game->game_info_->winner_ == PieceColor::BLACK)
+    if (game->GetGameInfo()->winner_ == PieceColor::BLACK)
         winnerColor = "获胜者：黑方";
-    else if (game->game_info_->winner_ == PieceColor::WHITE)
+    else if (game->GetGameInfo()->winner_ == PieceColor::WHITE)
         winnerColor = "获胜者：白方获胜";
-    else if (game->game_info_->winner_ == PieceColor::NONE)
+    else if (game->GetGameInfo()->winner_ == PieceColor::NONE)
         winnerColor = "平局";
 
     QString message = QString("<div style='text-align: center;'>"
@@ -248,9 +244,9 @@ void LocalMainWindow::restartGame() {
 }
 
 void LocalMainWindow::giveUp() {
-    game->game_info_->end_reason_ = SurakartaEndReason::RESIGN;
+    game->GetGameInfo()->end_reason_ = SurakartaEndReason::RESIGN;
     // game->game_info_->winner_ = PieceColor::NONE;
-    game->game_info_->winner_ = ReverseColor(game->game_info_->current_player_);
+    game->GetGameInfo()->winner_ = ReverseColor(game->GetGameInfo()->current_player_);
     buttonGiveUp->hide();
     showEndDialog();
 }

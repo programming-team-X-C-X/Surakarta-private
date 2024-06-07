@@ -15,7 +15,7 @@ void OnlineEndDialog::SetInfo(SurakartaEndReason rea, QString color, QString rou
     ui->roundnum->setText(round);
     ui->winner->setText(color);
     QString your_color = (PLAYER_COLOR) ? "BLACK" : "WHITE";
-    ui->UserName->setText(name);
+    ui->UserName->setText(NAME);
 
     // 处理结束信息
     if(rea == SurakartaEndReason::CHECKMATE){

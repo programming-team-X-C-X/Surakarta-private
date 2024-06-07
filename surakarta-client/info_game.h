@@ -91,13 +91,11 @@ public:
             game_info_ = std::make_shared<SurakartaGameInfo>(*other.game_info_);
             rule_manager_ = std::make_shared<SurakartaRuleManager>(*other.rule_manager_);
             agent_ = std::make_shared<SurakartaAgentMine>(*other.agent_);
-            // 处理其他成员
         }
         return *this;
     }
 
     void StartGame(/*std::string file_name = ""*/);
-    // void SaveGame(std::string file_name) const;
     void UpdateGameInfo(SurakartaIllegalMoveReason move_reason, SurakartaEndReason end_reason, SurakartaPlayer winner);
     SurakartaMoveResponse Move(/*const*/ SurakartaMove& move);
     void SetAgent(std::shared_ptr<SurakartaAgentMine> agent) { agent_ = agent; }
@@ -107,13 +105,19 @@ public:
     std::shared_ptr<SurakartaGameInfo> GetGameInfo() const { return game_info_; }
     std::shared_ptr<SurakartaAgentMine> GetAgent() const { return agent_; }
     bool IsEnd() const { return game_info_->IsEnd(); }
+    SurakartaGameMode GetGameMode() const { return game_mode_; }
+    SurakartaRealPlayer GetWhitePlayer() const { return white_player_; }
+    SurakartaRealPlayer GetBlackPlayer() const { return black_player_; }
+    std::shared_ptr<SurakartaRuleManager> GetRuleManager() const { return rule_manager_; }  // For testing.
 
     void SetRuleManager(std::shared_ptr<SurakartaRuleManager> rule_manager) {  // For testing.
         rule_manager_ = rule_manager;
     }
-    std::shared_ptr<SurakartaRuleManager> GetRuleManager() const { return rule_manager_; }  // For testing.
+    void SetGameMode(SurakartaGameMode game_mode) { game_mode_ = game_mode; }
+    void SetWhitePlayer(SurakartaRealPlayer white_player) { white_player_ = white_player; }
+    void SetBlackPlayer(SurakartaRealPlayer black_player) { black_player_ = black_player; }
 
-    //    private:
+private:
     SurakartaGameMode game_mode_;
     SurakartaRealPlayer white_player_;
     SurakartaRealPlayer black_player_;
@@ -122,8 +126,6 @@ public:
     std::shared_ptr<SurakartaGameInfo> game_info_;
     std::shared_ptr<SurakartaRuleManager> rule_manager_;
     std::shared_ptr<SurakartaAgentMine> agent_;
-    // std::shared_ptr<ChessBoardWidget> chessboardwight_;
-
 };
 
 

@@ -83,7 +83,7 @@ void GameView::startDEADCalculatorThread(SurakartaPosition fromPos, std::vector<
     // 创建线程和任务对象
 
     // DEADCalculateThread = new QThread();
-    DEADCalculator* deadCalcutor = new DEADCalculator(game, fromPos, toPos, DEPTH);
+    DEADCalculator* deadCalcutor = new DEADCalculator(game, fromPos, toPos, DEAD_SEARCH_DEPTH);
 
     // // 移动任务对象到新线程
     // deadCalcutor->moveToThread(DEADCalculateThread);
@@ -95,10 +95,9 @@ void GameView::startDEADCalculatorThread(SurakartaPosition fromPos, std::vector<
     // connect(DEADCalculateThread, &QThread::started, deadCalcutor, &DEADCalculator::doWork);
     connect(deadCalcutor, &DEADCalculator::resultReady, this, &GameView::onDEADCalculateComputed);
 
-    // 在对象销毁前输出调试信息
-    connect(deadCalcutor, &QObject::destroyed, this, [](QObject* obj){
-        qDebug() << "DEADCalculator object" << obj << "is being deleted" << Qt::endl;
-    });
+    // connect(deadCalcutor, &QObject::destroyed, this, [](QObject* obj){
+    //     qDebug() << "DEADCalculator object" << obj << "is being deleted" << Qt::endl;
+    // });
 
     // 清理
     connect(deadCalcutor, &DEADCalculator::resultReady, deadCalcutor, &DEADCalculator::deleteLater);
@@ -149,8 +148,7 @@ void GameView::onDEADCalculateComputed(std::vector<SurakartaPosition> pos) {
 
 void GameView::update_gameinfo()
 {
-    ui->Lname->setText(QString(name));
-    ui->Lcolor->setText((game.game_info_->current_player_ == PieceColor::BLACK) ? "BLACK" : "WHITE");
+    ui->Lname->setText(QString(NAME));
     ui->Lplayercolor->setText((PLAYER_COLOR == 1) ? "BLACK" : "WHITE");
     ui->Lround ->setText(QString::number(gameround));
 }
@@ -165,11 +163,11 @@ void GameView::update_time()
 }
 
 void GameView::provideHints(SurakartaPosition pos) {
-    auto captureHints = game.rule_manager_->GetAllLegalCaptureTarget(pos);
+    auto captureHints = game.GetRuleManager()->GetAllLegalCaptureTarget(pos);
     std::vector<SurakartaPosition> captureHintVector = *captureHints;
     emit sendCaptureHints(captureHintVector);
 
-    auto NONcaptureHints = game.rule_manager_->GetAllLegalNONCaptureTarget(pos);
+    auto NONcaptureHints = game.GetRuleManager()->GetAllLegalNONCaptureTarget(pos);
     std::vector<SurakartaPosition> NONcaptureHintVector = *NONcaptureHints;
     emit sendNONCaptureHints(NONcaptureHintVector);
 
@@ -177,7 +175,6 @@ void GameView::provideHints(SurakartaPosition pos) {
     combinedHintVector.insert(combinedHintVector.end(), NONcaptureHints->begin(), NONcaptureHints->end());
 
     // 只启动一个线程来处理合并后的提示
-    // if ()
     // startDEADCalculatorThread(pos, combinedHintVector);
 }
 

@@ -42,7 +42,7 @@ class SurakartaRuleManager {
     virtual std::unique_ptr<std::vector<SurakartaPosition>> GetAllLegalTarget(const SurakartaPosition postion);
 
     //    protected:
-    const unsigned int board_size_;
+    unsigned int board_size_;
     std::shared_ptr<const SurakartaBoard> board_;
     std::shared_ptr<const SurakartaGameInfo> game_info_;
 

@@ -17,7 +17,7 @@ const unsigned int SLEEP_TIME = 500;
 
 //棋子设置
 const unsigned int PIECE_SIZE = 30;
-double PIECE_SPEED = 100.0;
+double PIECE_SPEED = 200.0;
 
 //回合设置
 unsigned int TIME_LIMIT = 60;
@@ -33,9 +33,12 @@ int gameround     = 1;
 
 bool IsAi = 1;
 
-SurakartaPlayer mycolor;
+SurakartaPlayer MY_COLOR;
 
-QString name;
+QString NAME;
+
+// AI搜索深度设置
+int AI_SEARCH_DEPTH = 3;
 
 // 濒死搜索深度设置
-int DEPTH = 1;
+int DEAD_SEARCH_DEPTH = 1;

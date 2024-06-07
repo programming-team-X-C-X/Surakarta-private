@@ -50,7 +50,7 @@ void History_MainWindow::on_pushButton_clicked()
 
     // 放入最初始的状态
     MiniBoard *newBoard = new MiniBoard;
-    *newBoard = *(game->board_.get());
+    *newBoard = *(game->GetBoard().get());
     boards.push_back(*newBoard);
 
     // 绑定 打开 对应文件
@@ -84,7 +84,7 @@ void History_MainWindow::on_pushButton_clicked()
 
         // 放入每一步
         MiniBoard *newBoard = new MiniBoard;
-        *newBoard = *(game->board_.get());
+        *newBoard = *(game->GetBoard().get());
         boards.push_back(*newBoard);
     }
 
@@ -179,20 +179,19 @@ void History_MainWindow::on_pushButton_clicked()
         }
     });
 
-    connect(this,&History_MainWindow::reachMax,[=](){
-
+    connect(this, &History_MainWindow::reachMax, this, [=](){
         nextAction->setDisabled(true);
     });
 
-    connect(this,&History_MainWindow::reachMin,[=](){
+    connect(this, &History_MainWindow::reachMin, this, [=](){
         preAction->setDisabled(true);
     });
 
-    connect(this,&History_MainWindow::deMax,[=](){
+    connect(this, &History_MainWindow::deMax, this, [=](){
         nextAction->setDisabled(false);
     });
 
-    connect(this,&History_MainWindow::deMin,[=](){
+    connect(this, &History_MainWindow::deMin, this, [=](){
         preAction->setDisabled(false);
     });
 
@@ -248,7 +247,7 @@ void History_MainWindow::on_pushButton_clicked()
 
     connect(jumpButton, &QPushButton::clicked, this, &History_MainWindow::onJumpButtonClicked);
 
-    connect(chessBoard,&ChessBoardWidget::animationFinished,[=](){
+    connect(chessBoard, &ChessBoardWidget::animationFinished, this, [=](){
         if(!isDoing)
         {
             emit deMax();
@@ -366,10 +365,10 @@ void History_MainWindow::initGame()
 
 
 void History_MainWindow::provideHints(SurakartaPosition pos) {
-    auto captureHints = game->rule_manager_->GetAllLegalCaptureTarget(pos);
+    auto captureHints = game->GetRuleManager()->GetAllLegalCaptureTarget(pos);
     std::vector<SurakartaPosition> captureHintVector = *captureHints;
     emit sendCaptureHints(captureHintVector);
-    auto NONcaptureHints = game->rule_manager_->GetAllLegalNONCaptureTarget(pos);
+    auto NONcaptureHints = game->GetRuleManager()->GetAllLegalNONCaptureTarget(pos);
     std::vector<SurakartaPosition> NONcaptureHintVector = *NONcaptureHints;
     emit sendNONCaptureHints(NONcaptureHintVector);
 }

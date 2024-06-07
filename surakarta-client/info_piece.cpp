@@ -3,7 +3,6 @@
 #include <QPainter>
 
 QRectF SurakartaPiece::boundingRect() const {
-    //i'm sb
     return QRectF(0, 0, PIECE_SIZE, PIECE_SIZE);
 }
 

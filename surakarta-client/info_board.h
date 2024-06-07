@@ -71,7 +71,7 @@ public:
         {
             for(unsigned j = 0;j < BOARD_SIZE;++j)
             {
-                board[i].push_back(bd[i][j]->color_);
+                board[i].push_back(bd[i][j]->GetColor());
             }
         }
     }

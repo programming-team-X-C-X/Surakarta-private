@@ -230,23 +230,6 @@ void MainWindow::on_listen_button_clicked()
     }
 }
 
-
-// void MainWindow::on_stop_clicked()
-// {
-//     server->close();
-//     user1->clean();
-//     user2->clean();
-//     ui->cli1_info->setText("");
-//     ui->cli2_info->setText("");
-//     ui->listen_button->setDisabled(false);
-//     ui->stop->setDisabled(true);
-//     cnt = 0;
-//     color = "BLACK";
-//     ui->game_text->setText("");
-//     ui->port_line->setReadOnly(false);
-//     ui->TIMELIMIT->setDisabled(false);
-// }
-
 void MainWindow::ready(QTcpSocket *client, NetworkData data)
 {
 
@@ -474,8 +457,10 @@ void MainWindow::move_op(QTcpSocket *client, NetworkData data)
     SurakartaMove mv = backmove(data);
 
     //再转发给客户端        感觉有点病？
-    server->send(user1->client,data);
-    server->send(user2->client,data);
+    // server->send(user1->client,data);
+    // server->send(user2->client,data);
+    if(client == user2->client) server->send(user1->client,data);
+    else server->send(user2->client,data);
     // 开始计时等待下一次
     timer->start(1000);
     Smarkdown(data);

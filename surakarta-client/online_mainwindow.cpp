@@ -5,7 +5,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QMessageBox>
-extern QString name;
+extern QString NAME;
 extern bool PLAYER_COLOR;
 
 // timer 什么时候动
@@ -125,7 +125,7 @@ SurakartaMove OnlineMainWindow::backMove(NetworkData data)
     rt.from.y = data.data1[1].digitValue() - 1;
     rt.to.y   = data.data2[1].digitValue() - 1;
 
-    rt.player = Game->game.game_info_->current_player_;
+    rt.player = Game->game.GetGameInfo()->current_player_;
 
     qDebug() << "player :" << ((rt.player == PieceColor::BLACK) ? "BLACK" : "WHITE");
     return rt;
@@ -176,9 +176,9 @@ void OnlineMainWindow::rec_ready(NetworkData& data)
     // 表示双方准备就绪   游戏开始
     // 设置本用户的执棋颜色
     PLAYER_COLOR = (data.data2 == "BLACK") ? 1 : 0;
-    mycolor = (data.data2 == "BLACK") ? SurakartaPlayer::BLACK : SurakartaPlayer::WHITE;
-
-    name = ui->ready_name->text();
+    MY_COLOR = (data.data2 == "BLACK") ? SurakartaPlayer::BLACK : SurakartaPlayer::WHITE;
+    
+    NAME = ui->ready_name->text();
     // 开始打开游戏界面  关闭自己的界面
     this->hide();
     Game = new GameView();
@@ -209,6 +209,8 @@ void OnlineMainWindow::rec_ready(NetworkData& data)
     // 连接请求移动 和 认输
     connect(Game,&GameView::AskMove,this,[=](SurakartaMove move){
         // 向服务端发送这个信息
+        Game->game.Move(move);
+        Game->chessBoard->movePiece(move);
         // 先转换move
         socket->send(NetworkData(OPCODE::MOVE_OP,FormatPos(move.from),FormatPos(move.to),""));
     });
