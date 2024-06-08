@@ -3,6 +3,7 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include "surakarta_board.h"
 #include "surakarta_common.h"
 
 class SurakartaRuleManager {
@@ -47,17 +48,10 @@ class SurakartaRuleManager {
     std::shared_ptr<const SurakartaGameInfo> game_info_;
 
    public:
-    // TODO:
-    //  define your own functions/variables here
     bool Eat(const SurakartaMove& move); 
-
     bool IsN_C_M(const SurakartaMove& move); 
-
     bool EatCircle(const SurakartaMove& move,const circle& circle,unsigned int&);
-
     void HelloWorld();
-
-
     void InlineHelloWorld() 
     {
         std::cout << "Hello World!" << std::endl;

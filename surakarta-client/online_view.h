@@ -16,23 +16,21 @@ class GameView : public QMainWindow
     Q_OBJECT
 
 public:
-
-    int left_time ;
     explicit GameView(QWidget *parent = nullptr);
     ~GameView();
     // 需要游戏，棋盘的图形界面
-    SurakartaGame game;
-    ChessBoardWidget *chessBoard;
     void endShow(SurakartaEndReason rea, QString color, QString round);    void computerMove();
     void update_gameinfo();
     void update_time();
     void restartGame();
     void provideHints(SurakartaPosition pos);
-    std::shared_ptr<SurakartaAgentMine>agentMine = std::make_shared<SurakartaAgentMine>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager());
     void onAIMoveComputed(const SurakartaMove& move);
     void onDEADCalculateComputed(std::vector<SurakartaPosition> pos);
     void startAIThread();
     void startDEADCalculatorThread(SurakartaPosition fromPos, std::vector<SurakartaPosition> toPos);
+    SurakartaGame game;
+    ChessBoardWidget *chessBoard;
+    int left_time ;
 
 private slots:
     // void on_pushButton_clicked();
@@ -41,11 +39,13 @@ private slots:
     void Move(SurakartaPosition from, SurakartaPosition to);
     void AfterAnimationFinished();
     void updateProgress(int progress);
+
 private:
     Ui::game_view *ui;
+    std::shared_ptr<SurakartaAgentMine>agentMine = std::make_shared<SurakartaAgentMine>(game.GetBoard(), game.GetGameInfo(), game.GetRuleManager());
     QThread *aiThread;
     // QThread *DEADCalculateThread;
-    // DEADCalculator* deadCalcutor;
+
 signals:
     void sendCaptureHints(const std::vector<SurakartaPosition>& hints);
     void sendDengerousHints(const std::vector<SurakartaPosition>& hints);

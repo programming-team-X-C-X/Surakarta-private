@@ -3,11 +3,9 @@
 #include <QString>
 #include "info_piece.h"
 
+// 源文件中有所注释
 extern unsigned int BOARD_SIZE;
 extern unsigned int WINDOW_SIZE;
-extern int arcNum;
-extern int rawNum;
-extern int gridSize;
 extern const unsigned int SLEEP_TIME;
 extern const unsigned int PIECE_SIZE;
 extern double PIECE_SPEED;
@@ -21,4 +19,5 @@ extern bool IsAi;
 extern SurakartaPlayer MY_COLOR;
 extern int AI_SEARCH_DEPTH;
 extern int DEAD_SEARCH_DEPTH;
+
 #endif // SETTINGS_H

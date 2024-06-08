@@ -4,7 +4,6 @@
 #include <QMainWindow>
 #include "info_game.h"
 #include "info_common.h"
-#include "settings.h"
 #include "chess_board_widght.h"
 #include <QLabel>
 #include <QLineEdit>

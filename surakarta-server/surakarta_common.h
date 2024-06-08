@@ -1,6 +1,5 @@
 #pragma once
 
-#include "surakarta_board.h"
 #include "surakarta_piece.h"
 #include "surakarta_reason.h"
 

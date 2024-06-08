@@ -7,7 +7,7 @@
 #include "info_piece.h"
 
 ChessBoardWidget::ChessBoardWidget() :
-    currentMode(BoardMode), hasFirstClick(false)
+    hasFirstClick(false), currentMode(BoardMode)
 {
     board = std::make_shared<SurakartaBoard>(BOARD_SIZE);
 

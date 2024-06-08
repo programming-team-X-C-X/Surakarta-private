@@ -21,15 +21,15 @@ public:
 
     SurakartaAgentMine(const SurakartaAgentMine& other)
         : QObject(other.parent()),
-        board_size_(other.board_size_),
-        board_(std::make_shared<const SurakartaBoard>(*other.board_)),
-        game_info_(std::make_shared<const SurakartaGameInfo>(*other.game_info_)),
-        rule_manager_(std::make_shared<SurakartaRuleManager>(*other.rule_manager_)),
         progress(other.progress),
         averangeNode(other.averangeNode),
         totalNode(other.totalNode),
         totalPiece(other.totalPiece),
-        updateInterval(other.updateInterval) {
+        updateInterval(other.updateInterval),
+        board_size_(other.board_size_),
+        board_(std::make_shared<const SurakartaBoard>(*other.board_)),
+        game_info_(std::make_shared<const SurakartaGameInfo>(*other.game_info_)),
+        rule_manager_(std::make_shared<SurakartaRuleManager>(*other.rule_manager_)) {
     }
 
     void SetRuleManager(std::shared_ptr<SurakartaRuleManager> rule_manager) {  // For testing
@@ -39,20 +39,21 @@ public:
     MoveList getLegalMoves(SurakartaRuleManager rule_manager, int& averangeCnt);
     MoveList getLegalMoves(SurakartaRuleManager rule_manager);
     SurakartaMove MinimaxRoot(SurakartaRuleManager rule_manager, int depth);
-    int EvaluateBoardFor(const SurakartaBoard& board /*PieceColor currentPlayer*/);
+    int EvaluateBoardFor(const SurakartaBoard& board);
     int Minimax(SurakartaBoard& board, int depth, bool maximizingPlayer,
                 int alpha, int beta, PieceColor currentPlayer);
+    int progress; // 搜索进度
+    double averangeNode; // 平均每个棋子延伸情况数
+    int totalNode;
+    int totalPiece;
+    int updateInterval; // 进度更新间隔
 
-// private:
+private:
     unsigned int board_size_;
     std::shared_ptr<const SurakartaBoard> board_;
     std::shared_ptr<const SurakartaGameInfo> game_info_;
     std::shared_ptr<SurakartaRuleManager> rule_manager_;
-    int progress;
-    double averangeNode;
-    int totalNode;
-    int totalPiece;
-    int updateInterval; // 更新间隔
+
 
 signals:
     void updateProgress(int progress);

@@ -33,8 +33,6 @@ public:
         return *this;
     }
 
-
-
     unsigned int GetBoardSize() { return BOARD_SIZE; }
     std::shared_ptr<const SurakartaBoard> GetBoard() { return board_; }
     std::shared_ptr<const SurakartaGameInfo> GetGameInfo() { return game_info_; }
@@ -50,8 +48,6 @@ protected:
     std::shared_ptr<const SurakartaGameInfo> game_info_;
 
 public:
-    // TODO:
-    //  define your own functions/variables here
     bool Eat(const SurakartaMove& move, std::vector<std::shared_ptr<SurakartaPosition>>& path);
 
     bool IsN_C_M(const SurakartaMove& move);

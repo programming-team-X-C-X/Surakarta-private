@@ -86,7 +86,7 @@ MoveList SurakartaAgentMine::getLegalMoves(SurakartaRuleManager rule_manager) {
     }
     return legalMoves;
 }
-// 重载函数，调用时有细微区别
+// 重载函数，调用时有细微区别，用于顺便记录和计算平均节点数，用于估算工作
 MoveList SurakartaAgentMine::getLegalMoves(SurakartaRuleManager rule_manager, int& averangeCnt) {
     int totalMoves = 0;
     std::vector<std::pair<SurakartaPosition,std::unique_ptr<std::vector<SurakartaPosition>>>> legalMoves;

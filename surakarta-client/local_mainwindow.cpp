@@ -120,7 +120,7 @@ void LocalMainWindow::Initialize() {
     setCentralWidget(container);
 
     game->StartGame();
-    chessBoard->board = game->GetBoard();
+    chessBoard->getBoard() = game->GetBoard();
     // chessBoard->setMode(ChessBoardWidget::PieceMode);
     countdownTime = TIME_LIMIT;
     countdownTimer->start();

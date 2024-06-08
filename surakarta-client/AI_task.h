@@ -4,6 +4,7 @@
 #include "agent_mine.h"
 #include "info_game.h"
 
+// 处理AI搜索
 class AITask : public QObject {
     Q_OBJECT
 
@@ -26,6 +27,7 @@ private:
     std::shared_ptr<SurakartaAgentMine> agent_;
 };
 
+// 处理濒死搜索
 class DEADCalculator : public QObject {
     Q_OBJECT
 

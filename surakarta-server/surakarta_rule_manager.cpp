@@ -16,8 +16,6 @@ bool SurakartaRuleManager::EatCircle(const SurakartaMove& move,const circle& cir
     Pass = 0;   // 默认没有转弯
     index = i ; // 检查的第一个点
     
-
-
     if((index == 4 * board_size_ - 1) || (index == 3 * board_size_ - 1) || (index == 2 * board_size_ - 1)  || (index == board_size_ - 1) ) // 表示在拐弯的位置     
         Pass  = 1;
     

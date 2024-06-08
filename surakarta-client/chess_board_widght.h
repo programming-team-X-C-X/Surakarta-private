@@ -10,26 +10,21 @@
 #include "info_common.h"
 #include "settings.h"
 
+enum DrawMode { BoardMode, PieceMode };
 
 class ChessBoardWidget : public QWidget {
     Q_OBJECT
 public:
-    enum DrawMode { BoardMode, PieceMode };
-    DrawMode currentMode;
-    std::shared_ptr<SurakartaBoard> board;
-    std::vector<std::vector<std::shared_ptr<SurakartaPiece>>> pieceItems;
+
     ChessBoardWidget();
+    ChessBoardWidget(const MiniBoard& board_);
     void drawCaptureHint(const SurakartaPosition& position);
     void drawDangerousHint(const SurakartaPosition& position);
     void drawNONCaptureHint(const SurakartaPosition& position);
     void clearHints();
     void setMode(DrawMode newMode);
     QPointF convertPositionToQPointF(const SurakartaPosition& position);
-    ChessBoardWidget(const MiniBoard& board_);
-
-    int arcNum = (BOARD_SIZE - 2) / 2;//环数
-    int rawNum = BOARD_SIZE + arcNum * 2 + 1;//总行数
-    int gridSize = WINDOW_SIZE / rawNum;
+    std::shared_ptr<SurakartaBoard> getBoard() {return board;}
 
 public slots:
     void movePiece(const SurakartaMove& move);
@@ -53,7 +48,14 @@ private:
     std::vector<QGraphicsEllipseItem*> hintItems;
     QGraphicsScene *scene;
     QGraphicsView *view;
+    DrawMode currentMode;
+    std::shared_ptr<SurakartaBoard> board;
+    std::vector<std::vector<std::shared_ptr<SurakartaPiece>>> pieceItems;
+    int arcNum = (BOARD_SIZE - 2) / 2; //环数
+    int rawNum = BOARD_SIZE + arcNum * 2 + 1; //总行数
+    int gridSize = WINDOW_SIZE / rawNum; //棋盘单位长度
 };
+
 
 class ChessBoardGraphicsItem : public QGraphicsItem {
 public:
@@ -72,7 +74,6 @@ public:
     void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override {
         Q_UNUSED(option);
         Q_UNUSED(widget);
-        // QPainter painter(this);
         painter->setRenderHint(QPainter::Antialiasing);
         int arcNum = (BOARD_SIZE - 2) / 2;//环数
         int rawNum = BOARD_SIZE + arcNum * 2 + 1;//总行数

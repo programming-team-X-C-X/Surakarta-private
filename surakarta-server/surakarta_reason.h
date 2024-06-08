@@ -2,9 +2,6 @@
 
 #include <iostream>
 
-// TODO: Read the following comments carefully.
-// Don't implement anything with 'unused' comments.
-
 enum class SurakartaIllegalMoveReason {
     LEGAL,                     // unused
     LEGAL_CAPTURE_MOVE,        // capture a opponent's piece, and the move consists at least one corner loop

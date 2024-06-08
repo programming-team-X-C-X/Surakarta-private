@@ -16,9 +16,7 @@ bool fi{1};
 
 int MainWindow::cnt = 0;
 
-
 QString GetInfo(NetworkData data);
-
 
 void MainWindow::Rmarkdown(NetworkData data)
 {
